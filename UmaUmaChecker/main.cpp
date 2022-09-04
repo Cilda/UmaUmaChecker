@@ -1,3 +1,5 @@
+#pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 #include <Windows.h>
 #include <tchar.h>
 #include "resource.h"
@@ -45,11 +47,14 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
     return msg.wParam;
 }
 
-LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
     switch (msg) {
         case WM_CREATE:
             break;
+        case WM_CTLCOLORSTATIC:
+            SetBkMode(((HDC)wp), TRANSPARENT);
+            return (INT_PTR)GetStockObject(WHITE_BRUSH);
         case WM_DESTROY:
             PostQuitMessage(0);
             break;
