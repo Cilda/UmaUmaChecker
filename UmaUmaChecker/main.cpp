@@ -2,15 +2,30 @@
 
 #include <Windows.h>
 #include <tchar.h>
+#include <gdiplus.h>
+#include <Richedit.h>
+#include <Commctrl.h>
 #include "resource.h"
+#include "Uma.h"
+
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+
 
 int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int nCmdShow)
 {
     MSG msg;
     WNDCLASSEX wcx;
     LPCTSTR lpszClassName = TEXT("UmaUmaChecker");
+    Gdiplus::GdiplusStartupInput input;
+    ULONG_PTR token;
+
+    HMODULE hRichLib = LoadLibrary(TEXT("MsftEdit.dll"));
+    if (!hRichLib) {
+        return -1;
+    }
+
+    Gdiplus::GdiplusStartup(&token, &input, NULL);
 
     wcx.cbSize = sizeof(WNDCLASSEX);
     wcx.style = CS_HREDRAW | CS_VREDRAW;
@@ -26,7 +41,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
     wcx.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
     
     if (!RegisterClassEx(&wcx)) {
-        MessageBox(NULL, TEXT("RegisterClassEx関数呼び出し失敗"), TEXT("ウマウマチェッカー"), MB_OK | MB_ICONERROR);
+        MessageBox(NULL, TEXT("RegisterClassEx関数の呼び出しに失敗しました。"), TEXT("ウマウマチェッカー"), MB_OK | MB_ICONERROR);
         return -1;
     }
 
@@ -44,18 +59,46 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
         DispatchMessage(&msg);
     }
 
+    Gdiplus::GdiplusShutdown(token);
+    FreeLibrary(hRichLib);
     return msg.wParam;
 }
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
+    static HBRUSH hGreen, hYellow, hRed;
+
     switch (msg) {
         case WM_CREATE:
+            hGreen = CreateSolidBrush(RGB(200, 255, 150));
+            hYellow = CreateSolidBrush(RGB(255, 240, 150));
+            hRed = CreateSolidBrush(RGB(255, 200, 220));
             break;
         case WM_CTLCOLORSTATIC:
+            switch (GetDlgCtrlID((HWND)lp)) {
+                case IDC_EDITCHOISE1:
+                    SetBkColor((HDC)wp, RGB(200, 255, 150));
+                    return (LRESULT)hGreen;
+                case IDC_EDITCHOISE2:
+                    SetBkColor((HDC)wp, RGB(255, 240, 150));
+                    return (LRESULT)hYellow;
+                case IDC_EDITCHOISE3:
+                    SetBkColor((HDC)wp, RGB(255, 200, 220));
+                    return (LRESULT)hRed;
+            }
+
             SetBkMode(((HDC)wp), TRANSPARENT);
-            return (INT_PTR)GetStockObject(WHITE_BRUSH);
+            return (LRESULT)GetStockObject(WHITE_BRUSH);
+        case WM_COMMAND:
+            switch (wp) {
+                case IDC_BUTTONSTART:
+                    break;
+            }
+            break;
         case WM_DESTROY:
+            DeleteObject(hGreen);
+            DeleteObject(hYellow);
+            DeleteObject(hRed);
             PostQuitMessage(0);
             break;
         default:
