@@ -5,11 +5,14 @@
 #include <gdiplus.h>
 #include <Richedit.h>
 #include <Commctrl.h>
-#include "resource.h"
 #include "Uma.h"
+#include "utility.h"
+
+#include "resource.h"
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
 
 int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int nCmdShow)
@@ -45,7 +48,9 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
         return -1;
     }
 
-    HWND hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_MAIN), NULL, NULL);
+    Uma* uma = new Uma();
+
+    HWND hWnd = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAIN), NULL, NULL, (LPARAM)uma);
     if (!hWnd) {
         MessageBox(NULL, TEXT("ウィンドウの生成に失敗しました。"), TEXT("ウマウマチェッカー"), MB_OK | MB_ICONERROR);
         return -1;
@@ -59,6 +64,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
         DispatchMessage(&msg);
     }
 
+    delete uma;
     Gdiplus::GdiplusShutdown(token);
     FreeLibrary(hRichLib);
     return msg.wParam;
@@ -67,9 +73,11 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
     static HBRUSH hGreen, hYellow, hRed;
+    Uma* uma = (Uma*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
     switch (msg) {
         case WM_CREATE:
+            SetWindowLongPtr(hWnd, GWLP_USERDATA, (LPARAM)((CREATESTRUCT*)lp)->lpCreateParams);
             hGreen = CreateSolidBrush(RGB(200, 255, 150));
             hYellow = CreateSolidBrush(RGB(255, 240, 150));
             hRed = CreateSolidBrush(RGB(255, 200, 220));
@@ -93,6 +101,26 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             switch (wp) {
                 case IDC_BUTTONSTART:
                     break;
+                case IDC_BUTTONSCREENSHOT: {
+                    Gdiplus::Bitmap* image = uma->ScreenShot();
+                    if (image) {
+                        CLSID clsid;
+
+                        GetEncoderClsid(L"image/png", &clsid);
+
+                        std::wstring directory = utility::GetExeDirectory();
+
+                        CreateDirectoryW((directory + L"\\screenshots\\").c_str(), NULL);
+
+                        std::wstring savename = directory
+                            + std::wstring(L"\\screenshots\\screenshot_")
+                            + std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
+                            + L".png";
+                        image->Save(savename.c_str(), &clsid);
+                        delete image;
+                    }
+                    break;
+                }
             }
             break;
         case WM_DESTROY:
@@ -106,4 +134,35 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     }
 
     return 0;
+}
+
+int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
+{
+    UINT  num = 0;
+    UINT  size = 0;
+
+    Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
+
+    Gdiplus::GetImageEncodersSize(&num, &size);
+    if (size == 0)
+        return -1;
+
+    pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
+    if (pImageCodecInfo == NULL)
+        return -1;
+
+    GetImageEncoders(num, size, pImageCodecInfo);
+
+    for (UINT j = 0; j < num; ++j)
+    {
+        if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
+        {
+            *pClsid = pImageCodecInfo[j].Clsid;
+            free(pImageCodecInfo);
+            return j;
+        }
+    }
+
+    free(pImageCodecInfo);
+    return -1;
 }

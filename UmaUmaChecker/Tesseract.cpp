@@ -7,5 +7,5 @@ bool Tesseract::Init()
 
 std::wstring Tesseract::GetText()
 {
-	api->SetImage();
+	return L"";
 }
