@@ -8,6 +8,8 @@
 #include "Uma.h"
 #include "utility.h"
 
+#include <tesseract/baseapi.h>
+#include <codecvt>
 #include "resource.h"
 
 
@@ -56,6 +58,8 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
         return -1;
     }
 
+    SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG)uma);
+
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
 
@@ -77,7 +81,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
     switch (msg) {
         case WM_CREATE:
-            SetWindowLongPtr(hWnd, GWLP_USERDATA, (LPARAM)((CREATESTRUCT*)lp)->lpCreateParams);
             hGreen = CreateSolidBrush(RGB(200, 255, 150));
             hYellow = CreateSolidBrush(RGB(255, 240, 150));
             hRed = CreateSolidBrush(RGB(255, 200, 220));
@@ -100,6 +103,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         case WM_COMMAND:
             switch (wp) {
                 case IDC_BUTTONSTART:
+                    uma->Start();
                     break;
                 case IDC_BUTTONSCREENSHOT: {
                     Gdiplus::Bitmap* image = uma->ScreenShot();
@@ -116,6 +120,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
                             + std::wstring(L"\\screenshots\\screenshot_")
                             + std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
                             + L".png";
+                        
+                        GetEncoderClsid(L"image/png", &clsid);
                         image->Save(savename.c_str(), &clsid);
                         delete image;
                     }
