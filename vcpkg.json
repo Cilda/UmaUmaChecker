@@ -11,6 +11,7 @@
         "world"
       ]
     },
-    "tesseract"
+    "tesseract",
+    "nlohmann-json"
   ]
 }
