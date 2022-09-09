@@ -12,12 +12,13 @@
 const cv::Rect2d Uma::CharaEventBound = { 0.1545, 0.1884, 0.6330, 0.03140 };
 const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6293, 0.03030 };
 
-
 Uma::Uma()
 {
 	bDetected = false;
+	bStop = false;
 	thread = nullptr;
 	api = new tesseract::TessBaseAPI();
+	hTargetWnd = NULL;
 
 	std::wstring name = utility::GetExeDirectory();
 	std::wstring dir = name + L"\\tessdata";
@@ -47,23 +48,33 @@ Gdiplus::Bitmap *Uma::ScreenShot()
 
 	RECT rc, rw;
 	POINT pt = { 0, 0 };
+	BITMAPINFO bmpinfo;
+	byte* lpPixel;
 
 	GetWindowRect(hWnd, &rw);
 	GetClientRect(hWnd, &rc);
 
 	ClientToScreen(hWnd, &pt);
 
+	ZeroMemory(&bmpinfo, sizeof(bmpinfo));
+	bmpinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmpinfo.bmiHeader.biWidth = rc.right;
+	bmpinfo.bmiHeader.biHeight = rc.bottom;
+	bmpinfo.bmiHeader.biPlanes = 1;
+	bmpinfo.bmiHeader.biBitCount = 24;
+	bmpinfo.bmiHeader.biCompression = BI_RGB;
+
 	HDC hdc = GetDC(NULL);
 	HDC hdc_mem = CreateCompatibleDC(hdc);
-	HBITMAP hBmp = CreateCompatibleBitmap(hdc, rc.right, rc.bottom);
+	HBITMAP hBmp = CreateDIBSection(hdc, &bmpinfo, DIB_RGB_COLORS, (void**)&lpPixel, NULL, 0);
 
-	SelectObject(hdc_mem, hBmp);
+	SelectObject(hdc_mem, hBmp);	
 	BitBlt(hdc_mem, 0, 0, rc.right, rc.bottom, hdc, pt.x, pt.y, SRCCOPY);
 
 	Gdiplus::Bitmap* image = new Gdiplus::Bitmap(hBmp, NULL);
 
-	DeleteObject(hBmp);
 	DeleteDC(hdc_mem);
+	DeleteObject(hBmp);
 	ReleaseDC(hWnd, hdc);
 
 	return image;
@@ -88,22 +99,17 @@ void Uma::Stop()
 	thread = nullptr;
 }
 
-void Uma::Debug()
+void Uma::SetNotifyTarget(HWND hWnd)
 {
-	Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromFile(TEXT("debug2.png"));
-	cv::Mat mat = BitmapToCvMat(image);
-
-	//GetCharaEventText(mat);
-	GetCardEventText(mat);
-
-	delete image;
+	hTargetWnd = hWnd;
 }
 
 cv::Mat Uma::BitmapToCvMat(Gdiplus::Bitmap* image)
 {
+	assert(image->GetPixelFormat() == PixelFormat24bppRGB);
 	Gdiplus::Rect rect(0, 0, image->GetWidth(), image->GetHeight());
 	Gdiplus::BitmapData data;
-	image->LockBits(&rect, Gdiplus::ImageLockMode::ImageLockModeRead, PixelFormat24bppRGB, &data);
+	image->LockBits(&rect, Gdiplus::ImageLockMode::ImageLockModeRead, image->GetPixelFormat(), &data);
 
 	cv::Mat mat = cv::Mat(image->GetHeight(), image->GetWidth(), CV_8UC3, data.Scan0, data.Stride);
 
@@ -128,11 +134,17 @@ void Uma::MonitorThread()
 	while (!bStop) {
 		Gdiplus::Bitmap* image = ScreenShot();
 		if (image) {
-			
 			cv::Mat srcImage = BitmapToCvMat(image);
 			
 			std::wstring EventName = GetCharaEventText(srcImage);
-			_RPTW1(_CRT_WARN, L"ƒCƒxƒ“ƒg–¼: %ls\n", EventName.c_str());
+			if (EventName.empty()) {
+				EventName = GetCardEventText(srcImage);
+			}
+			
+			if (this->EventName != EventName) {
+				this->EventName = EventName;
+				if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+			}
 
 			delete image;
 		}
@@ -158,11 +170,11 @@ std::wstring Uma::GetCharaEventText(const cv::Mat& srcImg)
 		Uma::CharaEventBound.width * srcImg.size().width,
 		Uma::CharaEventBound.height * srcImg.size().height
 	));
+	cv::Mat rsImg;
 
-	if (IsCharaEvent(cut)) {
-		cv::Mat rsImg;
+	cv::resize(cut, rsImg, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
 
-		cv::resize(cut, rsImg, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
+	if (IsCharaEvent(rsImg)) {
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 
 		int c = cv::countNonZero(bin);
@@ -186,7 +198,6 @@ bool Uma::IsCardEvent(const cv::Mat& srcImg)
 	cv::Mat img = srcImg.clone();
 
 	cv::inRange(img, cv::Scalar(240, 145, 40), cv::Scalar(255, 210, 120), bg);
-	cv::imwrite("test.png", bg);
 	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
 }
 
@@ -198,11 +209,11 @@ std::wstring Uma::GetCardEventText(const cv::Mat& srcImg)
 		Uma::CardEventBound.width * srcImg.size().width,
 		Uma::CardEventBound.height * srcImg.size().height
 	));
+	cv::Mat rsImg;
 
-	if (IsCardEvent(cut)) {
-		cv::Mat rsImg;
+	cv::resize(cut, rsImg, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
 
-		cv::resize(cut, rsImg, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
+	if (IsCardEvent(rsImg)) {
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 
 		int c = cv::countNonZero(bin);

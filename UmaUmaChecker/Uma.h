@@ -4,6 +4,8 @@
 #include <opencv2/opencv.hpp>
 #include <tesseract/baseapi.h>
 
+#define WM_CHANGEUMAEVENT (WM_USER + 1)
+
 class Uma
 {
 public:
@@ -16,7 +18,7 @@ public:
 	void Start();
 	void Stop();
 
-	void Debug();
+	void SetNotifyTarget(HWND hWnd);
 
 public:
 	static cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);
@@ -35,10 +37,15 @@ public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界
 	static const cv::Rect2d CardEventBound;
 
+public:
+	std::wstring EventName;
+
 private:
 	bool bDetected;
 	bool bStop;
 	std::thread* thread;
 	tesseract::TessBaseAPI* api;
+	HWND hTargetWnd;
+	
 };
 
