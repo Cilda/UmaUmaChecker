@@ -5,11 +5,12 @@
 #include <gdiplus.h>
 #include <Richedit.h>
 #include <Commctrl.h>
+#include <tesseract/baseapi.h>
+#include <codecvt>
+
 #include "Uma.h"
 #include "utility.h"
 
-#include <tesseract/baseapi.h>
-#include <codecvt>
 #include "resource.h"
 
 
@@ -59,6 +60,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
     }
 
     SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG)uma);
+    uma->SetNotifyTarget(hWnd);
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
@@ -127,6 +129,11 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
                     }
                     break;
                 }
+            }
+            break;
+        case WM_CHANGEUMAEVENT:
+            if (uma) {
+                SetDlgItemTextW(hWnd, IDC_EDITEVENTNAME, uma->EventName.c_str());
             }
             break;
         case WM_DESTROY:
