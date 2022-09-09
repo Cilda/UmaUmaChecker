@@ -16,15 +16,24 @@ public:
 	void Start();
 	void Stop();
 
+	void Debug();
+
 public:
 	static cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);
-	static cv::Mat ImageBinarization(cv::Mat & srcImg);
+	static cv::Mat ImageBinarization(const cv::Mat& srcImg);
 	
 private:
 	void MonitorThread();
 
+	bool IsCharaEvent(const cv::Mat& srcImg);
+	std::wstring GetCharaEventText(const cv::Mat& srcImg);
+
+	bool IsCardEvent(const cv::Mat& srcImg);
+	std::wstring GetCardEventText(const cv::Mat& srcImg);
+
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界
+	static const cv::Rect2d CardEventBound;
 
 private:
 	bool bDetected;
