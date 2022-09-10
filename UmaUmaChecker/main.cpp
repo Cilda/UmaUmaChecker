@@ -105,7 +105,14 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         case WM_COMMAND:
             switch (wp) {
                 case IDC_BUTTONSTART:
-                    uma->Start();
+                    if (SendDlgItemMessage(hWnd, IDC_BUTTONSTART, BM_GETCHECK, 0, 0) == BST_CHECKED) {
+                        SetDlgItemText(hWnd, IDC_BUTTONSTART, TEXT("停止"));
+                        uma->Start();
+                    }
+                    else {
+                        SetDlgItemText(hWnd, IDC_BUTTONSTART, TEXT("スタート"));
+                        uma->Stop();
+                    }
                     break;
                 case IDC_BUTTONSCREENSHOT: {
                     Gdiplus::Bitmap* image = uma->ScreenShot();
