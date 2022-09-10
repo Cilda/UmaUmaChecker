@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SkillLibrary.h"
+
 #include <thread>
 #include <opencv2/opencv.hpp>
 #include <tesseract/baseapi.h>
@@ -11,6 +13,8 @@ class Uma
 public:
 	Uma();
 	~Uma();
+
+	void Init();
 
 	HWND GetUmaWindow();
 	Gdiplus::Bitmap *ScreenShot();
@@ -46,6 +50,7 @@ private:
 	std::thread* thread;
 	tesseract::TessBaseAPI* api;
 	HWND hTargetWnd;
+	SkillLibrary SkilLib;
 	
 };
 

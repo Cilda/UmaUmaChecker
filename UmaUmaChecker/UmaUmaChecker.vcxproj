@@ -107,6 +107,9 @@
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\" &amp;&amp; xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -130,6 +133,9 @@
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\" &amp;&amp; xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -148,6 +154,9 @@
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\" &amp;&amp; xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -170,19 +179,26 @@
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\" &amp;&amp; xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Skill.cpp" />
     <ClCompile Include="Tesseract.cpp" />
     <ClCompile Include="Uma.cpp" />
+    <ClCompile Include="SkillLibrary.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Skill.h" />
     <ClInclude Include="Tesseract.h" />
     <ClInclude Include="Uma.h" />
+    <ClInclude Include="SkillLibrary.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>

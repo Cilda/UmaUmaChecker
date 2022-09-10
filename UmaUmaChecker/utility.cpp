@@ -35,6 +35,18 @@ namespace utility
 
 		return std::string(ret.data(), ret.size());
 	}
+	std::wstring ConvertUtf8ToUtf16(const char* str)
+	{
+		std::vector<wchar_t> ret;
+
+		int len = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+
+		ret.resize(len);
+		MultiByteToWideChar(CP_UTF8, 0, str, -1, ret.data(), len);
+		ret.resize(ret.size() - 1);
+
+		return std::wstring(ret.data(), ret.size());
+	}
 }
 
 

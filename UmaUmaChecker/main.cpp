@@ -53,6 +53,8 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
 
     Uma* uma = new Uma();
 
+    uma->Init();
+
     HWND hWnd = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAIN), NULL, NULL, (LPARAM)uma);
     if (!hWnd) {
         MessageBox(NULL, TEXT("ウィンドウの生成に失敗しました。"), TEXT("ウマウマチェッカー"), MB_OK | MB_ICONERROR);

@@ -19,13 +19,6 @@ Uma::Uma()
 	thread = nullptr;
 	api = new tesseract::TessBaseAPI();
 	hTargetWnd = NULL;
-
-	std::wstring name = utility::GetExeDirectory();
-	std::wstring dir = name + L"\\tessdata";
-
-	assert(api->Init(utility::to_string(dir).c_str(), "jpn") == 0);
-
-	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
 }
 
 Uma::~Uma()
@@ -34,6 +27,17 @@ Uma::~Uma()
 		Stop();
 	}
 	delete api;
+}
+
+void Uma::Init()
+{
+	std::wstring name = utility::GetExeDirectory();
+	std::wstring dir = name + L"\\tessdata";
+
+	assert(api->Init(utility::to_string(dir).c_str(), "jpn") == 0);
+	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
+
+	SkilLib.Load();
 }
 
 HWND Uma::GetUmaWindow()
