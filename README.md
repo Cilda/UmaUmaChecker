@@ -13,4 +13,4 @@
 - OpenCV
 - tesseract
 - nlohmann-json
-- - simstring
+- simstring
