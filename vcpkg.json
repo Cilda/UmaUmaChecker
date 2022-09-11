@@ -5,11 +5,7 @@
     {
       "name": "opencv4",
       "default-features": false,
-      "features": [
-        "jpeg",
-        "png",
-        "world"
-      ]
+      "features": ["jpeg", "png", "world"]
     },
     "tesseract",
     "nlohmann-json"
