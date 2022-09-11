@@ -22,7 +22,7 @@ EventLibrary::~EventLibrary()
 
 bool EventLibrary::Load()
 {
-	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\Skills.json");
+	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\Events.json");
 	if (stream.good()) {
 		std::stringstream text;
 		simstring::ngram_generator gen(3, false);
