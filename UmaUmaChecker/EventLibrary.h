@@ -9,13 +9,19 @@ public:
 	~EventLibrary();
 
 	bool Load();
-	void InitDB();
+	bool LoadEvent();
+	bool LoadChara();
+	void InitEventDB();
+	void InitCharaDB();
 
-	std::wstring search(const std::wstring& name);
+	std::wstring SearchEvent(const std::wstring& name);
+	std::wstring SearchCharaEvent(const std::wstring& name);
 
 public:
-	std::vector<SupportCard> Skills;
-	std::unordered_map<std::wstring, SupportCard::Event> SkillMap;
+	std::vector<SupportCard> Events;
+	std::vector<SupportCard> Charas;
+	std::unordered_map<std::wstring, SupportCard::Event> EventMap;
+	std::unordered_map<std::wstring, SupportCard::Event> CharaMap;
 
 	std::string DBPath;
 };

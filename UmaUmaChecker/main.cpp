@@ -11,6 +11,7 @@
 
 #include "Uma.h"
 #include "utility.h"
+#include "Config.h"
 
 #include "resource.h"
 
@@ -76,6 +77,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
         DispatchMessage(&msg);
     }
 
+    g_umaMgr->config.Save();
     delete g_umaMgr;
     Gdiplus::GdiplusShutdown(token);
     FreeLibrary(hRichLib);
@@ -91,6 +93,19 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             hGreen = CreateSolidBrush(RGB(200, 255, 150));
             hYellow = CreateSolidBrush(RGB(255, 240, 150));
             hRed = CreateSolidBrush(RGB(255, 200, 220));
+            /*
+            if (g_umaMgr->config.WindowX == 0 && g_umaMgr->config.WindowY == 0) {
+                RECT MonitorRect;
+                RECT WindowRect;
+
+                SystemParametersInfo(SPI_GETWORKAREA, 0, &MonitorRect, 0);
+                GetWindowRect(hWnd, &WindowRect);
+
+                g_umaMgr->config.WindowX = (MonitorRect.right - (WindowRect.right - WindowRect.left)) / 2;
+                g_umaMgr->config.WindowY = (MonitorRect.bottom - (WindowRect.bottom - WindowRect.top)) / 2;
+            }
+            SetWindowPos(hWnd, HWND_TOP, g_umaMgr->config.WindowX, g_umaMgr->config.WindowY, 0, 0, SWP_NOSIZE);
+            */
             break;
         case WM_CTLCOLORSTATIC:
             switch (GetDlgCtrlID((HWND)lp)) {
@@ -162,6 +177,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             }
             break;
         }
+        case WM_MOVE:
+            g_umaMgr->config.WindowX = LOWORD(lp);
+            g_umaMgr->config.WindowY = HIWORD(lp);
+            break;
         case WM_DESTROY:
             DeleteObject(hGreen);
             DeleteObject(hYellow);

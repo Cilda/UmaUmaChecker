@@ -37,7 +37,12 @@ void Uma::Init()
 	assert(api->Init(utility::to_string(dir).c_str(), "jpn") == 0);
 	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
 
-	if (SkillLib.Load()) SkillLib.InitDB();
+	if (SkillLib.Load()) {
+		SkillLib.InitEventDB();
+		SkillLib.InitCharaDB();
+	}
+
+	config.Load();
 }
 
 HWND Uma::GetUmaWindow()
@@ -84,13 +89,13 @@ Gdiplus::Bitmap *Uma::ScreenShot()
 	return image;
 }
 
-void Uma::Start()
+bool Uma::Start()
 {
-	HWND hWnd = GetUmaWindow();
-	if (!hWnd || thread) return;
+	if (thread) return false;
 
 	bStop = false;
 	thread = new std::thread(&Uma::MonitorThread, this);
+	return true;
 }
 
 void Uma::Stop()
@@ -140,44 +145,84 @@ void Uma::MonitorThread()
 		if (image) {
 			cv::Mat srcImage = BitmapToCvMat(image);
 			
-			std::wstring EventName = GetCharaEventText(srcImage);
-			if (EventName.empty()) {
-				EventName = GetCardEventText(srcImage);
-			}
-			
-			if (this->EventName != EventName) {
-				EventName = utility::replace(EventName, L":", L"：");
-				EventName = utility::replace(EventName, L"\"", L"");
+			// サポートカードイベント
+			std::wstring EventName = GetCardEventText(srcImage);
+			if (!EventName.empty()) {
+				if (this->EventName != EventName) {
+					EventName = utility::replace(EventName, L":", L"：");
+					EventName = utility::replace(EventName, L"\"", L"");
 
-				if (SkillLib.SkillMap.find(EventName) != SkillLib.SkillMap.end()) {
-					auto& skill = SkillLib.SkillMap[EventName];
+					if (SkillLib.EventMap.find(EventName) != SkillLib.EventMap.end()) {
+						auto& skill = SkillLib.EventMap[EventName];
 
-					CurrentEvent = &skill;
-					this->EventName = EventName;
-					if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
-				}
-				else {
-					EventName = SkillLib.search(EventName);
+						CurrentEvent = &skill;
+						this->EventName = EventName;
+						if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+					}
+					else {
+						EventName = SkillLib.SearchEvent(EventName);
 
-					if (!EventName.empty() && this->EventName != EventName) {
-						if (SkillLib.SkillMap.find(EventName) != SkillLib.SkillMap.end()) {
-							auto& skill = SkillLib.SkillMap[EventName];
+						if (!EventName.empty() && this->EventName != EventName) {
+							if (SkillLib.EventMap.find(EventName) != SkillLib.EventMap.end()) {
+								auto& skill = SkillLib.EventMap[EventName];
 
-							CurrentEvent = &skill;
+								CurrentEvent = &skill;
+							}
+							else {
+								CurrentEvent = nullptr;
+							}
 						}
 						else {
 							CurrentEvent = nullptr;
 						}
-					}
-					else {
-						CurrentEvent = nullptr;
-					}
 
-					if (hTargetWnd && this->EventName != EventName) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+						if (hTargetWnd && this->EventName != EventName)
+							PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
 
-					this->EventName = EventName;
+						this->EventName = EventName;
+					}
 				}
 			}
+			// キャライベント
+			else {
+				std::wstring EventName = GetCharaEventText(srcImage);
+				if (!EventName.empty() && this->EventName != EventName) {
+					//EventName = utility::replace(EventName, L":", L"：");
+					//EventName = utility::replace(EventName, L"\"", L"");
+
+					if (SkillLib.CharaMap.find(EventName) != SkillLib.CharaMap.end()) {
+						auto& skill = SkillLib.CharaMap[EventName];
+
+						CurrentEvent = &skill;
+						this->EventName = EventName;
+						if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+					}
+					else {
+						EventName = SkillLib.SearchCharaEvent(EventName);
+
+						if (!EventName.empty() && this->EventName != EventName) {
+							if (SkillLib.CharaMap.find(EventName) != SkillLib.CharaMap.end()) {
+								auto& skill = SkillLib.CharaMap[EventName];
+
+								CurrentEvent = &skill;
+							}
+							else {
+								CurrentEvent = nullptr;
+							}
+						}
+						else {
+							CurrentEvent = nullptr;
+						}
+
+						if (hTargetWnd && this->EventName != EventName)
+							PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+
+						this->EventName = EventName;
+					}
+				}
+			}
+			
+			
 
 			delete image;
 		}

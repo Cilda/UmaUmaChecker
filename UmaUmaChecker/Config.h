@@ -8,6 +8,7 @@ public:
 
 	bool Load();
 	void Create();
+	void Save();
 
 public:
 	int WindowX = 0;

@@ -5,6 +5,7 @@
 #include <thread>
 #include <opencv2/opencv.hpp>
 #include <tesseract/baseapi.h>
+#include "Config.h"
 
 #define WM_CHANGEUMAEVENT (WM_USER + 1)
 
@@ -19,7 +20,7 @@ public:
 	HWND GetUmaWindow();
 	Gdiplus::Bitmap *ScreenShot();
 
-	void Start();
+	bool Start();
 	void Stop();
 
 	void SetNotifyTarget(HWND hWnd);
@@ -44,6 +45,7 @@ public:
 public:
 	std::wstring EventName;
 	SupportCard::Event* CurrentEvent;
+	Config config;
 
 private:
 	bool bDetected;

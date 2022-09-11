@@ -22,11 +22,16 @@ EventLibrary::~EventLibrary()
 
 bool EventLibrary::Load()
 {
+	LoadEvent();
+	LoadChara();
+	return true;
+}
+
+bool EventLibrary::LoadEvent()
+{
 	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\Events.json");
 	if (stream.good()) {
 		std::stringstream text;
-		simstring::ngram_generator gen(3, false);
-		simstring::writer_base<std::wstring> dbw(gen, "");
 
 		text << stream.rdbuf();
 
@@ -59,13 +64,13 @@ bool EventLibrary::Load()
 							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
 							skill.Events[EventName] = event;
 
-							if (SkillMap.find(EventName) == SkillMap.end()) {
-								SkillMap[EventName] = event;
+							if (EventMap.find(EventName) == EventMap.end()) {
+								EventMap[EventName] = event;
 							}
 						}
 					}
 
-					Skills.push_back(skill);
+					Events.push_back(skill);
 				}
 			}
 		}
@@ -79,24 +84,109 @@ bool EventLibrary::Load()
 	return false;
 }
 
-void EventLibrary::InitDB()
+bool EventLibrary::LoadChara()
+{
+	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\Chara.json");
+	if (stream.good()) {
+		std::stringstream text;
+
+		text << stream.rdbuf();
+
+		try {
+			json charas = json::parse(text.str());
+
+			const char* types[] = { "3", "2", "1" };
+			for (int i = 0; i < 3; i++) {
+				auto cards = charas["Chara"][types[i]];
+
+				for (auto& card : cards.items()) {
+					auto name = card.key();
+					auto events = card.value()["Events"];
+					SupportCard skill;
+
+					skill.Name = utility::ConvertUtf8ToUtf16(name.c_str());
+
+					for (auto& e : events) {
+						for (auto& choise : e.items()) {
+							SupportCard::Event event;
+
+							for (auto& option : choise.value()) {
+								SupportCard::Choise choise;
+
+								choise.Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
+								choise.Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
+								event.Choises.push_back(choise);
+							}
+
+							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
+							skill.Events[EventName] = event;
+
+							if (CharaMap.find(EventName) == CharaMap.end()) {
+								CharaMap[EventName] = event;
+							}
+						}
+					}
+
+					Charas.push_back(skill);
+				}
+			}
+		}
+		catch (json::exception& ex) {
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+void EventLibrary::InitEventDB()
 {
 	CreateDirectoryA(DBPath.c_str(), NULL);
+	CreateDirectoryA((DBPath + "event\\").c_str(), NULL);
 
 	simstring::ngram_generator gen(3, false);
-	simstring::writer_base<std::wstring> dbw(gen, DBPath + "events.db");
+	simstring::writer_base<std::wstring> dbw(gen, DBPath + "event\\events.db");
 
-	for (auto& pair : SkillMap) {
+	for (auto& pair : EventMap) {
 		dbw.insert(pair.first);
 	}
 	dbw.close();
 }
 
-std::wstring EventLibrary::search(const std::wstring& name)
+void EventLibrary::InitCharaDB()
+{
+	CreateDirectoryA(DBPath.c_str(), NULL);
+	CreateDirectoryA((DBPath + "chara\\").c_str(), NULL);
+
+	simstring::ngram_generator gen(3, false);
+	simstring::writer_base<std::wstring> dbw(gen, DBPath + "chara\\chara.db");
+
+	for (auto& pair : CharaMap) {
+		dbw.insert(pair.first);
+	}
+	dbw.close();
+}
+
+std::wstring EventLibrary::SearchEvent(const std::wstring& name)
 {
 	simstring::reader dbr;
 	
-	dbr.open(DBPath + "events.db");
+	dbr.open(DBPath + "event\\events.db");
+
+	std::vector<std::wstring> xstrs;
+	dbr.retrieve(name, simstring::cosine, 0.6, std::back_inserter(xstrs));
+	dbr.close();
+
+	return !xstrs.empty() ? xstrs.front() : L"";
+}
+
+std::wstring EventLibrary::SearchCharaEvent(const std::wstring& name)
+{
+	simstring::reader dbr;
+
+	dbr.open(DBPath + "chara\\chara.db");
 
 	std::vector<std::wstring> xstrs;
 	dbr.retrieve(name, simstring::cosine, 0.6, std::back_inserter(xstrs));
