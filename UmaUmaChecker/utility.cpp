@@ -4,6 +4,7 @@
 
 #include <Windows.h>
 #include <vector>
+#include <algorithm>
 
 namespace utility
 {
@@ -46,6 +47,18 @@ namespace utility
 		ret.resize(ret.size() - 1);
 
 		return std::wstring(ret.data(), ret.size());
+	}
+	std::wstring replace(const std::wstring& str, const std::wstring& src, const std::wstring& replaceStr)
+	{
+		std::wstring ret = str;
+		int pos = 0;
+
+		while ((pos = ret.find(src, pos)) != std::wstring::npos) {
+			ret.replace(pos, src.length(), replaceStr);
+			pos += replaceStr.length();
+		}
+
+		return ret;
 	}
 }
 

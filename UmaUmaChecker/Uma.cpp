@@ -9,8 +9,8 @@
 #include "utility.h"
 
 
-const cv::Rect2d Uma::CharaEventBound = { 0.1545, 0.1884, 0.6330, 0.03140 };
-const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6293, 0.03030 };
+const cv::Rect2d Uma::CharaEventBound = { 0.1545, 0.1884, 0.6118, 0.03140 };
+const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03030 };
 
 Uma::Uma()
 {
@@ -37,7 +37,7 @@ void Uma::Init()
 	assert(api->Init(utility::to_string(dir).c_str(), "jpn") == 0);
 	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
 
-	SkilLib.Load();
+	if (SkillLib.Load()) SkillLib.InitDB();
 }
 
 HWND Uma::GetUmaWindow()
@@ -127,8 +127,8 @@ cv::Mat Uma::ImageBinarization(const cv::Mat& srcImg)
 	cv::Mat gray;
 	cv::Mat bin;
 
-	cv::cvtColor(srcImg, gray, cv::COLOR_BGR2GRAY);
-	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
+	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
+	cv::threshold(gray, bin, 0, 255, cv::THRESH_OTSU);
 
 	return bin;
 }
@@ -146,8 +146,37 @@ void Uma::MonitorThread()
 			}
 			
 			if (this->EventName != EventName) {
-				this->EventName = EventName;
-				if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+				EventName = utility::replace(EventName, L":", L"F");
+				EventName = utility::replace(EventName, L"\"", L"");
+
+				if (SkillLib.SkillMap.find(EventName) != SkillLib.SkillMap.end()) {
+					auto& skill = SkillLib.SkillMap[EventName];
+
+					CurrentEvent = &skill;
+					this->EventName = EventName;
+					if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+				}
+				else {
+					EventName = SkillLib.search(EventName);
+
+					if (!EventName.empty() && this->EventName != EventName) {
+						if (SkillLib.SkillMap.find(EventName) != SkillLib.SkillMap.end()) {
+							auto& skill = SkillLib.SkillMap[EventName];
+
+							CurrentEvent = &skill;
+						}
+						else {
+							CurrentEvent = nullptr;
+						}
+					}
+					else {
+						CurrentEvent = nullptr;
+					}
+
+					if (hTargetWnd && this->EventName != EventName) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+
+					this->EventName = EventName;
+				}
 			}
 
 			delete image;
@@ -181,8 +210,6 @@ std::wstring Uma::GetCharaEventText(const cv::Mat& srcImg)
 	if (IsCharaEvent(rsImg)) {
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 
-		int c = cv::countNonZero(bin);
-
 		api->SetImage(bin.data, bin.size().width, bin.size().height, bin.channels(), bin.step1());
 		api->Recognize(NULL);
 
@@ -215,10 +242,11 @@ std::wstring Uma::GetCardEventText(const cv::Mat& srcImg)
 	));
 	cv::Mat rsImg;
 
-	cv::resize(cut, rsImg, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
+	cv::resize(cut, rsImg, cv::Size(), 3.0, 3.0, cv::INTER_CUBIC);
 
-	if (IsCardEvent(rsImg)) {
+	if (IsCardEvent(cut)) {
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
+		cv::resize(bin, bin, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
 
 		int c = cv::countNonZero(bin);
 

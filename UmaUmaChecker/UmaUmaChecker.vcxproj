@@ -186,19 +186,19 @@
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Skill.cpp" />
+    <ClCompile Include="SupportCard.cpp" />
     <ClCompile Include="Tesseract.cpp" />
     <ClCompile Include="Uma.cpp" />
-    <ClCompile Include="SkillLibrary.cpp" />
+    <ClCompile Include="EventLibrary.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Skill.h" />
+    <ClInclude Include="SupportCard.h" />
     <ClInclude Include="Tesseract.h" />
     <ClInclude Include="Uma.h" />
-    <ClInclude Include="SkillLibrary.h" />
+    <ClInclude Include="EventLibrary.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>

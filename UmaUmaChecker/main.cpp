@@ -7,6 +7,7 @@
 #include <Commctrl.h>
 #include <tesseract/baseapi.h>
 #include <codecvt>
+#include <regex>
 
 #include "Uma.h"
 #include "utility.h"
@@ -14,8 +15,11 @@
 #include "resource.h"
 
 
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
+
+Uma *g_umaMgr = nullptr;
 
 
 int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int nCmdShow)
@@ -51,18 +55,18 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
         return -1;
     }
 
-    Uma* uma = new Uma();
+    g_umaMgr = new Uma();
 
-    uma->Init();
+    g_umaMgr->Init();
 
-    HWND hWnd = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAIN), NULL, NULL, (LPARAM)uma);
+    HWND hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_MAIN), NULL, NULL);
     if (!hWnd) {
+        delete g_umaMgr;
         MessageBox(NULL, TEXT("ウィンドウの生成に失敗しました。"), TEXT("ウマウマチェッカー"), MB_OK | MB_ICONERROR);
         return -1;
     }
 
-    SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG)uma);
-    uma->SetNotifyTarget(hWnd);
+    g_umaMgr->SetNotifyTarget(hWnd);
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
@@ -72,7 +76,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
         DispatchMessage(&msg);
     }
 
-    delete uma;
+    delete g_umaMgr;
     Gdiplus::GdiplusShutdown(token);
     FreeLibrary(hRichLib);
     return msg.wParam;
@@ -81,7 +85,6 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
     static HBRUSH hGreen, hYellow, hRed;
-    Uma* uma = (Uma*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
     switch (msg) {
         case WM_CREATE:
@@ -109,15 +112,15 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
                 case IDC_BUTTONSTART:
                     if (SendDlgItemMessage(hWnd, IDC_BUTTONSTART, BM_GETCHECK, 0, 0) == BST_CHECKED) {
                         SetDlgItemText(hWnd, IDC_BUTTONSTART, TEXT("停止"));
-                        uma->Start();
+                        g_umaMgr->Start();
                     }
                     else {
                         SetDlgItemText(hWnd, IDC_BUTTONSTART, TEXT("スタート"));
-                        uma->Stop();
+                        g_umaMgr->Stop();
                     }
                     break;
                 case IDC_BUTTONSCREENSHOT: {
-                    Gdiplus::Bitmap* image = uma->ScreenShot();
+                    Gdiplus::Bitmap* image = g_umaMgr->ScreenShot();
                     if (image) {
                         CLSID clsid;
 
@@ -140,11 +143,25 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
                 }
             }
             break;
-        case WM_CHANGEUMAEVENT:
-            if (uma) {
-                SetDlgItemTextW(hWnd, IDC_EDITEVENTNAME, uma->EventName.c_str());
+        case WM_CHANGEUMAEVENT: {
+            int ids[3] = { IDC_EDITCHOISE1, IDC_EDITCHOISE2, IDC_EDITCHOISE3 };
+            int detailids[3] = { IDC_EDIT1, IDC_EDIT2, IDC_EDIT3 };
+            if (g_umaMgr->CurrentEvent) {
+                SetDlgItemTextW(hWnd, IDC_EDITEVENTNAME, g_umaMgr->EventName.c_str());
+                for (int i = 0; i < g_umaMgr->CurrentEvent->Choises.size() && i < 3; i++) {
+                    SetDlgItemTextW(hWnd, ids[i], g_umaMgr->CurrentEvent->Choises[i].Title.c_str());
+                    SetDlgItemTextW(hWnd, detailids[i], utility::replace(g_umaMgr->CurrentEvent->Choises[i].Effect, L"\n", L"\r\n").c_str());
+                }
+            }
+            else {
+                SetDlgItemTextW(hWnd, IDC_EDITEVENTNAME, L"");
+                for (int i = 0; i < 3; i++) {
+                    SetDlgItemTextW(hWnd, ids[i], L"");
+                    SetDlgItemTextW(hWnd, detailids[i], L"");
+                }
             }
             break;
+        }
         case WM_DESTROY:
             DeleteObject(hGreen);
             DeleteObject(hYellow);

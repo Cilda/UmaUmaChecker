@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SkillLibrary.h"
+#include "EventLibrary.h"
 
 #include <thread>
 #include <opencv2/opencv.hpp>
@@ -43,6 +43,7 @@ public:
 
 public:
 	std::wstring EventName;
+	SupportCard::Event* CurrentEvent;
 
 private:
 	bool bDetected;
@@ -50,7 +51,7 @@ private:
 	std::thread* thread;
 	tesseract::TessBaseAPI* api;
 	HWND hTargetWnd;
-	SkillLibrary SkilLib;
+	EventLibrary SkillLib;
 	
 };
 
