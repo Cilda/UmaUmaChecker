@@ -7,7 +7,6 @@
       "default-features": false,
       "features": ["jpeg", "png", "world"]
     },
-    "tesseract",
     "nlohmann-json"
   ]
 }

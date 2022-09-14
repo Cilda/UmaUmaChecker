@@ -5,7 +5,6 @@
 #include <gdiplus.h>
 #include <Richedit.h>
 #include <Commctrl.h>
-#include <tesseract/baseapi.h>
 #include <codecvt>
 #include <regex>
 
@@ -60,7 +59,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
 
     g_umaMgr->Init();
 
-    HWND hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_MAIN), NULL, NULL);
+    HWND hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_MAIN), NULL, (DLGPROC)WndProc);
     if (!hWnd) {
         delete g_umaMgr;
         MessageBox(NULL, TEXT("ウィンドウの生成に失敗しました。"), TEXT("ウマウマチェッカー"), MB_OK | MB_ICONERROR);
@@ -107,6 +106,11 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             SetWindowPos(hWnd, HWND_TOP, g_umaMgr->config.WindowX, g_umaMgr->config.WindowY, 0, 0, SWP_NOSIZE);
             */
             break;
+        case WM_INITDIALOG:
+            for (auto& chara : g_umaMgr->GetCharacters()) {
+                assert(SendDlgItemMessageW(hWnd, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)chara->Name.c_str()) >= 0);
+            }
+            break;
         case WM_CTLCOLORSTATIC:
             switch (GetDlgCtrlID((HWND)lp)) {
                 case IDC_EDITCHOISE1:
@@ -123,7 +127,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             SetBkMode(((HDC)wp), TRANSPARENT);
             return (LRESULT)GetStockObject(WHITE_BRUSH);
         case WM_COMMAND:
-            switch (wp) {
+            switch (LOWORD(wp)) {
                 case IDC_BUTTONSTART:
                     if (SendDlgItemMessage(hWnd, IDC_BUTTONSTART, BM_GETCHECK, 0, 0) == BST_CHECKED) {
                         SetDlgItemText(hWnd, IDC_BUTTONSTART, TEXT("停止"));
@@ -132,6 +136,22 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
                     else {
                         SetDlgItemText(hWnd, IDC_BUTTONSTART, TEXT("スタート"));
                         g_umaMgr->Stop();
+                    }
+                    break;
+                case IDC_COMBO1:
+                    if (HIWORD(wp) == CBN_SELCHANGE) {
+                        int idx = SendDlgItemMessage(hWnd, IDC_COMBO1, CB_GETCURSEL, 0, 0);
+                        if (idx != CB_ERR) {
+                            wchar_t* str;
+                            int len = SendDlgItemMessageW(hWnd, IDC_COMBO1, CB_GETLBTEXTLEN, idx, 0);
+
+                            str = new wchar_t[len + 1];
+                            SendDlgItemMessageW(hWnd, IDC_COMBO1, CB_GETLBTEXT, idx, (LPARAM)str);
+
+                            g_umaMgr->SetTrainingCharacter(str);
+
+                            delete[] str;
+                        }
                     }
                     break;
                 case IDC_BUTTONSCREENSHOT: {

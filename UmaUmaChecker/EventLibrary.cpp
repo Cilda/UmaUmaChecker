@@ -45,16 +45,16 @@ bool EventLibrary::LoadEvent()
 				for (auto& card : cards.items()) {
 					auto name = card.key();
 					auto events = card.value()["Events"];
-					SupportCard skill;
+					std::shared_ptr<Character> skill(new Character());
 
-					skill.Name = utility::ConvertUtf8ToUtf16(name.c_str());
+					skill->Name = utility::ConvertUtf8ToUtf16(name.c_str());
 
 					for (auto &e : events) {
 						for (auto& choise : e.items()) {
-							SupportCard::Event event;
+							Character::Event event;
 
 							for (auto& option : choise.value()) {
-								SupportCard::Choise choise;
+								Character::Choise choise;
 
 								choise.Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
 								choise.Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
@@ -62,7 +62,7 @@ bool EventLibrary::LoadEvent()
 							}
 							
 							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
-							skill.Events[EventName] = event;
+							skill->Events[EventName] = event;
 
 							if (EventMap.find(EventName) == EventMap.end()) {
 								EventMap[EventName] = event;
@@ -102,16 +102,16 @@ bool EventLibrary::LoadChara()
 				for (auto& card : cards.items()) {
 					auto name = card.key();
 					auto events = card.value()["Events"];
-					SupportCard skill;
+					std::shared_ptr<Character> skill(new Character());
 
-					skill.Name = utility::ConvertUtf8ToUtf16(name.c_str());
+					skill->Name = utility::ConvertUtf8ToUtf16(name.c_str());
 
 					for (auto& e : events) {
 						for (auto& choise : e.items()) {
-							SupportCard::Event event;
+							Character::Event event;
 
 							for (auto& option : choise.value()) {
-								SupportCard::Choise choise;
+								Character::Choise choise;
 
 								choise.Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
 								choise.Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
@@ -119,15 +119,18 @@ bool EventLibrary::LoadChara()
 							}
 
 							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
-							skill.Events[EventName] = event;
+							skill->Events[EventName] = event;
 
-							if (CharaMap.find(EventName) == CharaMap.end()) {
-								CharaMap[EventName] = event;
+							if (CharaEventMap.find(EventName) == CharaEventMap.end()) {
+								CharaEventMap[EventName] = event;
 							}
 						}
 					}
 
 					Charas.push_back(skill);
+
+					auto& bb = Charas.back();
+					CharaMap[skill->Name] = skill;
 				}
 			}
 		}
@@ -163,10 +166,15 @@ void EventLibrary::InitCharaDB()
 	simstring::ngram_generator gen(3, false);
 	simstring::writer_base<std::wstring> dbw(gen, DBPath + "chara\\chara.db");
 
-	for (auto& pair : CharaMap) {
+	for (auto& pair : CharaEventMap) {
 		dbw.insert(pair.first);
 	}
 	dbw.close();
+
+	/*
+	auto itr = CharaEventMap.find(L"êVîNÇÃï¯ïâ");
+	assert(itr != CharaEventMap.end());
+	*/
 }
 
 std::wstring EventLibrary::SearchEvent(const std::wstring& name)

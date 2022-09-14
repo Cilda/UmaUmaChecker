@@ -8,17 +8,20 @@
 #include <crtdbg.h>
 #include "utility.h"
 
+#include "../UmaOCRWrapper/UmaOCRWrapper.h"
+
 
 const cv::Rect2d Uma::CharaEventBound = { 0.1545, 0.1884, 0.6118, 0.03140 };
 const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03030 };
+const double Uma::ResizeRatio = 2.0;
 
 Uma::Uma()
 {
 	bDetected = false;
 	bStop = false;
 	thread = nullptr;
-	api = new tesseract::TessBaseAPI();
 	hTargetWnd = NULL;
+	CurrentCharacter = nullptr;
 }
 
 Uma::~Uma()
@@ -26,21 +29,16 @@ Uma::~Uma()
 	if (thread) {
 		Stop();
 	}
-	delete api;
 }
 
 void Uma::Init()
 {
-	std::wstring name = utility::GetExeDirectory();
-	std::wstring dir = name + L"\\tessdata";
-
-	assert(api->Init(utility::to_string(dir).c_str(), "jpn") == 0);
-	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
-
 	if (SkillLib.Load()) {
 		SkillLib.InitEventDB();
 		SkillLib.InitCharaDB();
 	}
+
+	InitOCR();
 
 	config.Load();
 }
@@ -113,6 +111,17 @@ void Uma::SetNotifyTarget(HWND hWnd)
 	hTargetWnd = hWnd;
 }
 
+void Uma::SetTrainingCharacter(const std::wstring& CharaName)
+{
+	auto itr = SkillLib.CharaMap.find(CharaName);
+	if (itr != SkillLib.CharaMap.end()) {
+		CurrentCharacter = itr->second.get();
+	}
+	else {
+		CurrentCharacter = nullptr;
+	}
+}
+
 cv::Mat Uma::BitmapToCvMat(Gdiplus::Bitmap* image)
 {
 	assert(image->GetPixelFormat() == PixelFormat24bppRGB);
@@ -133,9 +142,10 @@ cv::Mat Uma::ImageBinarization(const cv::Mat& srcImg)
 	cv::Mat bin;
 
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 0, 255, cv::THRESH_OTSU);
+	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
+	//cv::adaptiveThreshold(gray, bin, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 11, 2);
 
-	return bin;
+	return bin.clone();
 }
 
 void Uma::MonitorThread()
@@ -184,14 +194,14 @@ void Uma::MonitorThread()
 				}
 			}
 			// キャライベント
-			else {
+			else if (CurrentCharacter) {
 				std::wstring EventName = GetCharaEventText(srcImage);
 				if (!EventName.empty() && this->EventName != EventName) {
 					//EventName = utility::replace(EventName, L":", L"：");
 					//EventName = utility::replace(EventName, L"\"", L"");
 
-					if (SkillLib.CharaMap.find(EventName) != SkillLib.CharaMap.end()) {
-						auto& skill = SkillLib.CharaMap[EventName];
+					if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
+						auto& skill = CurrentCharacter->Events[EventName];
 
 						CurrentEvent = &skill;
 						this->EventName = EventName;
@@ -201,8 +211,8 @@ void Uma::MonitorThread()
 						EventName = SkillLib.SearchCharaEvent(EventName);
 
 						if (!EventName.empty() && this->EventName != EventName) {
-							if (SkillLib.CharaMap.find(EventName) != SkillLib.CharaMap.end()) {
-								auto& skill = SkillLib.CharaMap[EventName];
+							if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
+								auto& skill = CurrentCharacter->Events[EventName];
 
 								CurrentEvent = &skill;
 							}
@@ -219,6 +229,13 @@ void Uma::MonitorThread()
 
 						this->EventName = EventName;
 					}
+				}
+				else if (EventName.empty()) {
+					if (hTargetWnd && this->EventName != EventName)
+						PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+
+					this->EventName = EventName;
+					CurrentEvent = nullptr;
 				}
 			}
 			
@@ -250,19 +267,25 @@ std::wstring Uma::GetCharaEventText(const cv::Mat& srcImg)
 	));
 	cv::Mat rsImg;
 
-	cv::resize(cut, rsImg, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCharaEvent(rsImg)) {
-		cv::Mat bin = Uma::ImageBinarization(rsImg);
+		//cv::Mat bin = Uma::ImageBinarization(rsImg);
 
-		api->SetImage(bin.data, bin.size().width, bin.size().height, bin.channels(), bin.step1());
-		api->Recognize(NULL);
+		cv::Mat recognizeImage = rsImg.clone();
+		
+		std::wstring text;
+		if (RecognizeText(
+			recognizeImage.size().width,
+			recognizeImage.size().height,
+			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
+			recognizeImage.step,
+			text
+		)) {
+			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
-		std::wstring text = convert.from_bytes(api->GetUTF8Text());
-		text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-
-		return text;
+			return text;
+		}
 	}
 
 	return L"";
@@ -287,22 +310,25 @@ std::wstring Uma::GetCardEventText(const cv::Mat& srcImg)
 	));
 	cv::Mat rsImg;
 
-	cv::resize(cut, rsImg, cv::Size(), 3.0, 3.0, cv::INTER_CUBIC);
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCardEvent(cut)) {
-		cv::Mat bin = Uma::ImageBinarization(rsImg);
-		cv::resize(bin, bin, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
+		//cv::Mat bin = Uma::ImageBinarization(rsImg);
 
-		int c = cv::countNonZero(bin);
+		cv::Mat recognizeImage = rsImg.clone();
+		
+		std::wstring text;
+		if (RecognizeText(
+			recognizeImage.size().width,
+			recognizeImage.size().height,
+			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
+			recognizeImage.step,
+			text
+		)) {
+			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
-		api->SetImage(bin.data, bin.size().width, bin.size().height, bin.channels(), bin.step1());
-		api->Recognize(NULL);
-
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
-		std::wstring text = convert.from_bytes(api->GetUTF8Text());
-		text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-
-		return text;
+			return text;
+		}
 	}
 
 	return L"";

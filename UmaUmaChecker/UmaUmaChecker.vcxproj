@@ -102,13 +102,13 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>crypt32.lib;Comctl32.lib;Gdiplus.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutDirFullPath)\UmaOCRWrapper.lib;crypt32.lib;Comctl32.lib;Gdiplus.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>true</EnableDpiAwareness>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\" &amp;&amp; xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,13 +128,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>crypt32.lib;Comctl32.lib;Gdiplus.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutDirFullPath)\UmaOCRWrapper.lib;crypt32.lib;Comctl32.lib;Gdiplus.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>true</EnableDpiAwareness>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\" &amp;&amp; xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -149,13 +149,13 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>crypt32.lib;Comctl32.lib;Gdiplus.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutDirFullPath)\UmaOCRWrapper.lib;crypt32.lib;Comctl32.lib;Gdiplus.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>true</EnableDpiAwareness>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\" &amp;&amp; xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -174,20 +174,19 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>crypt32.lib;Comctl32.lib;Gdiplus.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutDirFullPath)\UmaOCRWrapper.lib;crypt32.lib;Comctl32.lib;Gdiplus.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>true</EnableDpiAwareness>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\" &amp;&amp; xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="SupportCard.cpp" />
-    <ClCompile Include="Tesseract.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="Uma.cpp" />
     <ClCompile Include="EventLibrary.cpp" />
     <ClCompile Include="utility.cpp" />
@@ -195,8 +194,7 @@
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SupportCard.h" />
-    <ClInclude Include="Tesseract.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="Uma.h" />
     <ClInclude Include="EventLibrary.h" />
     <ClInclude Include="utility.h" />
@@ -205,6 +203,5 @@
     <ResourceCompile Include="UmaUmaChecker.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

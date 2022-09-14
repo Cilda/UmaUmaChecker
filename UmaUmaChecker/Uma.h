@@ -4,8 +4,9 @@
 
 #include <thread>
 #include <opencv2/opencv.hpp>
-#include <tesseract/baseapi.h>
+
 #include "Config.h"
+
 
 #define WM_CHANGEUMAEVENT (WM_USER + 1)
 
@@ -18,17 +19,23 @@ public:
 	void Init();
 
 	HWND GetUmaWindow();
-	Gdiplus::Bitmap *ScreenShot();
+	Gdiplus::Bitmap* ScreenShot();
 
 	bool Start();
 	void Stop();
 
 	void SetNotifyTarget(HWND hWnd);
 
+	void SetTrainingCharacter(const std::wstring& CharaName);
+
+	const std::vector<std::shared_ptr<Character>>& GetCharacters() const {
+		return SkillLib.Charas;
+	}
+
 public:
 	static cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);
 	static cv::Mat ImageBinarization(const cv::Mat& srcImg);
-	
+
 private:
 	void MonitorThread();
 
@@ -44,16 +51,19 @@ public:
 
 public:
 	std::wstring EventName;
-	SupportCard::Event* CurrentEvent;
+	Character::Event* CurrentEvent;
 	Config config;
 
 private:
 	bool bDetected;
 	bool bStop;
 	std::thread* thread;
-	tesseract::TessBaseAPI* api;
 	HWND hTargetWnd;
 	EventLibrary SkillLib;
-	
-};
+	Character* CurrentCharacter;
 
+	std::wstring DetectedEventName;
+
+private:
+	static const double ResizeRatio;
+};

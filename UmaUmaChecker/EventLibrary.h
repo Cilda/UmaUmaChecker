@@ -1,6 +1,7 @@
 #pragma once
 
-#include "SupportCard.h"
+#include <memory>
+#include "Character.h"
 
 class EventLibrary
 {
@@ -18,10 +19,11 @@ public:
 	std::wstring SearchCharaEvent(const std::wstring& name);
 
 public:
-	std::vector<SupportCard> Events;
-	std::vector<SupportCard> Charas;
-	std::unordered_map<std::wstring, SupportCard::Event> EventMap;
-	std::unordered_map<std::wstring, SupportCard::Event> CharaMap;
+	std::vector<std::shared_ptr<Character>> Events;
+	std::vector<std::shared_ptr<Character>> Charas;
+	std::unordered_map<std::wstring, Character::Event> EventMap;
+	std::unordered_map<std::wstring, std::shared_ptr<Character>> CharaMap;
+	std::unordered_map<std::wstring, Character::Event> CharaEventMap;
 
 	std::string DBPath;
 };

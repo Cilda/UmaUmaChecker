@@ -5,7 +5,7 @@
 #include <string>
 
 
-class SupportCard
+class Character
 {
 public:
 	class Choise {
@@ -20,6 +20,6 @@ public:
 	};
 public:
 	std::wstring Name;
-	std::unordered_map<std::wstring, SupportCard::Event> Events;
+	std::unordered_map<std::wstring, Event> Events;
 };
 
