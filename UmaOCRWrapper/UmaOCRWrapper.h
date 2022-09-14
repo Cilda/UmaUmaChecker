@@ -9,4 +9,4 @@
 #endif
 
 void DECLSPEC InitOCR();
-bool DECLSPEC RecognizeText(int width, int height, unsigned char* pixels, int size, int stride, std::wstring& output);
+bool DECLSPEC RecognizeText(int width, int height, unsigned char* pixels, int size, int stride, wchar_t* output, size_t outputSize);

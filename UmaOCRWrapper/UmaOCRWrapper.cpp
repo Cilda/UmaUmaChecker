@@ -11,11 +11,14 @@ void DECLSPEC InitOCR()
 	UmaOCRDll::OCR::Init();
 }
 
-bool DECLSPEC RecognizeText(int width, int height, unsigned char* pixels, int size, int stride, std::wstring& output)
+bool DECLSPEC RecognizeText(int width, int height, unsigned char* pixels, int size, int stride, wchar_t* pOutput, size_t outputSize)
 {
 	String^ str = UmaOCRDll::OCR::RecognizeText(width, height, IntPtr(pixels), size, stride);
 
-	output = marshal_as<std::wstring>(str);
+	marshal_context ctx;
+	const wchar_t *result = ctx.marshal_as<const wchar_t*>(str);
+
+	wcscpy_s(pOutput, outputSize, result);
 	
-	return !output.empty();
+	return str->Length > 0;
 }

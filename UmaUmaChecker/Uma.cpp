@@ -275,13 +275,15 @@ std::wstring Uma::GetCharaEventText(const cv::Mat& srcImg)
 		cv::Mat recognizeImage = rsImg.clone();
 		
 		std::wstring text;
+		wchar_t wText[1024];
 		if (RecognizeText(
 			recognizeImage.size().width,
 			recognizeImage.size().height,
 			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
 			recognizeImage.step,
-			text
+			wText, 1024
 		)) {
+			text = wText;
 			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
 			return text;
@@ -318,13 +320,15 @@ std::wstring Uma::GetCardEventText(const cv::Mat& srcImg)
 		cv::Mat recognizeImage = rsImg.clone();
 		
 		std::wstring text;
+		wchar_t wText[1024];
 		if (RecognizeText(
 			recognizeImage.size().width,
 			recognizeImage.size().height,
 			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
 			recognizeImage.step,
-			text
+			wText, 1024
 		)) {
+			text = wText;
 			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
 			return text;
