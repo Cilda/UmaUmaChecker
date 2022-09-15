@@ -3,9 +3,9 @@
 ウマ娘プリティダービーの育成選択肢において取得するステータスの可視化
 
 # 要件
-Windows 10以降のOS
-.NET Framework 4.8
-Windows 日本語言語パック
+- Windows 10以降のOS
+- .NET Framework 4.8
+- Windows 日本語言語パック
 
 # 利用方法
 ソフトを起動
