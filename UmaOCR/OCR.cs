@@ -28,7 +28,7 @@ namespace UmaOCRDll
 
         public static string RecognizeText(int width, int height, IntPtr pixels, int size, int stride)
         {
-            BitmapSource src = BitmapSource.Create(width, height, 96, 96, PixelFormats.Bgr24, null, pixels, size, stride);
+            BitmapSource src = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, pixels, size, stride);
 
             var encoder = new BmpBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(src));

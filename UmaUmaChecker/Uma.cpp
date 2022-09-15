@@ -11,9 +11,9 @@
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
 
 
-const cv::Rect2d Uma::CharaEventBound = { 0.1545, 0.1884, 0.6118, 0.03140 };
-const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03030 };
-const double Uma::ResizeRatio = 2.0;
+const cv::Rect2d Uma::CharaEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
+const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
+const double Uma::ResizeRatio = 3.0;
 
 Uma::Uma()
 {
@@ -142,8 +142,9 @@ cv::Mat Uma::ImageBinarization(const cv::Mat& srcImg)
 	cv::Mat bin;
 
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
-	//cv::adaptiveThreshold(gray, bin, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 11, 2);
+	cv::inRange(gray, cv::Scalar(230, 230, 230), cv::Scalar(255, 255, 255), bin);
+	cv::bitwise_not(bin, bin);
+	// cv::threshold(gray, bin, 245, 255, cv::THRESH_BINARY_INV); // スキャン可能
 
 	return bin.clone();
 }
@@ -158,10 +159,11 @@ void Uma::MonitorThread()
 			// サポートカードイベント
 			std::wstring EventName = GetCardEventText(srcImage);
 			if (!EventName.empty()) {
-				if (this->EventName != EventName) {
-					EventName = utility::replace(EventName, L":", L"：");
-					EventName = utility::replace(EventName, L"\"", L"");
+				EventName = utility::replace(EventName, L":", L"：");
+				EventName = utility::replace(EventName, L"\"", L"");
+				EventName = utility::replace(EventName, L"?", L"？");
 
+				if (this->EventName != EventName) {
 					if (SkillLib.EventMap.find(EventName) != SkillLib.EventMap.end()) {
 						auto& skill = SkillLib.EventMap[EventName];
 
@@ -196,41 +198,42 @@ void Uma::MonitorThread()
 			// キャライベント
 			else if (CurrentCharacter) {
 				std::wstring EventName = GetCharaEventText(srcImage);
-				if (!EventName.empty() && this->EventName != EventName) {
-					//EventName = utility::replace(EventName, L":", L"：");
-					//EventName = utility::replace(EventName, L"\"", L"");
+				if (!EventName.empty()) {
+					EventName = utility::replace(EventName, L":", L"：");
+					EventName = utility::replace(EventName, L"\"", L"");
+					if (this->EventName != EventName) {
+						if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
+							auto& skill = CurrentCharacter->Events[EventName];
 
-					if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
-						auto& skill = CurrentCharacter->Events[EventName];
+							CurrentEvent = &skill;
+							this->EventName = EventName;
+							if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+						}
+						else {
+							EventName = SkillLib.SearchCharaEvent(EventName);
 
-						CurrentEvent = &skill;
-						this->EventName = EventName;
-						if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
-					}
-					else {
-						EventName = SkillLib.SearchCharaEvent(EventName);
+							if (!EventName.empty() && this->EventName != EventName) {
+								if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
+									auto& skill = CurrentCharacter->Events[EventName];
 
-						if (!EventName.empty() && this->EventName != EventName) {
-							if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
-								auto& skill = CurrentCharacter->Events[EventName];
-
-								CurrentEvent = &skill;
+									CurrentEvent = &skill;
+								}
+								else {
+									CurrentEvent = nullptr;
+								}
 							}
 							else {
 								CurrentEvent = nullptr;
 							}
-						}
-						else {
-							CurrentEvent = nullptr;
-						}
 
-						if (hTargetWnd && this->EventName != EventName)
-							PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+							if (hTargetWnd && this->EventName != EventName)
+								PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
 
-						this->EventName = EventName;
+							this->EventName = EventName;
+						}
 					}
 				}
-				else if (EventName.empty()) {
+				else {
 					if (hTargetWnd && this->EventName != EventName)
 						PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
 
@@ -270,10 +273,10 @@ std::wstring Uma::GetCharaEventText(const cv::Mat& srcImg)
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCharaEvent(rsImg)) {
-		//cv::Mat bin = Uma::ImageBinarization(rsImg);
+		cv::Mat bin = Uma::ImageBinarization(rsImg);
 
-		cv::Mat recognizeImage = rsImg.clone();
-		
+		cv::Mat recognizeImage = bin.clone();
+
 		std::wstring text;
 		wchar_t wText[1024];
 		if (RecognizeText(
@@ -315,9 +318,9 @@ std::wstring Uma::GetCardEventText(const cv::Mat& srcImg)
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCardEvent(cut)) {
-		//cv::Mat bin = Uma::ImageBinarization(rsImg);
+		cv::Mat bin = Uma::ImageBinarization(rsImg);
 
-		cv::Mat recognizeImage = rsImg.clone();
+		cv::Mat recognizeImage = bin.clone();
 		
 		std::wstring text;
 		wchar_t wText[1024];

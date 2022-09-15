@@ -108,7 +108,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             break;
         case WM_INITDIALOG:
             for (auto& chara : g_umaMgr->GetCharacters()) {
-                assert(SendDlgItemMessageW(hWnd, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)chara->Name.c_str()) >= 0);
+                SendDlgItemMessageW(hWnd, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)chara->Name.c_str());
             }
             break;
         case WM_CTLCOLORSTATIC:
