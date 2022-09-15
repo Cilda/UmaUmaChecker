@@ -26,9 +26,27 @@ namespace UmaOCRDll
             ocrEngine = OcrEngine.TryCreateFromLanguage(new Windows.Globalization.Language("ja"));
         }
 
-        public static string RecognizeText(int width, int height, IntPtr pixels, int size, int stride)
+        public static string RecognizeTextFromGrayImage(int width, int height, IntPtr pixels, int size, int stride)
         {
             BitmapSource src = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, pixels, size, stride);
+
+            var encoder = new BmpBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(src));
+
+            using (var stream = new MemoryStream())
+            {
+                encoder.Save(stream);
+                using (var softwareBitmap = LoadImageFromByteArrayAsync(stream.ToArray()).GetAwaiter().GetResult())
+                {
+                    var result = ocrEngine.RecognizeAsync(softwareBitmap).GetAwaiter().GetResult();
+                    return result.Text;
+                }
+            }
+        }
+
+        public static string RecognizeText(int width, int height, IntPtr pixels, int size, int stride)
+        {
+            BitmapSource src = BitmapSource.Create(width, height, 96, 96, PixelFormats.Bgr24, null, pixels, size, stride);
 
             var encoder = new BmpBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(src));

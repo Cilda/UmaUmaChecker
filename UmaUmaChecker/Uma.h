@@ -1,9 +1,15 @@
 #pragma once
 
+
+
 #include "EventLibrary.h"
 
 #include <thread>
 #include <opencv2/opencv.hpp>
+
+#ifndef USE_MS_OCR
+#include <tesseract/baseapi.h>
+#endif
 
 #include "Config.h"
 
@@ -61,7 +67,7 @@ private:
 	HWND hTargetWnd;
 	EventLibrary SkillLib;
 	Character* CurrentCharacter;
-
+	tesseract::TessBaseAPI* api;
 	std::wstring DetectedEventName;
 
 private:

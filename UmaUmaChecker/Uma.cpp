@@ -3,17 +3,17 @@
 
 #include "Uma.h"
 
-
 #include <codecvt>
 #include <crtdbg.h>
 #include "utility.h"
 
+#ifdef USE_MS_OCR
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
-
+#endif
 
 const cv::Rect2d Uma::CharaEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
 const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
-const double Uma::ResizeRatio = 3.0;
+const double Uma::ResizeRatio = 5.0;
 
 Uma::Uma()
 {
@@ -22,6 +22,7 @@ Uma::Uma()
 	thread = nullptr;
 	hTargetWnd = NULL;
 	CurrentCharacter = nullptr;
+	api = new tesseract::TessBaseAPI();
 }
 
 Uma::~Uma()
@@ -29,6 +30,7 @@ Uma::~Uma()
 	if (thread) {
 		Stop();
 	}
+	delete api;
 }
 
 void Uma::Init()
@@ -38,7 +40,12 @@ void Uma::Init()
 		SkillLib.InitCharaDB();
 	}
 
+	assert(api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn") == 0);
+	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
+
+#ifdef USE_OCR
 	InitOCR();
+#endif
 
 	config.Load();
 }
@@ -141,10 +148,12 @@ cv::Mat Uma::ImageBinarization(const cv::Mat& srcImg)
 	cv::Mat gray;
 	cv::Mat bin;
 
-	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	cv::inRange(gray, cv::Scalar(230, 230, 230), cv::Scalar(255, 255, 255), bin);
+	/*
+	cv::inRange(gray, cv::Scalar(242, 242, 242), cv::Scalar(255, 255, 255), bin);
 	cv::bitwise_not(bin, bin);
-	// cv::threshold(gray, bin, 245, 255, cv::THRESH_BINARY_INV); // ƒXƒLƒƒƒ“‰Â”\
+	*/
+	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
+	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
 
 	return bin.clone();
 }
@@ -273,9 +282,8 @@ std::wstring Uma::GetCharaEventText(const cv::Mat& srcImg)
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCharaEvent(rsImg)) {
-		cv::Mat bin = Uma::ImageBinarization(rsImg);
-
-		cv::Mat recognizeImage = bin.clone();
+#ifdef USE_MS_OCR
+		cv::Mat recognizeImage = rsImg.clone();
 
 		std::wstring text;
 		wchar_t wText[1024];
@@ -291,6 +299,33 @@ std::wstring Uma::GetCharaEventText(const cv::Mat& srcImg)
 
 			return text;
 		}
+
+		cv::Mat bin = Uma::ImageBinarization(rsImg);
+		recognizeImage = bin;
+
+		if (RecognizeTextFromGrayImage(
+			recognizeImage.size().width,
+			recognizeImage.size().height,
+			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
+			recognizeImage.step,
+			wText, 1024
+		)) {
+			text = wText;
+			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
+
+			return text;
+		}
+#else
+		cv::Mat bin = Uma::ImageBinarization(rsImg);
+
+		api->SetImage(bin.data, bin.size().width, bin.size().height, bin.channels(), bin.step1());
+		api->Recognize(NULL);
+
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
+		std::wstring text = convert.from_bytes(api->GetUTF8Text());
+		text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
+		return text;
+#endif
 	}
 
 	return L"";
@@ -318,9 +353,8 @@ std::wstring Uma::GetCardEventText(const cv::Mat& srcImg)
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCardEvent(cut)) {
-		cv::Mat bin = Uma::ImageBinarization(rsImg);
-
-		cv::Mat recognizeImage = bin.clone();
+#ifdef USE_MS_OCR
+		cv::Mat recognizeImage = rsImg.clone();
 		
 		std::wstring text;
 		wchar_t wText[1024];
@@ -336,6 +370,33 @@ std::wstring Uma::GetCardEventText(const cv::Mat& srcImg)
 
 			return text;
 		}
+
+		cv::Mat bin = Uma::ImageBinarization(rsImg);
+		recognizeImage = bin;
+
+		if (RecognizeTextFromGrayImage(
+			recognizeImage.size().width,
+			recognizeImage.size().height,
+			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
+			recognizeImage.step,
+			wText, 1024
+		)) {
+			text = wText;
+			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
+
+			return text;
+		}
+#else
+		cv::Mat bin = Uma::ImageBinarization(rsImg);
+
+		api->SetImage(bin.data, bin.size().width, bin.size().height, bin.channels(), bin.step1());
+		api->Recognize(NULL);
+
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
+		std::wstring text = convert.from_bytes(api->GetUTF8Text());
+		text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
+		return text;
+#endif
 	}
 
 	return L"";

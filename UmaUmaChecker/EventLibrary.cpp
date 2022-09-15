@@ -184,7 +184,13 @@ std::wstring EventLibrary::SearchEvent(const std::wstring& name)
 	dbr.open(DBPath + "event\\events.db");
 
 	std::vector<std::wstring> xstrs;
-	dbr.retrieve(name, simstring::cosine, 0.4, std::back_inserter(xstrs));
+
+	for (double ratio = 0.6; ratio > 0.1; ratio -= 0.05) {
+		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
 	dbr.close();
 
 	return !xstrs.empty() ? xstrs.front() : L"";
@@ -197,7 +203,13 @@ std::wstring EventLibrary::SearchCharaEvent(const std::wstring& name)
 	dbr.open(DBPath + "chara\\chara.db");
 
 	std::vector<std::wstring> xstrs;
-	dbr.retrieve(name, simstring::cosine, 0.4, std::back_inserter(xstrs));
+	
+	for (double ratio = 0.6; ratio > 0.1; ratio -= 0.05) {
+		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
 	dbr.close();
 
 	return !xstrs.empty() ? xstrs.front() : L"";
