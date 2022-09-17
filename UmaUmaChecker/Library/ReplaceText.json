@@ -1,0 +1,17 @@
+{
+  "replaces": [
+    {
+      "search": "^初語$",
+      "replace": "初詣"
+    },
+    {
+      "search": ":",
+      "replace": "："
+    },
+    {
+      "search": "\"",
+      "replace": "",
+      "?":  "？"
+    }
+  ]
+}
