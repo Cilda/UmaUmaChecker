@@ -5,6 +5,10 @@
       "replace": "初詣"
     },
     {
+      "search": "^初話$",
+      "replace":  "初詣"
+    },
+    {
       "search": ":",
       "replace": "："
     },
