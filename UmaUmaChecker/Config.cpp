@@ -27,8 +27,10 @@ bool Config::Load()
 			stream << input.rdbuf();
 			json config = json::parse(stream.str());
 
-			WindowX = config["WindowX"].get<int>();
-			WindowY = config["WindowY"].get<int>();
+			WindowX = config.value("WindowX", 0);
+			WindowY = config.value("WindowY", 0);
+			EnableDebug = config.value("Debug", false);
+			SaveMissingEvent = config.value("SaveMissingEventName", false);
 		}
 		catch (json::exception& ex) {
 			return false;
@@ -45,6 +47,8 @@ void Config::Create()
 
 	config["WindowX"] = 0;
 	config["WindowY"] = 0;
+	config["Debug"] = false;
+	config["SaveMissingEventName"] = false;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;
@@ -56,6 +60,8 @@ void Config::Save()
 
 	config["WindowX"] = WindowX;
 	config["WindowY"] = WindowY;
+	config["Debug"] = EnableDebug;
+	config["SaveMissingEventName"] = SaveMissingEvent;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

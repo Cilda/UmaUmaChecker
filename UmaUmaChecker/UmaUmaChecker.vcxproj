@@ -108,8 +108,12 @@
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\" &amp;&amp; xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -134,8 +138,12 @@
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\" &amp;&amp; xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -155,8 +163,12 @@
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\" &amp;&amp; xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -180,13 +192,18 @@
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
     <PostBuildEvent>
-      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\" &amp;&amp; xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="TextCollector.cpp" />
     <ClCompile Include="Uma.cpp" />
     <ClCompile Include="EventLibrary.cpp" />
     <ClCompile Include="utility.cpp" />
@@ -195,6 +212,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="TextCollector.h" />
     <ClInclude Include="Uma.h" />
     <ClInclude Include="EventLibrary.h" />
     <ClInclude Include="utility.h" />

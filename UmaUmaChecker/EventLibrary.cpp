@@ -185,7 +185,7 @@ std::wstring EventLibrary::SearchEvent(const std::wstring& name)
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 0.6; ratio > 0.1; ratio -= 0.05) {
+	for (double ratio = 1.0; (float)ratio >= 0.4; ratio -= 0.05) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -204,7 +204,7 @@ std::wstring EventLibrary::SearchCharaEvent(const std::wstring& name)
 
 	std::vector<std::wstring> xstrs;
 	
-	for (double ratio = 0.6; ratio > 0.1; ratio -= 0.05) {
+	for (double ratio = 1.0; (float)ratio > 0.4; ratio -= 0.05) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;

@@ -17,18 +17,25 @@
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+BOOL CALLBACK ConfigProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+
 int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
+HINSTANCE hInst;
 Uma *g_umaMgr = nullptr;
+HWND hPreviewWnd = NULL;
 
 
-int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int nCmdShow)
+int WINAPI _tWinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int nCmdShow)
 {
     MSG msg;
     WNDCLASSEX wcx;
     LPCTSTR lpszClassName = TEXT("UmaUmaChecker");
     Gdiplus::GdiplusStartupInput input;
     ULONG_PTR token;
+
+    hInst = hCurInst;
 
     HMODULE hRichLib = LoadLibrary(TEXT("MsftEdit.dll"));
     if (!hRichLib) {
@@ -42,7 +49,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
     wcx.lpfnWndProc = WndProc;
     wcx.cbClsExtra = 0;
     wcx.cbWndExtra = DLGWINDOWEXTRA;
-    wcx.hInstance = hInst;
+    wcx.hInstance = hCurInst;
     wcx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     wcx.hCursor = LoadCursor(NULL, IDC_ARROW);
     wcx.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
@@ -59,7 +66,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
 
     g_umaMgr->Init();
 
-    HWND hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_MAIN), NULL, (DLGPROC)WndProc);
+    HWND hWnd = CreateDialog(hCurInst, MAKEINTRESOURCE(IDD_MAIN), NULL, (DLGPROC)WndProc);
     if (!hWnd) {
         delete g_umaMgr;
         MessageBox(NULL, TEXT("ウィンドウの生成に失敗しました。"), TEXT("ウマウマチェッカー"), MB_OK | MB_ICONERROR);
@@ -72,8 +79,10 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int
     UpdateWindow(hWnd);
 
     while (GetMessage(&msg, NULL, 0, 0) > 0) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        if (!hPreviewWnd || !IsDialogMessage(hPreviewWnd, &msg)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
     }
 
     g_umaMgr->config.Save();
@@ -169,13 +178,31 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
                             + std::wstring(L"\\screenshots\\screenshot_")
                             + std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
                             + L".png";
-                        
+
                         GetEncoderClsid(L"image/png", &clsid);
                         image->Save(savename.c_str(), &clsid);
                         delete image;
                     }
+                    else MessageBox(hWnd, TEXT("ウマ娘のウィンドウが見つかりません。"), NULL, MB_OK | MB_ICONERROR);
                     break;
                 }
+                case IDC_BUTTONCONFIG:
+                    DialogBox(hInst, MAKEINTRESOURCE(IDD_CONFIG), hWnd, (DLGPROC)ConfigProc);
+                    break;
+                case IDC_BUTTONPREVIEW:
+                    if (!hPreviewWnd) {
+                        hPreviewWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_PREVIEW), hWnd, (DLGPROC)PreviewProc);
+
+                        RECT rw;
+
+                        GetWindowRect(hWnd, &rw);
+                        SetWindowPos(hPreviewWnd, HWND_TOP, rw.right, rw.top, 0, 0, SWP_NOSIZE);
+                    }
+                    else {
+                        DestroyWindow(hPreviewWnd);
+                        hPreviewWnd = NULL;
+                    }
+                    break;
             }
             break;
         case WM_CHANGEUMAEVENT: {
@@ -183,9 +210,15 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             int detailids[3] = { IDC_EDIT1, IDC_EDIT2, IDC_EDIT3 };
             if (g_umaMgr->CurrentEvent) {
                 SetDlgItemTextW(hWnd, IDC_EDITEVENTNAME, g_umaMgr->EventName.c_str());
-                for (int i = 0; i < g_umaMgr->CurrentEvent->Choises.size() && i < 3; i++) {
-                    SetDlgItemTextW(hWnd, ids[i], g_umaMgr->CurrentEvent->Choises[i].Title.c_str());
-                    SetDlgItemTextW(hWnd, detailids[i], utility::replace(g_umaMgr->CurrentEvent->Choises[i].Effect, L"\n", L"\r\n").c_str());
+                for (int i = 0; i < 3; i++) {
+                    if (i < g_umaMgr->CurrentEvent->Choises.size()) {
+                        SetDlgItemTextW(hWnd, ids[i], g_umaMgr->CurrentEvent->Choises[i].Title.c_str());
+                        SetDlgItemTextW(hWnd, detailids[i], utility::replace(g_umaMgr->CurrentEvent->Choises[i].Effect, L"\n", L"\r\n").c_str());
+                    }
+                    else {
+                        SetDlgItemTextW(hWnd, ids[i], L"");
+                        SetDlgItemTextW(hWnd, detailids[i], L"");
+                    }
                 }
             }
             else {
@@ -212,6 +245,83 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     }
 
     return 0;
+}
+
+BOOL CALLBACK ConfigProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
+{
+    switch (msg) {
+        case WM_INITDIALOG:
+            SendDlgItemMessage(hWnd, IDC_CHECKDEBUG, BM_SETCHECK, g_umaMgr->config.EnableDebug ? BST_CHECKED : BST_UNCHECKED, 0);
+            SendDlgItemMessage(hWnd, IDC_CHECKMISSINGEVENT, BM_SETCHECK, g_umaMgr->config.SaveMissingEvent ? BST_CHECKED : BST_UNCHECKED, 0);
+            break;
+        case WM_COMMAND:
+            switch (LOWORD(wp)) {
+                case IDOK:
+                    g_umaMgr->config.EnableDebug = SendDlgItemMessage(hWnd, IDC_CHECKDEBUG, BM_GETCHECK, 0, 0) == BST_CHECKED;
+                    g_umaMgr->config.SaveMissingEvent = SendDlgItemMessage(hWnd, IDC_CHECKMISSINGEVENT, BM_GETCHECK, 0, 0) == BST_CHECKED;
+                    EndDialog(hWnd, 1);
+                    return TRUE;
+                case IDCANCEL:
+                    EndDialog(hWnd, 0);
+                    return TRUE;
+            }
+            break;
+    }
+
+    return FALSE;
+}
+
+BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
+{
+    switch (msg) {
+        case WM_INITDIALOG:
+            break;
+        case WM_SIZE:
+            break;
+        case WM_DROPFILES: {
+            HDROP hDrop = (HDROP)wp;
+            TCHAR FileName[256];
+
+            DragQueryFile(hDrop, 0, FileName, 256);
+
+            Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromFile(FileName);
+            cv::Mat srcImage = Uma::BitmapToCvMat(image);
+
+            std::wstring event = g_umaMgr->GetCardEventText(srcImage);
+            if (!event.empty()) {
+
+            }
+            else {
+                event = g_umaMgr->GetCharaEventText(srcImage);
+            }
+
+            HWND hParent = GetParent(hWnd);
+            if (hParent) {
+                SetDlgItemTextW(hParent, IDC_EDITEVENTNAME, event.c_str());
+            }
+
+            HWND hPicBoxWnd = GetDlgItem(hWnd, IDC_PICTUREBOX);
+            HDC hdc = GetDC(hPicBoxWnd);
+
+            Gdiplus::Graphics g(hdc);
+
+            DWORD color = GetSysColor(COLOR_3DFACE);
+            g.Clear(Gdiplus::Color(color));
+            g.DrawImage(image, 0, 0);
+
+            ReleaseDC(hPicBoxWnd, hdc);
+
+            delete image;
+            DragFinish(hDrop);
+            break;
+        }
+        case WM_PAINT:
+            break;
+        case WM_CLOSE:
+            return TRUE;
+    }
+
+    return FALSE;
 }
 
 int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)

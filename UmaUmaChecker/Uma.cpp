@@ -13,7 +13,7 @@
 
 const cv::Rect2d Uma::CharaEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
 const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
-const double Uma::ResizeRatio = 5.0;
+const double Uma::ResizeRatio = 2.0;
 
 Uma::Uma()
 {
@@ -48,6 +48,7 @@ void Uma::Init()
 #endif
 
 	config.Load();
+	Collector.Load();
 }
 
 HWND Uma::GetUmaWindow()
@@ -153,7 +154,7 @@ cv::Mat Uma::ImageBinarization(const cv::Mat& srcImg)
 	cv::bitwise_not(bin, bin);
 	*/
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
+	cv::threshold(gray, bin, 240, 255, cv::THRESH_BINARY_INV);
 
 	return bin.clone();
 }
@@ -168,24 +169,77 @@ void Uma::MonitorThread()
 			// サポートカードイベント
 			std::wstring EventName = GetCardEventText(srcImage);
 			if (!EventName.empty()) {
-				EventName = utility::replace(EventName, L":", L"：");
-				EventName = utility::replace(EventName, L"\"", L"");
-				EventName = utility::replace(EventName, L"?", L"？");
+				Collector.Collect(EventName);
 
 				if (this->EventName != EventName) {
-					if (SkillLib.EventMap.find(EventName) != SkillLib.EventMap.end()) {
-						auto& skill = SkillLib.EventMap[EventName];
+					std::wstring OrgEventName = EventName;
+					EventName = SkillLib.SearchEvent(EventName);
 
-						CurrentEvent = &skill;
-						this->EventName = EventName;
-						if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+					// デバッグ
+					if (config.SaveMissingEvent && EventName.empty() && DetectedEventName != OrgEventName) {
+						DetectedEventName = OrgEventName;
+
+						CreateDirectoryW((utility::GetExeDirectory() + L"\\Logs\\").c_str(), NULL);
+						CreateDirectoryW((utility::GetExeDirectory() + L"\\Logs\\support\\").c_str(), NULL);
+
+						std::wstring path =
+							utility::GetExeDirectory() +
+							std::wstring(L"\\Logs\\support\\screenshot_") +
+							std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) +
+							L".png";
+
+						cv::imwrite(utility::to_string(path), srcImage);
+					}
+
+					if (!EventName.empty() && this->EventName != EventName) {
+						if (SkillLib.EventMap.find(EventName) != SkillLib.EventMap.end()) {
+							auto& skill = SkillLib.EventMap[EventName];
+
+							CurrentEvent = &skill;
+						}
+						else {
+							CurrentEvent = nullptr;
+						}
 					}
 					else {
-						EventName = SkillLib.SearchEvent(EventName);
+						CurrentEvent = nullptr;
+					}
+
+					if (hTargetWnd && this->EventName != EventName)
+						PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+
+					this->EventName = EventName;
+				}
+			}
+			// キャライベント
+			else if (CurrentCharacter) {
+				std::wstring EventName = GetCharaEventText(srcImage);
+				if (!EventName.empty()) {
+					Collector.Collect(EventName);
+
+					if (this->EventName != EventName) {
+						std::wstring OrgEventName = EventName;
+						EventName = SkillLib.SearchCharaEvent(EventName);
+
+						// デバッグ
+						if (config.SaveMissingEvent && EventName.empty() && DetectedEventName != OrgEventName) {
+							DetectedEventName = OrgEventName;
+
+							CreateDirectoryW((utility::GetExeDirectory() + L"\\Logs\\").c_str(), NULL);
+							CreateDirectoryW((utility::GetExeDirectory() + L"\\Logs\\chara\\").c_str(), NULL);
+
+							std::wstring path =
+								utility::GetExeDirectory() +
+								std::wstring(L"\\Logs\\chara\\screenshot_") +
+								std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) +
+								L".png";
+
+							cv::imwrite(utility::to_string(path), srcImage);
+						}
 
 						if (!EventName.empty() && this->EventName != EventName) {
-							if (SkillLib.EventMap.find(EventName) != SkillLib.EventMap.end()) {
-								auto& skill = SkillLib.EventMap[EventName];
+							if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
+								auto& skill = CurrentCharacter->Events[EventName];
 
 								CurrentEvent = &skill;
 							}
@@ -203,60 +257,21 @@ void Uma::MonitorThread()
 						this->EventName = EventName;
 					}
 				}
-			}
-			// キャライベント
-			else if (CurrentCharacter) {
-				std::wstring EventName = GetCharaEventText(srcImage);
-				if (!EventName.empty()) {
-					EventName = utility::replace(EventName, L":", L"：");
-					EventName = utility::replace(EventName, L"\"", L"");
-					if (this->EventName != EventName) {
-						if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
-							auto& skill = CurrentCharacter->Events[EventName];
-
-							CurrentEvent = &skill;
-							this->EventName = EventName;
-							if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
-						}
-						else {
-							EventName = SkillLib.SearchCharaEvent(EventName);
-
-							if (!EventName.empty() && this->EventName != EventName) {
-								if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
-									auto& skill = CurrentCharacter->Events[EventName];
-
-									CurrentEvent = &skill;
-								}
-								else {
-									CurrentEvent = nullptr;
-								}
-							}
-							else {
-								CurrentEvent = nullptr;
-							}
-
-							if (hTargetWnd && this->EventName != EventName)
-								PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
-
-							this->EventName = EventName;
-						}
-					}
-				}
 				else {
+					/*
 					if (hTargetWnd && this->EventName != EventName)
 						PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+					*/
 
 					this->EventName = EventName;
 					CurrentEvent = nullptr;
 				}
 			}
-			
-			
 
 			delete image;
 		}
 
-		Sleep(100);
+		Sleep(1000);
 	}
 }
 
