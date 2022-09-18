@@ -5,6 +5,7 @@
 
 #include <codecvt>
 #include <crtdbg.h>
+#include <future>
 #include "utility.h"
 
 #ifdef USE_MS_OCR
@@ -167,13 +168,11 @@ void Uma::MonitorThread()
 			cv::Mat srcImage = BitmapToCvMat(image);
 			
 			// サポートカードイベント
-			std::wstring EventName = GetCardEventText(srcImage);
-			if (!EventName.empty()) {
-				Collector.Collect(EventName);
-
+			std::vector<std::wstring> events = GetCardEventText(srcImage);
+			if (!events.empty()) {
+				std::wstring EventName = GetCardEventName(events);
 				if (this->EventName != EventName) {
 					std::wstring OrgEventName = EventName;
-					EventName = SkillLib.SearchEvent(EventName);
 
 					// デバッグ
 					if (config.SaveMissingEvent && EventName.empty() && DetectedEventName != OrgEventName) {
@@ -213,13 +212,11 @@ void Uma::MonitorThread()
 			}
 			// キャライベント
 			else if (CurrentCharacter) {
-				std::wstring EventName = GetCharaEventText(srcImage);
-				if (!EventName.empty()) {
-					Collector.Collect(EventName);
-
+				std::vector<std::wstring> events = GetCharaEventText(srcImage);
+				if (!events.empty()) {
+					std::wstring EventName = GetCharaEventName(events);
 					if (this->EventName != EventName) {
 						std::wstring OrgEventName = EventName;
-						EventName = SkillLib.SearchCharaEvent(EventName);
 
 						// デバッグ
 						if (config.SaveMissingEvent && EventName.empty() && DetectedEventName != OrgEventName) {
@@ -284,7 +281,7 @@ bool Uma::IsCharaEvent(const cv::Mat& srcImg)
 	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
 }
 
-std::wstring Uma::GetCharaEventText(const cv::Mat& srcImg)
+std::vector<std::wstring> Uma::GetCharaEventText(const cv::Mat& srcImg)
 {
 	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
 		Uma::CharaEventBound.x * srcImg.size().width,
@@ -331,19 +328,22 @@ std::wstring Uma::GetCharaEventText(const cv::Mat& srcImg)
 			return text;
 		}
 #else
+		cv::Mat gray;
+		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
+		std::wstring text = GetTextFromImage(bin);
 
-		api->SetImage(bin.data, bin.size().width, bin.size().height, bin.channels(), bin.step1());
-		api->Recognize(NULL);
+		std::vector<std::wstring> text_list;
+		{
+			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
+			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+		}
 
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
-		std::wstring text = convert.from_bytes(api->GetUTF8Text());
-		text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-		return text;
+		return text_list;
 #endif
 	}
 
-	return L"";
+	return std::vector<std::wstring>();
 }
 
 bool Uma::IsCardEvent(const cv::Mat& srcImg)
@@ -355,7 +355,41 @@ bool Uma::IsCardEvent(const cv::Mat& srcImg)
 	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
 }
 
-std::wstring Uma::GetCardEventText(const cv::Mat& srcImg)
+std::wstring Uma::GetTextFromImage(cv::Mat& img)
+{
+	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
+	api->Recognize(NULL);
+
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
+	std::wstring text = convert.from_bytes(api->GetUTF8Text());
+	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
+
+	Collector.Collect(text);
+
+	return text;
+}
+
+std::wstring Uma::GetCardEventName(const std::vector<std::wstring>& text_list)
+{
+	for (auto& text : text_list) {
+		std::wstring ret = SkillLib.SearchEvent(text);
+		if (!ret.empty()) return ret;
+	}
+
+	return L"";
+}
+
+std::wstring Uma::GetCharaEventName(const std::vector<std::wstring>& text_list)
+{
+	for (auto& text : text_list) {
+		std::wstring ret = SkillLib.SearchCharaEvent(text);
+		if (!ret.empty()) return ret;
+	}
+
+	return L"";
+}
+
+std::vector<std::wstring> Uma::GetCardEventText(const cv::Mat& srcImg)
 {
 	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
 		Uma::CardEventBound.x * srcImg.size().width,
@@ -402,17 +436,20 @@ std::wstring Uma::GetCardEventText(const cv::Mat& srcImg)
 			return text;
 		}
 #else
+		cv::Mat gray;
+		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
+		std::wstring text = GetTextFromImage(bin);
 
-		api->SetImage(bin.data, bin.size().width, bin.size().height, bin.channels(), bin.step1());
-		api->Recognize(NULL);
+		std::vector<std::wstring> text_list;
+		{
+			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
+			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+		}
 
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
-		std::wstring text = convert.from_bytes(api->GetUTF8Text());
-		text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-		return text;
+		return text_list;
 #endif
 	}
 
-	return L"";
+	return std::vector<std::wstring>();
 }

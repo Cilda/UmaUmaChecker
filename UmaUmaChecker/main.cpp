@@ -286,18 +286,21 @@ BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
             Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromFile(FileName);
             cv::Mat srcImage = Uma::BitmapToCvMat(image);
-
-            std::wstring event = g_umaMgr->GetCardEventText(srcImage);
-            if (!event.empty()) {
-
+            std::wstring result;
+            std::vector<std::wstring> events = g_umaMgr->GetCardEventText(srcImage);
+            if (!events.empty()) {
+                result = g_umaMgr->GetCardEventName(events);
             }
             else {
-                event = g_umaMgr->GetCharaEventText(srcImage);
+                events = g_umaMgr->GetCharaEventText(srcImage);
+                if (!events.empty()) {
+                    result = g_umaMgr->GetCharaEventName(events);
+                }
             }
 
             HWND hParent = GetParent(hWnd);
             if (hParent) {
-                SetDlgItemTextW(hParent, IDC_EDITEVENTNAME, event.c_str());
+                SetDlgItemTextW(hParent, IDC_EDITEVENTNAME, result.c_str());
             }
 
             HWND hPicBoxWnd = GetDlgItem(hWnd, IDC_PICTUREBOX);

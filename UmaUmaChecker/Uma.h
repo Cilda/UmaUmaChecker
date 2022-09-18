@@ -38,8 +38,10 @@ public:
 		return SkillLib.Charas;
 	}
 
-	std::wstring GetCharaEventText(const cv::Mat& srcImg);
-	std::wstring GetCardEventText(const cv::Mat& srcImg);
+	std::vector<std::wstring> GetCharaEventText(const cv::Mat& srcImg);
+	std::vector<std::wstring> GetCardEventText(const cv::Mat& srcImg);
+	std::wstring GetCardEventName(const std::vector<std::wstring>& text_list);
+	std::wstring GetCharaEventName(const std::vector<std::wstring>& text_list);
 
 public:
 	static cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);
@@ -50,6 +52,8 @@ private:
 
 	bool IsCharaEvent(const cv::Mat& srcImg);
 	bool IsCardEvent(const cv::Mat& srcImg);
+
+	std::wstring GetTextFromImage(cv::Mat& img);
 
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界
