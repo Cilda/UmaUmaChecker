@@ -7,6 +7,7 @@
 
 #include <thread>
 #include <opencv2/opencv.hpp>
+#include <mutex>
 
 #ifndef USE_MS_OCR
 #include <tesseract/baseapi.h>
@@ -74,6 +75,7 @@ private:
 	Character* CurrentCharacter;
 	tesseract::TessBaseAPI* api;
 	std::wstring DetectedEventName;
+	std::mutex mutex;
 
 private:
 	static const double ResizeRatio;

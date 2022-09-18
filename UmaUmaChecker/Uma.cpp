@@ -41,7 +41,7 @@ void Uma::Init()
 		SkillLib.InitCharaDB();
 	}
 
-	assert(api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn") == 0);
+	api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
 	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
 
 #ifdef USE_OCR
@@ -357,6 +357,8 @@ bool Uma::IsCardEvent(const cv::Mat& srcImg)
 
 std::wstring Uma::GetTextFromImage(cv::Mat& img)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
 	api->Recognize(NULL);
 
