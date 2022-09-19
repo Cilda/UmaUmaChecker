@@ -289,8 +289,6 @@ BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             std::wstring result;
             std::vector<std::wstring> events = g_umaMgr->GetCardEventText(srcImage);
 
-            result = g_umaMgr->GetBottomChoiseTitle(srcImage);
-
             if (!events.empty()) {
                 result = g_umaMgr->GetCardEventName(events);
             }

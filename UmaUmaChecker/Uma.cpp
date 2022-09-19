@@ -177,7 +177,16 @@ void Uma::MonitorThread()
 					std::wstring title = GetBottomChoiseTitle(srcImage);
 					if (!title.empty()) {
 						if (SkillLib.ChoiseMap.find(title) != SkillLib.ChoiseMap.end()) {
-							EventName = SkillLib.ChoiseMap[title]->Name;
+							for (auto& events : SkillLib.ChoiseMap[title]->Events) {
+								for (auto& e : events.second.Choises) {
+									if (e.Title == title) {
+										EventName = events.first;
+										break;
+									}
+								}
+
+								if (!EventName.empty()) break;
+							}
 						}
 					}
 				}

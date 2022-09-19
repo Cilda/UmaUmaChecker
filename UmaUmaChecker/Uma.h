@@ -55,8 +55,6 @@ private:
 	bool IsCardEvent(const cv::Mat& srcImg);
 
 	std::wstring GetTextFromImage(cv::Mat& img);
-
-public:
 	std::wstring GetBottomChoiseTitle(cv::Mat& srcImg);
 
 public:
