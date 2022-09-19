@@ -14,6 +14,7 @@
 
 const cv::Rect2d Uma::CharaEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
 const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
+const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
 const double Uma::ResizeRatio = 2.0;
 
 Uma::Uma()
@@ -171,6 +172,16 @@ void Uma::MonitorThread()
 			std::vector<std::wstring> events = GetCardEventText(srcImage);
 			if (!events.empty()) {
 				std::wstring EventName = GetCardEventName(events);
+				// イベント名が見つからなかった場合は選択肢からイベント名を取得する
+				if (EventName.empty()) {
+					std::wstring title = GetBottomChoiseTitle(srcImage);
+					if (!title.empty()) {
+						if (SkillLib.ChoiseMap.find(title) != SkillLib.ChoiseMap.end()) {
+							EventName = SkillLib.ChoiseMap[title]->Name;
+						}
+					}
+				}
+
 				if (this->EventName != EventName) {
 					std::wstring OrgEventName = EventName;
 
@@ -371,6 +382,26 @@ std::wstring Uma::GetTextFromImage(cv::Mat& img)
 	return text;
 }
 
+std::wstring Uma::GetBottomChoiseTitle(cv::Mat& srcImg)
+{
+	cv::Mat rsImg, gray, bin;
+	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
+		Uma::BottomChoiseBound.x * srcImg.size().width,
+		Uma::BottomChoiseBound.y * srcImg.size().height,
+		Uma::BottomChoiseBound.width * srcImg.size().width,
+		Uma::BottomChoiseBound.height * srcImg.size().height
+	));
+
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+	cv::threshold(gray, bin, 85, 255, cv::THRESH_BINARY);
+
+	std::wstring text = GetTextFromImage(bin);
+	std::wstring ret = SkillLib.SearchEventFromChoise(text);
+
+	return ret;
+}
+
 std::wstring Uma::GetCardEventName(const std::vector<std::wstring>& text_list)
 {
 	for (auto& text : text_list) {
@@ -442,8 +473,6 @@ std::vector<std::wstring> Uma::GetCardEventText(const cv::Mat& srcImg)
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		std::wstring text = GetTextFromImage(bin);
-
-		cv::imwrite("test.png", bin);
 
 		std::vector<std::wstring> text_list;
 		{

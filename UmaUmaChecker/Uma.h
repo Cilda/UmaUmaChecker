@@ -57,8 +57,12 @@ private:
 	std::wstring GetTextFromImage(cv::Mat& img);
 
 public:
+	std::wstring GetBottomChoiseTitle(cv::Mat& srcImg);
+
+public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界
 	static const cv::Rect2d CardEventBound;
+	static const cv::Rect2d BottomChoiseBound;
 
 public:
 	std::wstring EventName;

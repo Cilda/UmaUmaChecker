@@ -16,6 +16,7 @@ public:
 	void InitCharaDB();
 
 	std::wstring SearchEvent(const std::wstring& name);
+	std::wstring SearchEventFromChoise(const std::wstring& name);
 	std::wstring SearchCharaEvent(const std::wstring& name);
 
 public:
@@ -24,6 +25,7 @@ public:
 	std::unordered_map<std::wstring, Character::Event> EventMap;
 	std::unordered_map<std::wstring, std::shared_ptr<Character>> CharaMap;
 	std::unordered_map<std::wstring, Character::Event> CharaEventMap;
+	std::unordered_map<std::wstring, std::shared_ptr<Character>> ChoiseMap;
 
 	std::string DBPath;
 };

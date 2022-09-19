@@ -59,6 +59,10 @@ bool EventLibrary::LoadEvent()
 								choise.Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
 								choise.Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
 								event.Choises.push_back(choise);
+
+								if (ChoiseMap.find(choise.Title) == ChoiseMap.end()) {
+									ChoiseMap[choise.Title] = skill;
+								}
 							}
 							
 							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
@@ -152,10 +156,18 @@ void EventLibrary::InitEventDB()
 	simstring::ngram_generator gen(3, false);
 	simstring::writer_base<std::wstring> dbw(gen, DBPath + "event\\events.db");
 
+	simstring::ngram_generator gen2(3, false);
+	simstring::writer_base<std::wstring> dbw2(gen2, DBPath + "event\\choises.db");
+
 	for (auto& pair : EventMap) {
 		dbw.insert(pair.first);
+
+		for (auto& pair2 : pair.second.Choises) {
+			dbw2.insert(pair2.Title);
+		}
 	}
 	dbw.close();
+	dbw2.close();
 }
 
 void EventLibrary::InitCharaDB()
@@ -170,11 +182,6 @@ void EventLibrary::InitCharaDB()
 		dbw.insert(pair.first);
 	}
 	dbw.close();
-
-	/*
-	auto itr = CharaEventMap.find(L"êVîNÇÃï¯ïâ");
-	assert(itr != CharaEventMap.end());
-	*/
 }
 
 std::wstring EventLibrary::SearchEvent(const std::wstring& name)
@@ -182,6 +189,25 @@ std::wstring EventLibrary::SearchEvent(const std::wstring& name)
 	simstring::reader dbr;
 	
 	dbr.open(DBPath + "event\\events.db");
+
+	std::vector<std::wstring> xstrs;
+
+	for (double ratio = 1.0; (float)ratio >= 0.4; ratio -= 0.05) {
+		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
+	dbr.close();
+
+	return !xstrs.empty() ? xstrs.front() : L"";
+}
+
+std::wstring EventLibrary::SearchEventFromChoise(const std::wstring& name)
+{
+	simstring::reader dbr;
+
+	dbr.open(DBPath + "event\\choises.db");
 
 	std::vector<std::wstring> xstrs;
 
