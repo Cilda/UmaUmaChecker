@@ -155,7 +155,7 @@ cv::Mat Uma::ImageBinarization(const cv::Mat& srcImg)
 	cv::bitwise_not(bin, bin);
 	*/
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 240, 255, cv::THRESH_BINARY_INV);
+	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
 
 	return bin.clone();
 }
@@ -442,6 +442,8 @@ std::vector<std::wstring> Uma::GetCardEventText(const cv::Mat& srcImg)
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		std::wstring text = GetTextFromImage(bin);
+
+		cv::imwrite("test.png", bin);
 
 		std::vector<std::wstring> text_list;
 		{
