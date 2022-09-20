@@ -12,11 +12,9 @@
 
 # 実装
 
-# 実装予定
-ディープラーニングによる検出率向上(未定)
-
 # ライブラリ
 - OpenCV
 - Microsoft OCR (Microsoft.Media.OCR)
 - nlohmann-json
 - simstring
+- Tesseract OCR
