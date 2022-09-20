@@ -3,6 +3,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <sstream>
+#include <filesystem>
 
 #include "utility.h"
 
@@ -31,6 +32,7 @@ bool Config::Load()
 			WindowY = config.value("WindowY", 0);
 			EnableDebug = config.value("Debug", false);
 			SaveMissingEvent = config.value("SaveMissingEventName", false);
+			ScreenshotSavePath = utility::ConvertUtf8ToUtf16(config.value("ScreenshotSavePath", "").c_str());
 		}
 		catch (json::exception& ex) {
 			return false;
@@ -49,6 +51,7 @@ void Config::Create()
 	config["WindowY"] = 0;
 	config["Debug"] = false;
 	config["SaveMissingEventName"] = false;
+	config["ScreenshotSavePath"] = L"";
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;
@@ -62,6 +65,7 @@ void Config::Save()
 	config["WindowY"] = WindowY;
 	config["Debug"] = EnableDebug;
 	config["SaveMissingEventName"] = SaveMissingEvent;
+	config["ScreenshotSavePath"] = std::filesystem::path(ScreenshotSavePath.begin(), ScreenshotSavePath.end()).u8string();
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

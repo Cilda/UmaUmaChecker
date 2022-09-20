@@ -7,6 +7,7 @@
 #include <Commctrl.h>
 #include <codecvt>
 #include <regex>
+#include <shobjidl_core.h>
 
 #include "Uma.h"
 #include "utility.h"
@@ -170,12 +171,14 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
                         GetEncoderClsid(L"image/png", &clsid);
 
-                        std::wstring directory = utility::GetExeDirectory();
-
-                        CreateDirectoryW((directory + L"\\screenshots\\").c_str(), NULL);
+                        std::wstring directory = g_umaMgr->config.ScreenshotSavePath + L"\\";
+                        if (g_umaMgr->config.ScreenshotSavePath.empty()) {
+                            directory = utility::GetExeDirectory() + L"\\screenshots\\";
+                            CreateDirectoryW(directory.c_str(), NULL);
+                        }
 
                         std::wstring savename = directory
-                            + std::wstring(L"\\screenshots\\screenshot_")
+                            + std::wstring(L"screenshot_")
                             + std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
                             + L".png";
 
@@ -253,17 +256,47 @@ BOOL CALLBACK ConfigProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         case WM_INITDIALOG:
             SendDlgItemMessage(hWnd, IDC_CHECKDEBUG, BM_SETCHECK, g_umaMgr->config.EnableDebug ? BST_CHECKED : BST_UNCHECKED, 0);
             SendDlgItemMessage(hWnd, IDC_CHECKMISSINGEVENT, BM_SETCHECK, g_umaMgr->config.SaveMissingEvent ? BST_CHECKED : BST_UNCHECKED, 0);
+            SetDlgItemTextW(hWnd, IDC_EDITSCREENSHOTPATH, g_umaMgr->config.ScreenshotSavePath.c_str());
             break;
         case WM_COMMAND:
             switch (LOWORD(wp)) {
                 case IDOK:
+                    wchar_t filepath[1024];
+
                     g_umaMgr->config.EnableDebug = SendDlgItemMessage(hWnd, IDC_CHECKDEBUG, BM_GETCHECK, 0, 0) == BST_CHECKED;
                     g_umaMgr->config.SaveMissingEvent = SendDlgItemMessage(hWnd, IDC_CHECKMISSINGEVENT, BM_GETCHECK, 0, 0) == BST_CHECKED;
+                    GetDlgItemTextW(hWnd, IDC_EDITSCREENSHOTPATH, filepath, 1024);
+                    g_umaMgr->config.ScreenshotSavePath = filepath;
                     EndDialog(hWnd, 1);
                     return TRUE;
                 case IDCANCEL:
                     EndDialog(hWnd, 0);
                     return TRUE;
+                case IDC_BUTTONSELECTDIR: {
+                    IFileDialog* pDialog = NULL;
+
+                    if (SUCCEEDED(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDialog)))) {
+                        DWORD option;
+
+                        pDialog->GetOptions(&option);
+                        pDialog->SetOptions(option | FOS_PICKFOLDERS);
+
+                        if (SUCCEEDED(pDialog->Show(hWnd))) {
+                            IShellItem* pItem = NULL;
+                            PWSTR pFilePath = NULL;
+
+                            if (SUCCEEDED(pDialog->GetResult(&pItem))) {
+                                if (SUCCEEDED(pItem->GetDisplayName(SIGDN_FILESYSPATH, &pFilePath))) {
+                                    SetDlgItemTextW(hWnd, IDC_EDITSCREENSHOTPATH, pFilePath);
+                                    CoTaskMemFree(pFilePath);
+                                }
+                            }
+                        }
+
+                        pDialog->Release();
+                    }
+                    break;
+                }
             }
             break;
     }

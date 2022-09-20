@@ -382,8 +382,7 @@ std::wstring Uma::GetTextFromImage(cv::Mat& img)
 	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
 	api->Recognize(NULL);
 
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
-	std::wstring text = convert.from_bytes(api->GetUTF8Text());
+	std::wstring text = utility::ConvertUtf8ToUtf16(api->GetUTF8Text());
 	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
 	Collector.Collect(text);
