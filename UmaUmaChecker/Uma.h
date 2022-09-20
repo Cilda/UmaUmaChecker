@@ -44,6 +44,8 @@ public:
 	std::wstring GetCardEventName(const std::vector<std::wstring>& text_list);
 	std::wstring GetCharaEventName(const std::vector<std::wstring>& text_list);
 
+	bool UpdateLibrary();
+
 public:
 	static cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);
 	static cv::Mat ImageBinarization(const cv::Mat& srcImg);
@@ -56,6 +58,8 @@ private:
 
 	std::wstring GetTextFromImage(cv::Mat& img);
 	std::wstring GetBottomChoiseTitle(cv::Mat& srcImg);
+
+	bool UpdateFile(const std::wstring& url, const std::wstring& path);
 
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界

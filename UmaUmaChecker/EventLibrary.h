@@ -9,6 +9,7 @@ public:
 	EventLibrary();
 	~EventLibrary();
 
+	void Clear();
 	bool Load();
 	bool LoadEvent();
 	bool LoadChara();

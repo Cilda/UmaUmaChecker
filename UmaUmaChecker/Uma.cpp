@@ -6,6 +6,7 @@
 #include <codecvt>
 #include <crtdbg.h>
 #include <future>
+#include <WinInet.h>
 #include "utility.h"
 
 #ifdef USE_MS_OCR
@@ -410,6 +411,100 @@ std::wstring Uma::GetBottomChoiseTitle(cv::Mat& srcImg)
 	return ret;
 }
 
+bool Uma::UpdateFile(const std::wstring& url, const std::wstring& path)
+{
+	HINTERNET hInternetOpen = NULL;
+	HINTERNET hInternetConnect = NULL;
+	HINTERNET hInternetRequest = NULL;
+	int Version;
+	DWORD dwReadSize;
+
+	URL_COMPONENTSW urlcomponents;
+	wchar_t szHostName[256];
+	wchar_t szUrlPath[256];
+	DWORD bytes;
+
+	// URLâêÕ
+	ZeroMemory(&urlcomponents, sizeof(URL_COMPONENTSW));
+	urlcomponents.dwStructSize = sizeof(URL_COMPONENTSW);
+	urlcomponents.lpszHostName = szHostName;
+	urlcomponents.lpszUrlPath = szUrlPath;
+	urlcomponents.dwHostNameLength = 256;
+	urlcomponents.dwUrlPathLength = 256;
+
+	if (!InternetCrackUrlW(url.c_str(), 0, 0, &urlcomponents)) {
+		return false;
+	}
+
+	DWORD dwFlags = 0;
+	if (urlcomponents.nScheme == INTERNET_SCHEME_HTTP) {
+		dwFlags = INTERNET_FLAG_RELOAD | INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_NO_AUTO_REDIRECT;
+	}
+	else if (urlcomponents.nScheme == INTERNET_SCHEME_HTTPS) {
+		dwFlags = INTERNET_FLAG_RELOAD | INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_SECURE | INTERNET_FLAG_NO_AUTO_REDIRECT;
+	}
+
+	hInternetOpen = InternetOpenW(L"downloader", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+	if (hInternetOpen == NULL) {
+		return false;
+	}
+
+	hInternetConnect = InternetConnectW(hInternetOpen, urlcomponents.lpszHostName, urlcomponents.nPort, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
+	if (hInternetConnect == NULL) {
+		InternetCloseHandle(hInternetOpen);
+		return false;
+	}
+
+	hInternetRequest = HttpOpenRequestW(hInternetConnect, L"GET", urlcomponents.lpszUrlPath, NULL, NULL, NULL, dwFlags, NULL);
+	if (hInternetRequest == NULL) {
+		InternetCloseHandle(hInternetConnect);
+		InternetCloseHandle(hInternetOpen);
+		return false;
+	}
+
+	if (!HttpSendRequest(hInternetRequest, NULL, 0, NULL, 0)) {
+		InternetCloseHandle(hInternetRequest);
+		InternetCloseHandle(hInternetConnect);
+		InternetCloseHandle(hInternetOpen);
+		return false;
+	}
+
+	DWORD dwStatusCode = 0;
+	DWORD dwStatusCodeLength = sizeof(dwStatusCode);
+
+	if (!HttpQueryInfo(hInternetRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &dwStatusCode, &dwStatusCodeLength, NULL))
+		return false;
+
+	if (dwStatusCode != HTTP_STATUS_OK) {
+		return false;
+	}
+
+	DWORD dwSize = 0;
+	DWORD dwMaxSizeLength = sizeof(dwSize);
+	HttpQueryInfo(hInternetRequest, HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER, &dwSize, &dwMaxSizeLength, NULL);
+
+	char* buf = new char[dwSize];
+
+	ZeroMemory(buf, dwSize);
+	InternetReadFile(hInternetRequest, buf, dwSize, &dwReadSize);
+
+	HANDLE hFile = CreateFileW(path.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile != INVALID_HANDLE_VALUE) {
+		DWORD bytes;
+
+		WriteFile(hFile, buf, dwSize, &bytes, NULL);
+		CloseHandle(hFile);
+	}
+	
+	delete[] buf;
+
+	InternetCloseHandle(hInternetRequest);
+	InternetCloseHandle(hInternetConnect);
+	InternetCloseHandle(hInternetOpen);
+
+	return true;
+}
+
 std::wstring Uma::GetCardEventName(const std::vector<std::wstring>& text_list)
 {
 	for (auto& text : text_list) {
@@ -428,6 +523,22 @@ std::wstring Uma::GetCharaEventName(const std::vector<std::wstring>& text_list)
 	}
 
 	return L"";
+}
+
+bool Uma::UpdateLibrary()
+{
+	std::wstring directory = utility::GetExeDirectory() + L"\\Library\\";
+
+	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Chara.json", directory + L"Chara.json");
+	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Events.json", directory + L"Events.json");
+	
+	SkillLib.Clear();
+	if (SkillLib.Load()) {
+		SkillLib.InitEventDB();
+		SkillLib.InitCharaDB();
+	}
+
+	return true;
 }
 
 std::vector<std::wstring> Uma::GetCardEventText(const cv::Mat& srcImg)

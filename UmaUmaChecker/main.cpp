@@ -297,6 +297,15 @@ BOOL CALLBACK ConfigProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
                     }
                     break;
                 }
+                case IDC_BUTTONUPDATE:
+                    if (g_umaMgr->UpdateLibrary()) {
+                        SendDlgItemMessage(GetParent(hWnd), IDC_COMBO1, CB_RESETCONTENT, 0, 0);
+                        for (auto& chara : g_umaMgr->GetCharacters()) {
+                            SendDlgItemMessageW(GetParent(hWnd), IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)chara->Name.c_str());
+                        }
+                        MessageBox(hWnd, TEXT("更新が完了しました。"), TEXT("ウマウマチェッカー"), MB_OK | MB_ICONINFORMATION);
+                    }
+                    break;
             }
             break;
     }

@@ -20,6 +20,16 @@ EventLibrary::~EventLibrary()
 {
 }
 
+void EventLibrary::Clear()
+{
+	Events.clear();
+	Charas.clear();
+	EventMap.clear();
+	CharaMap.clear();
+	CharaEventMap.clear();
+	ChoiseMap.clear();
+}
+
 bool EventLibrary::Load()
 {
 	LoadEvent();
