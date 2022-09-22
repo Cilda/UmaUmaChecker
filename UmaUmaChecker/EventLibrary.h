@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "Character.h"
+#include "EventRoot.h"
 
 class EventLibrary
 {
@@ -11,22 +11,35 @@ public:
 
 	void Clear();
 	bool Load();
+
 	bool LoadEvent();
 	bool LoadChara();
+	bool LoadScenarioEvent();
+
 	void InitEventDB();
 	void InitCharaDB();
+	void InitScenarioEventDB();
 
-	std::wstring SearchEvent(const std::wstring& name);
-	std::wstring SearchEventFromChoise(const std::wstring& name);
-	std::wstring SearchCharaEvent(const std::wstring& name);
+	std::shared_ptr<EventSource> RetrieveEvent(const std::wstring& name);
+	std::shared_ptr<EventSource> RetrieveEventFromOptionTitle(const std::wstring& name);
+	std::shared_ptr<EventSource> RetrieveCharaEvent(const std::wstring& name);
+	std::shared_ptr<EventSource> RetrieveScenarioEvent(const std::wstring& name);
+	EventRoot* GetCharacter(const std::wstring& name);
 
-public:
-	std::vector<std::shared_ptr<Character>> Events;
-	std::vector<std::shared_ptr<Character>> Charas;
-	std::unordered_map<std::wstring, Character::Event> EventMap;
-	std::unordered_map<std::wstring, std::shared_ptr<Character>> CharaMap;
-	std::unordered_map<std::wstring, Character::Event> CharaEventMap;
-	std::unordered_map<std::wstring, std::shared_ptr<Character>> ChoiseMap;
+	const std::vector<std::shared_ptr<EventRoot>>& GetCharacters() const { return Charas; }
+
+private:
+	std::vector<std::shared_ptr<EventRoot>> Events; // サポートカードイベント保持用
+	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> EventMap; // キー: イベント名, 値: 選択肢
+
+	std::vector<std::shared_ptr<EventRoot>> Charas;
+	std::unordered_map<std::wstring, std::shared_ptr<EventRoot>> CharaMap; // キャライベント保持用
+	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> CharaEventMap; // キー: イベント名, 値: 選択肢
+
+	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> OptionMap; // キー: 選択肢, 値: イベントソース
+
+	std::vector<std::shared_ptr<EventRoot>> ScenarioEvents; // シナリオイベント
+	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> ScenarioEventMap; // キー: イベント名, 値: 選択肢
 
 	std::string DBPath;
 };

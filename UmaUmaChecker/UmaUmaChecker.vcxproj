@@ -205,8 +205,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="EventOption.cpp" />
+    <ClCompile Include="EventSource.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Character.cpp" />
+    <ClCompile Include="EventRoot.cpp" />
     <ClCompile Include="TextCollector.cpp" />
     <ClCompile Include="Uma.cpp" />
     <ClCompile Include="EventLibrary.cpp" />
@@ -214,8 +216,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="EventOption.h" />
+    <ClInclude Include="EventSource.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Character.h" />
+    <ClInclude Include="EventRoot.h" />
     <ClInclude Include="TextCollector.h" />
     <ClInclude Include="Uma.h" />
     <ClInclude Include="EventLibrary.h" />

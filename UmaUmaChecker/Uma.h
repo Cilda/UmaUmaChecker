@@ -35,40 +35,48 @@ public:
 	void SetNotifyTarget(HWND hWnd);
 	void SetTrainingCharacter(const std::wstring& CharaName);
 
-	const std::vector<std::shared_ptr<Character>>& GetCharacters() const {
-		return SkillLib.Charas;
+	const std::vector<std::shared_ptr<EventRoot>>& GetCharacters() const {
+		return SkillLib.GetCharacters();
 	}
 
-	std::vector<std::wstring> GetCharaEventText(const cv::Mat& srcImg);
-	std::vector<std::wstring> GetCardEventText(const cv::Mat& srcImg);
-	std::wstring GetCardEventName(const std::vector<std::wstring>& text_list);
-	std::wstring GetCharaEventName(const std::vector<std::wstring>& text_list);
+	// イベント名認識
+	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg);
+	std::vector<std::wstring> RecognizeCardEventText(const cv::Mat& srcImg);
+	std::vector<std::wstring> RecognizeScenarioEventText(const cv::Mat& srcImg);
+
+	// イベント取得
+	std::shared_ptr<EventSource> GetCardEvent(const std::vector<std::wstring>& text_list);
+	std::shared_ptr<EventSource> GetCharaEvent(const std::vector<std::wstring>& text_list);
+	std::shared_ptr<EventSource> GetScenarioEvent(const std::vector<std::wstring>& text_list);
+	std::shared_ptr<EventSource> GetEventByBottomOption(const cv::Mat& srcImg);
 
 	bool UpdateLibrary();
 
 public:
 	static cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);
-	static cv::Mat ImageBinarization(const cv::Mat& srcImg);
+	static cv::Mat ImageBinarization(cv::Mat& srcImg);
 
 private:
 	void MonitorThread();
 
 	bool IsCharaEvent(const cv::Mat& srcImg);
 	bool IsCardEvent(const cv::Mat& srcImg);
+	bool IsScenarioEvent(const cv::Mat& srcImg);
 
 	std::wstring GetTextFromImage(cv::Mat& img);
-	std::wstring GetBottomChoiseTitle(cv::Mat& srcImg);
 
 	bool UpdateFile(const std::wstring& url, const std::wstring& path);
 
+	EventSource* DetectEvent(const cv::Mat& srcImg);
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界
 	static const cv::Rect2d CardEventBound;
 	static const cv::Rect2d BottomChoiseBound;
+	static const cv::Rect2d ScenarioChoiseBound;
 
 public:
 	std::wstring EventName;
-	Character::Event* CurrentEvent;
+	EventSource* CurrentEvent;
 	Config config;
 
 private:
@@ -78,7 +86,7 @@ private:
 	HWND hTargetWnd;
 	EventLibrary SkillLib;
 	TextCollector Collector;
-	Character* CurrentCharacter;
+	EventRoot* CurrentCharacter;
 	tesseract::TessBaseAPI* api;
 	std::wstring DetectedEventName;
 	std::mutex mutex;

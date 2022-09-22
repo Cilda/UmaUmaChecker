@@ -22,18 +22,21 @@ EventLibrary::~EventLibrary()
 
 void EventLibrary::Clear()
 {
-	Events.clear();
-	Charas.clear();
 	EventMap.clear();
 	CharaMap.clear();
 	CharaEventMap.clear();
-	ChoiseMap.clear();
+	OptionMap.clear();
+	ScenarioEventMap.clear();
+	Events.clear();
+	Charas.clear();
+	ScenarioEvents.clear();
 }
 
 bool EventLibrary::Load()
 {
 	LoadEvent();
 	LoadChara();
+	LoadScenarioEvent();
 	return true;
 }
 
@@ -55,27 +58,28 @@ bool EventLibrary::LoadEvent()
 				for (auto& card : cards.items()) {
 					auto name = card.key();
 					auto events = card.value()["Events"];
-					std::shared_ptr<Character> skill(new Character());
+					std::shared_ptr<EventRoot> skill(new EventRoot());
 
 					skill->Name = utility::ConvertUtf8ToUtf16(name.c_str());
 
 					for (auto &e : events) {
 						for (auto& choise : e.items()) {
-							Character::Event event;
+							std::shared_ptr<EventSource> event(new EventSource());
 
 							for (auto& option : choise.value()) {
-								Character::Choise choise;
+								std::shared_ptr<EventOption> choise(new EventOption());
 
-								choise.Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
-								choise.Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
-								event.Choises.push_back(choise);
+								choise->Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
+								choise->Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
+								event->Options.push_back(choise);
 
-								if (ChoiseMap.find(choise.Title) == ChoiseMap.end()) {
-									ChoiseMap[choise.Title] = skill;
+								if (OptionMap.find(choise->Title) == OptionMap.end()) {
+									OptionMap[choise->Title] = event;
 								}
 							}
 							
 							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
+							event->Name = EventName;
 							skill->Events[EventName] = event;
 
 							if (EventMap.find(EventName) == EventMap.end()) {
@@ -116,23 +120,24 @@ bool EventLibrary::LoadChara()
 				for (auto& card : cards.items()) {
 					auto name = card.key();
 					auto events = card.value()["Events"];
-					std::shared_ptr<Character> skill(new Character());
+					std::shared_ptr<EventRoot> skill(new EventRoot());
 
 					skill->Name = utility::ConvertUtf8ToUtf16(name.c_str());
 
 					for (auto& e : events) {
 						for (auto& choise : e.items()) {
-							Character::Event event;
+							std::shared_ptr<EventSource> event(new EventSource());
 
 							for (auto& option : choise.value()) {
-								Character::Choise choise;
+								std::shared_ptr<EventOption> choise(new EventOption());
 
-								choise.Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
-								choise.Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
-								event.Choises.push_back(choise);
+								choise->Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
+								choise->Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
+								event->Options.push_back(choise);
 							}
 
 							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
+							event->Name = EventName;
 							skill->Events[EventName] = event;
 
 							if (CharaEventMap.find(EventName) == CharaEventMap.end()) {
@@ -158,6 +163,54 @@ bool EventLibrary::LoadChara()
 	return false;
 }
 
+bool EventLibrary::LoadScenarioEvent()
+{
+	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\ScenarioEvents.json");
+	if (stream.good()) {
+		std::stringstream text;
+
+		text << stream.rdbuf();
+
+		try {
+			json events = json::parse(text.str());
+
+			const std::filesystem::path types[] = { L"URA", L"アオハル", L"クラマ", L"グラライ" };
+			for (int i = 0; i < 4; i++) {
+				auto scenario = events[types[i].u8string()];
+				std::shared_ptr<EventRoot> root(new EventRoot());
+
+				for (auto& event : scenario.items()) {
+					std::shared_ptr<EventSource> source(new EventSource());
+					
+					for (auto& option : event.value()) {
+						std::shared_ptr<EventOption> event_option(new EventOption());
+
+						event_option->Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
+						event_option->Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
+						
+						source->Options.push_back(event_option);
+					}
+
+					std::wstring EventName = utility::ConvertUtf8ToUtf16(event.key().c_str());
+					source->Name = EventName;
+					root->Events[EventName] = source;
+					ScenarioEventMap[EventName] = source;
+				}
+
+				root->Name = types[i].wstring();
+				ScenarioEvents.push_back(root);
+			}
+		}
+		catch (json::exception& ex) {
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 void EventLibrary::InitEventDB()
 {
 	CreateDirectoryA(DBPath.c_str(), NULL);
@@ -169,11 +222,11 @@ void EventLibrary::InitEventDB()
 	simstring::ngram_generator gen2(3, false);
 	simstring::writer_base<std::wstring> dbw2(gen2, DBPath + "event\\choises.db");
 
-	for (auto& pair : EventMap) {
-		dbw.insert(pair.first);
+	for (auto& source : EventMap) {
+		dbw.insert(source.first);
 
-		for (auto& pair2 : pair.second.Choises) {
-			dbw2.insert(pair2.Title);
+		for (auto& event : source.second->Options) {
+			dbw2.insert(event->Title);
 		}
 	}
 	dbw.close();
@@ -194,7 +247,23 @@ void EventLibrary::InitCharaDB()
 	dbw.close();
 }
 
-std::wstring EventLibrary::SearchEvent(const std::wstring& name)
+void EventLibrary::InitScenarioEventDB()
+{
+	CreateDirectoryA(DBPath.c_str(), NULL);
+	CreateDirectoryA((DBPath + "event\\").c_str(), NULL);
+
+	simstring::ngram_generator gen(3, false);
+	simstring::writer_base<std::wstring> dbw(gen, DBPath + "event\\scenario.db");
+
+	for (auto& scenario : ScenarioEvents) {
+		for (auto& event : scenario->Events) {
+			dbw.insert(event.first); // イベント名
+		}
+	}
+	dbw.close();
+}
+
+std::shared_ptr<EventSource> EventLibrary::RetrieveEvent(const std::wstring& name)
 {
 	simstring::reader dbr;
 	
@@ -210,10 +279,15 @@ std::wstring EventLibrary::SearchEvent(const std::wstring& name)
 
 	dbr.close();
 
-	return !xstrs.empty() ? xstrs.front() : L"";
+	if (xstrs.empty()) return nullptr;
+
+	const auto& event = EventMap.find(xstrs.front());
+	if (event == EventMap.end()) return nullptr;
+
+	return event->second;
 }
 
-std::wstring EventLibrary::SearchEventFromChoise(const std::wstring& name)
+std::shared_ptr<EventSource> EventLibrary::RetrieveEventFromOptionTitle(const std::wstring& name)
 {
 	simstring::reader dbr;
 
@@ -229,10 +303,15 @@ std::wstring EventLibrary::SearchEventFromChoise(const std::wstring& name)
 
 	dbr.close();
 
-	return !xstrs.empty() ? xstrs.front() : L"";
+	if (xstrs.empty()) return nullptr;
+
+	const auto& event = OptionMap.find(xstrs.front());
+	if (event == OptionMap.end()) return nullptr;
+
+	return event->second;
 }
 
-std::wstring EventLibrary::SearchCharaEvent(const std::wstring& name)
+std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring& name)
 {
 	simstring::reader dbr;
 
@@ -248,5 +327,44 @@ std::wstring EventLibrary::SearchCharaEvent(const std::wstring& name)
 
 	dbr.close();
 
-	return !xstrs.empty() ? xstrs.front() : L"";
+	if (xstrs.empty()) return nullptr;
+
+	const auto& event = CharaEventMap.find(xstrs.front());
+	if (event == CharaEventMap.end()) return nullptr;
+
+	return event->second;
+}
+
+std::shared_ptr<EventSource> EventLibrary::RetrieveScenarioEvent(const std::wstring& name)
+{
+	simstring::reader dbr;
+
+	dbr.open(DBPath + "event\\scenario.db");
+
+	std::vector<std::wstring> xstrs;
+
+	for (double ratio = 1.0; (float)ratio > 0.4; ratio -= 0.05) {
+		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
+	dbr.close();
+
+	if (xstrs.empty()) return nullptr;
+
+	const auto& event = ScenarioEventMap.find(xstrs.front());
+	if (event == ScenarioEventMap.end()) return nullptr;
+
+	return event->second;
+}
+
+EventRoot* EventLibrary::GetCharacter(const std::wstring& name)
+{
+	const auto& itr = CharaMap.find(name);
+	if (itr != CharaMap.end()) {
+		return itr->second.get();
+	}
+
+	return nullptr;
 }

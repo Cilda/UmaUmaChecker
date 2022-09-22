@@ -16,6 +16,7 @@
 const cv::Rect2d Uma::CharaEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
 const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
 const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
+const cv::Rect2d Uma::ScenarioChoiseBound = { 0.1636, 0.1929, 0.6051, 0.02485 };
 const double Uma::ResizeRatio = 2.0;
 
 Uma::Uma()
@@ -25,6 +26,7 @@ Uma::Uma()
 	thread = nullptr;
 	hTargetWnd = NULL;
 	CurrentCharacter = nullptr;
+	CurrentEvent = nullptr;
 	api = new tesseract::TessBaseAPI();
 }
 
@@ -38,9 +40,13 @@ Uma::~Uma()
 
 void Uma::Init()
 {
+	CurrentEvent = nullptr;
+	CurrentCharacter = nullptr;
+
 	if (SkillLib.Load()) {
 		SkillLib.InitEventDB();
 		SkillLib.InitCharaDB();
+		SkillLib.InitScenarioEventDB();
 	}
 
 	api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
@@ -71,6 +77,8 @@ Gdiplus::Bitmap *Uma::ScreenShot()
 
 	GetWindowRect(hWnd, &rw);
 	GetClientRect(hWnd, &rc);
+
+	if (rc.right == 0 || rc.bottom == 0) return nullptr;
 
 	ClientToScreen(hWnd, &pt);
 
@@ -124,13 +132,7 @@ void Uma::SetNotifyTarget(HWND hWnd)
 
 void Uma::SetTrainingCharacter(const std::wstring& CharaName)
 {
-	auto itr = SkillLib.CharaMap.find(CharaName);
-	if (itr != SkillLib.CharaMap.end()) {
-		CurrentCharacter = itr->second.get();
-	}
-	else {
-		CurrentCharacter = nullptr;
-	}
+	CurrentCharacter = SkillLib.GetCharacter(CharaName);
 }
 
 cv::Mat Uma::BitmapToCvMat(Gdiplus::Bitmap* image)
@@ -147,7 +149,7 @@ cv::Mat Uma::BitmapToCvMat(Gdiplus::Bitmap* image)
 	return mat;
 }
 
-cv::Mat Uma::ImageBinarization(const cv::Mat& srcImg)
+cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 {
 	cv::Mat gray;
 	cv::Mat bin;
@@ -169,29 +171,17 @@ void Uma::MonitorThread()
 		if (image) {
 			cv::Mat srcImage = BitmapToCvMat(image);
 			
-			// サポートカードイベント
-			std::vector<std::wstring> events = GetCardEventText(srcImage);
-			if (!events.empty()) {
-				std::wstring EventName = GetCardEventName(events);
-				// イベント名が見つからなかった場合は選択肢からイベント名を取得する
-				if (EventName.empty()) {
-					std::wstring title = GetBottomChoiseTitle(srcImage);
-					if (!title.empty()) {
-						if (SkillLib.ChoiseMap.find(title) != SkillLib.ChoiseMap.end()) {
-							for (auto& events : SkillLib.ChoiseMap[title]->Events) {
-								for (auto& e : events.second.Choises) {
-									if (e.Title == title) {
-										EventName = events.first;
-										break;
-									}
-								}
+			CurrentEvent = DetectEvent(srcImage);
+			if (CurrentEvent) {
+				if (EventName != CurrentEvent->Name) {
+					EventName = CurrentEvent->Name;
 
-								if (!EventName.empty()) break;
-							}
-						}
-					}
+					if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
 				}
+			}
 
+
+				/*
 				if (this->EventName != EventName) {
 					std::wstring OrgEventName = EventName;
 
@@ -233,9 +223,9 @@ void Uma::MonitorThread()
 			}
 			// キャライベント
 			else if (CurrentCharacter) {
-				std::vector<std::wstring> events = GetCharaEventText(srcImage);
+				std::vector<std::wstring> events = RecognizeCharaEventText(srcImage);
 				if (!events.empty()) {
-					std::wstring EventName = GetCharaEventName(events);
+					std::wstring EventName = GetCharaEvent(events);
 					if (this->EventName != EventName) {
 						std::wstring OrgEventName = EventName;
 
@@ -276,20 +266,30 @@ void Uma::MonitorThread()
 					}
 				}
 				else {
-					/*
-					if (hTargetWnd && this->EventName != EventName)
-						PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
-					*/
 
 					this->EventName = EventName;
 					CurrentEvent = nullptr;
 				}
 			}
+			// シナリオイベント
+			else {
+				std::vector<std::wstring> events = RecognizeScenarioEventText(srcImage);
+				if (!events.empty()) {
+					std::wstring EventName = GetScenarioEvent(events);
+					if (!EventName.empty() && this->EventName != EventName) {
+						const auto& itr = SkillLib.ScenarioEventMap.find(EventName);
+						if (itr != SkillLib.ScenarioEventMap.end()) {
+							CurrentEvent = &itr->second;
+						}
+					}
+				}
+			}
+			*/
 
 			delete image;
 		}
 
-		Sleep(1000);
+		Sleep(100);
 	}
 }
 
@@ -302,7 +302,7 @@ bool Uma::IsCharaEvent(const cv::Mat& srcImg)
 	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
 }
 
-std::vector<std::wstring> Uma::GetCharaEventText(const cv::Mat& srcImg)
+std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 {
 	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
 		Uma::CharaEventBound.x * srcImg.size().width,
@@ -376,6 +376,15 @@ bool Uma::IsCardEvent(const cv::Mat& srcImg)
 	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
 }
 
+bool Uma::IsScenarioEvent(const cv::Mat& srcImg)
+{
+	cv::Mat bg;
+	cv::Mat img = srcImg.clone();
+
+	cv::inRange(img, cv::Scalar(20, 200, 110), cv::Scalar(80, 240, 170), bg);
+	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
+}
+
 std::wstring Uma::GetTextFromImage(cv::Mat& img)
 {
 	std::lock_guard<std::mutex> lock(mutex);
@@ -391,7 +400,7 @@ std::wstring Uma::GetTextFromImage(cv::Mat& img)
 	return text;
 }
 
-std::wstring Uma::GetBottomChoiseTitle(cv::Mat& srcImg)
+std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 {
 	cv::Mat rsImg, gray, bin;
 	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
@@ -406,9 +415,7 @@ std::wstring Uma::GetBottomChoiseTitle(cv::Mat& srcImg)
 	cv::threshold(gray, bin, 85, 255, cv::THRESH_BINARY);
 
 	std::wstring text = GetTextFromImage(bin);
-	std::wstring ret = SkillLib.SearchEventFromChoise(text);
-
-	return ret;
+	return SkillLib.RetrieveEventFromOptionTitle(text);
 }
 
 bool Uma::UpdateFile(const std::wstring& url, const std::wstring& path)
@@ -505,24 +512,67 @@ bool Uma::UpdateFile(const std::wstring& url, const std::wstring& path)
 	return true;
 }
 
-std::wstring Uma::GetCardEventName(const std::vector<std::wstring>& text_list)
+EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 {
-	for (auto& text : text_list) {
-		std::wstring ret = SkillLib.SearchEvent(text);
-		if (!ret.empty()) return ret;
+	// サポートカードイベント
+	std::vector<std::wstring> events = RecognizeCardEventText(srcImg);
+	if (!events.empty()) {
+		auto event = GetCardEvent(events);
+		if (!event) event = GetEventByBottomOption(srcImg);
+		if (event) {
+			return event.get();
+		}
 	}
 
-	return L"";
+	if (CurrentCharacter) {
+		events = RecognizeCharaEventText(srcImg);
+		if (!events.empty()) {
+			auto event = GetCharaEvent(events);
+			if (event) {
+				return event.get();
+			}
+		}
+	}
+
+	events = RecognizeScenarioEventText(srcImg);
+	if (!events.empty()) {
+		auto event = GetScenarioEvent(events);
+		if (event) {
+			return event.get();
+		}
+	}
+
+	return nullptr;
 }
 
-std::wstring Uma::GetCharaEventName(const std::vector<std::wstring>& text_list)
+std::shared_ptr<EventSource> Uma::GetCardEvent(const std::vector<std::wstring>& text_list)
 {
 	for (auto& text : text_list) {
-		std::wstring ret = SkillLib.SearchCharaEvent(text);
-		if (!ret.empty()) return ret;
+		auto ret = SkillLib.RetrieveEvent(text);
+		if (ret) return ret;
 	}
 
-	return L"";
+	return nullptr;
+}
+
+std::shared_ptr<EventSource> Uma::GetCharaEvent(const std::vector<std::wstring>& text_list)
+{
+	for (auto& text : text_list) {
+		auto ret = SkillLib.RetrieveCharaEvent(text);
+		if (ret) return ret;
+	}
+
+	return nullptr;
+}
+
+std::shared_ptr<EventSource> Uma::GetScenarioEvent(const std::vector<std::wstring>& text_list)
+{
+	for (auto& text : text_list) {
+		auto ret = SkillLib.RetrieveScenarioEvent(text);
+		if (ret) return ret;
+	}
+
+	return nullptr;
 }
 
 bool Uma::UpdateLibrary()
@@ -536,12 +586,13 @@ bool Uma::UpdateLibrary()
 	if (SkillLib.Load()) {
 		SkillLib.InitEventDB();
 		SkillLib.InitCharaDB();
+		SkillLib.InitScenarioEventDB();
 	}
 
 	return true;
 }
 
-std::vector<std::wstring> Uma::GetCardEventText(const cv::Mat& srcImg)
+std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 {
 	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
 		Uma::CardEventBound.x * srcImg.size().width,
@@ -601,6 +652,36 @@ std::vector<std::wstring> Uma::GetCardEventText(const cv::Mat& srcImg)
 
 		return text_list;
 #endif
+	}
+
+	return std::vector<std::wstring>();
+}
+
+std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
+{
+	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
+		Uma::ScenarioChoiseBound.x * srcImg.size().width,
+		Uma::ScenarioChoiseBound.y * srcImg.size().height,
+		Uma::ScenarioChoiseBound.width * srcImg.size().width,
+		Uma::ScenarioChoiseBound.height * srcImg.size().height
+	));
+	cv::Mat rsImg;
+
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+
+	if (IsScenarioEvent(cut)) {
+		cv::Mat gray;
+		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+		cv::Mat bin = Uma::ImageBinarization(rsImg);
+		std::wstring text = GetTextFromImage(bin);
+
+		std::vector<std::wstring> text_list;
+		{
+			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
+			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+		}
+
+		return text_list;
 	}
 
 	return std::vector<std::wstring>();

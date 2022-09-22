@@ -14,12 +14,19 @@
     },
     {
       "search": "\"",
-      "replace": "",
-      "?": "？"
+      "replace": ""
     },
     {
       "search": "アヤべ",
       "replace": "アヤベ"
+    },
+    {
+      "search": "\\?",
+      "replace": "？"
+    },
+    {
+      "search": "^(.+?)7$",
+      "replace": "$1！"
     }
   ]
 }

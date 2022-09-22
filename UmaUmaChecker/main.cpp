@@ -214,9 +214,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             if (g_umaMgr->CurrentEvent) {
                 SetDlgItemTextW(hWnd, IDC_EDITEVENTNAME, g_umaMgr->EventName.c_str());
                 for (int i = 0; i < 3; i++) {
-                    if (i < g_umaMgr->CurrentEvent->Choises.size()) {
-                        SetDlgItemTextW(hWnd, ids[i], g_umaMgr->CurrentEvent->Choises[i].Title.c_str());
-                        SetDlgItemTextW(hWnd, detailids[i], utility::replace(g_umaMgr->CurrentEvent->Choises[i].Effect, L"\n", L"\r\n").c_str());
+                    if (i < g_umaMgr->CurrentEvent->Options.size()) {
+                        SetDlgItemTextW(hWnd, ids[i], g_umaMgr->CurrentEvent->Options[i]->Title.c_str());
+                        SetDlgItemTextW(hWnd, detailids[i], utility::replace(g_umaMgr->CurrentEvent->Options[i]->Effect, L"\n", L"\r\n").c_str());
                     }
                     else {
                         SetDlgItemTextW(hWnd, ids[i], L"");
@@ -329,17 +329,26 @@ BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromFile(FileName);
             cv::Mat srcImage = Uma::BitmapToCvMat(image);
             std::wstring result;
-            std::vector<std::wstring> events = g_umaMgr->GetCardEventText(srcImage);
+            std::vector<std::wstring> events = g_umaMgr->RecognizeCardEventText(srcImage);
 
+            /*
             if (!events.empty()) {
-                result = g_umaMgr->GetCardEventName(events);
+                result = g_umaMgr->GetCardEvent(events);
             }
             else {
-                events = g_umaMgr->GetCharaEventText(srcImage);
+                events = g_umaMgr->RecognizeCharaEventText(srcImage);
                 if (!events.empty()) {
-                    result = g_umaMgr->GetCharaEventName(events);
+                    result = g_umaMgr->GetCharaEvent(events);
+                }
+                else {
+                    events = g_umaMgr->RecognizeScenarioEventText(srcImage);
+                    if (!events.empty()) {
+
+                        result = g_umaMgr->GetScenarioEvent(events);
+                    }
                 }
             }
+            */
 
             HWND hParent = GetParent(hWnd);
             if (hParent) {
