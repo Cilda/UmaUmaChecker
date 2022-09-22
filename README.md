@@ -27,7 +27,7 @@
 
 ## 使用ライブラリ一覧
 - OpenCV
-- Microsoft OCR (Microsoft.Media.OCR)
+- ~~Microsoft OCR (Microsoft.Media.OCR)~~
 - nlohmann-json
 - simstring
 - Tesseract OCR
