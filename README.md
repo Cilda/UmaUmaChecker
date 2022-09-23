@@ -4,7 +4,7 @@
 
 ## 動作環境
 - Windows10以降のOS(64bit)
-- .NET Framework 4.8
+- .NET Framework 4.8(ビルドに必要)
 - Windows 日本語言語パック  
  ↑おそらく日本語版のWindowsであれば大丈夫だと思います。
 
