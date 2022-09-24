@@ -15,17 +15,24 @@
 
 #include "resource.h"
 
+#define WM_SETTEXT (WM_USER + 1)
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 BOOL CALLBACK ConfigProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+LRESULT CALLBACK DetailEditProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+LRESULT CALLBACK EditSubProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 
+bool InitializeDetailEditClass();
 int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
 HINSTANCE hInst;
 Uma *g_umaMgr = nullptr;
 HWND hPreviewWnd = NULL;
+
+static int hEditID = -1;
+static HWND hEdit = NULL;
 
 
 int WINAPI _tWinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int nCmdShow)
@@ -41,6 +48,11 @@ int WINAPI _tWinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, 
     HMODULE hRichLib = LoadLibrary(TEXT("MsftEdit.dll"));
     if (!hRichLib) {
         return -1;
+    }
+
+    if (!InitializeDetailEditClass()) {
+        MessageBox(NULL, TEXT("コントロールの初期化に失敗しました。"), TEXT("ウマウマチェッカー"), MB_OK | MB_ICONERROR);
+        return -2;
     }
 
     Gdiplus::GdiplusStartup(&token, &input, NULL);
@@ -102,21 +114,12 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             hGreen = CreateSolidBrush(RGB(200, 255, 150));
             hYellow = CreateSolidBrush(RGB(255, 240, 150));
             hRed = CreateSolidBrush(RGB(255, 200, 220));
-            /*
-            if (g_umaMgr->config.WindowX == 0 && g_umaMgr->config.WindowY == 0) {
-                RECT MonitorRect;
-                RECT WindowRect;
-
-                SystemParametersInfo(SPI_GETWORKAREA, 0, &MonitorRect, 0);
-                GetWindowRect(hWnd, &WindowRect);
-
-                g_umaMgr->config.WindowX = (MonitorRect.right - (WindowRect.right - WindowRect.left)) / 2;
-                g_umaMgr->config.WindowY = (MonitorRect.bottom - (WindowRect.bottom - WindowRect.top)) / 2;
-            }
-            SetWindowPos(hWnd, HWND_TOP, g_umaMgr->config.WindowX, g_umaMgr->config.WindowY, 0, 0, SWP_NOSIZE);
-            */
             break;
         case WM_INITDIALOG:
+            SetWindowSubclass(GetDlgItem(hWnd, IDC_EDIT1), EditSubProc, 0, 0);
+            SetWindowSubclass(GetDlgItem(hWnd, IDC_EDIT2), EditSubProc, 0, 0);
+            SetWindowSubclass(GetDlgItem(hWnd, IDC_EDIT3), EditSubProc, 0, 0);
+
             for (auto& chara : g_umaMgr->GetCharacters()) {
                 SendDlgItemMessageW(hWnd, IDC_COMBO1, CB_ADDSTRING, 0, (LPARAM)chara->Name.c_str());
             }
@@ -237,6 +240,13 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             g_umaMgr->config.WindowX = LOWORD(lp);
             g_umaMgr->config.WindowY = HIWORD(lp);
             break;
+        case WM_MOUSEMOVE:
+            if (hEdit) {
+                DestroyWindow(hEdit);
+                hEdit = NULL;
+                hEditID = -1;
+            }
+            break;
         case WM_DESTROY:
             DeleteObject(hGreen);
             DeleteObject(hYellow);
@@ -329,7 +339,7 @@ BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromFile(FileName);
             cv::Mat srcImage = Uma::BitmapToCvMat(image);
             std::wstring result;
-            std::vector<std::wstring> events = g_umaMgr->RecognizeCardEventText(srcImage);
+            std::vector<std::wstring> events = g_umaMgr->RecognizeCharaEventText(srcImage);
 
             /*
             if (!events.empty()) {
@@ -377,6 +387,107 @@ BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     }
 
     return FALSE;
+}
+
+LRESULT WINAPI DetailEditProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
+{
+    static HWND hEdit = NULL;
+    static HFONT hFont = NULL;
+    RECT rc;
+
+    switch (msg) {
+        case WM_CREATE:
+            GetClientRect(hWnd, &rc);
+            hFont = CreateFont(13, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, TEXT("MS Shell Dlg 2"));
+            hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("EDIT"), TEXT(""), WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_READONLY, 0, 0, rc.right, rc.bottom, hWnd, NULL, hInst, NULL);
+            SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
+            break;
+        case WM_CTLCOLORSTATIC:
+            SetBkMode(((HDC)wp), TRANSPARENT);
+            return (LRESULT)GetStockObject(WHITE_BRUSH);
+        case WM_DESTROY:
+            DeleteObject(hFont);
+            DestroyWindow(hEdit);
+            break;
+        case WM_SETTEXT:
+            SetWindowText(hEdit, (LPCTSTR)lp);
+            break;
+        default:
+            return DefWindowProc(hWnd, msg, wp, lp);
+    }
+
+    return FALSE;
+}
+
+LRESULT WINAPI EditSubProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+{
+    switch (msg) {
+        case WM_MOUSEMOVE:
+            if (hEditID != -1 && hEditID != GetWindowLongPtr(hWnd, GWLP_ID)) {
+                if (hEdit) {
+                    DestroyWindow(hEdit);
+                    hEdit = NULL;
+                    hEditID = -1;
+                }
+            }
+            if (!hEdit) {
+                TCHAR text[1024];
+
+                if (GetWindowText(hWnd, text, 1024)) {
+                    RECT rc, TextRect{0, 0, 1000, 1000};
+                    POINT pt;
+                    SIZE size;
+
+                    GetWindowRect(hWnd, &rc);
+
+                    HDC hdc = GetDC(hWnd);
+                    SelectObject(hdc, (HFONT)SendMessage(hWnd, WM_GETFONT, 0, 0));
+                    DrawText(hdc, text, -1, &TextRect, DT_CALCRECT);
+                    //GetTextExtentPoint32(hdc, text, lstrlen(text), &size);
+                    ReleaseDC(hWnd, hdc);
+                    
+                    if (TextRect.bottom > rc.bottom - rc.top) {
+                        hEdit = CreateWindow(TEXT("DETAILEDIT"), TEXT(""), WS_POPUP | WS_VISIBLE, rc.left, rc.top, rc.right - rc.left, TextRect.bottom + 10, GetParent(hWnd), NULL, hInst, NULL);
+                        hEditID = GetWindowLongPtr(hWnd, GWLP_ID);
+                        SetWindowPos(hEdit, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+                        SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)text);
+                    }
+                }
+            }
+            return TRUE;
+        case WM_DESTROY:
+            if (hEdit) {
+                DestroyWindow(hEdit);
+                hEdit = NULL;
+                hEditID = -1;
+            }
+    }
+
+    return DefSubclassProc(hWnd, msg, wp, lp);
+}
+
+bool InitializeDetailEditClass()
+{
+    WNDCLASSEX wcx;
+
+    wcx.cbSize = sizeof(WNDCLASSEX);
+    wcx.style = CS_HREDRAW | CS_VREDRAW;
+    wcx.lpfnWndProc = DetailEditProc;
+    wcx.cbClsExtra = 0;
+    wcx.cbWndExtra = 0;
+    wcx.hInstance = hInst;
+    wcx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wcx.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wcx.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+    wcx.lpszMenuName = NULL;
+    wcx.lpszClassName = TEXT("DETAILEDIT");
+    wcx.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+
+    if (!RegisterClassEx(&wcx)) {
+        return false;
+    }
+
+    return true;
 }
 
 int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
