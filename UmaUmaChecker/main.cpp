@@ -339,26 +339,7 @@ BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromFile(FileName);
             cv::Mat srcImage = Uma::BitmapToCvMat(image);
             std::wstring result;
-            std::vector<std::wstring> events = g_umaMgr->RecognizeCharaEventText(srcImage);
-
-            /*
-            if (!events.empty()) {
-                result = g_umaMgr->GetCardEvent(events);
-            }
-            else {
-                events = g_umaMgr->RecognizeCharaEventText(srcImage);
-                if (!events.empty()) {
-                    result = g_umaMgr->GetCharaEvent(events);
-                }
-                else {
-                    events = g_umaMgr->RecognizeScenarioEventText(srcImage);
-                    if (!events.empty()) {
-
-                        result = g_umaMgr->GetScenarioEvent(events);
-                    }
-                }
-            }
-            */
+            EventSource* source = g_umaMgr->DetectEvent(srcImage);
 
             HWND hParent = GetParent(hWnd);
             if (hParent) {

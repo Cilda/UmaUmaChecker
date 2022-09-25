@@ -39,6 +39,8 @@ public:
 		return SkillLib.GetCharacters();
 	}
 
+	EventSource* DetectEvent(const cv::Mat& srcImg);
+
 	// イベント名認識
 	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg);
 	std::vector<std::wstring> RecognizeCardEventText(const cv::Mat& srcImg);
@@ -49,6 +51,7 @@ public:
 	std::shared_ptr<EventSource> GetCharaEvent(const std::vector<std::wstring>& text_list);
 	std::shared_ptr<EventSource> GetScenarioEvent(const std::vector<std::wstring>& text_list);
 	std::shared_ptr<EventSource> GetEventByBottomOption(const cv::Mat& srcImg);
+	std::shared_ptr<EventSource> GetCharaEventByBottomOption(const cv::Mat& srcImg);
 
 	bool UpdateLibrary();
 
@@ -66,8 +69,6 @@ private:
 	std::wstring GetTextFromImage(cv::Mat& img);
 
 	bool UpdateFile(const std::wstring& url, const std::wstring& path);
-
-	EventSource* DetectEvent(const cv::Mat& srcImg);
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界
 	static const cv::Rect2d CardEventBound;

@@ -23,6 +23,7 @@ public:
 	std::shared_ptr<EventSource> RetrieveEvent(const std::wstring& name);
 	std::shared_ptr<EventSource> RetrieveEventFromOptionTitle(const std::wstring& name);
 	std::shared_ptr<EventSource> RetrieveCharaEvent(const std::wstring& name);
+	std::shared_ptr<EventSource> RetrieveCharaEventFromOptionTitle(const std::wstring& name);
 	std::shared_ptr<EventSource> RetrieveScenarioEvent(const std::wstring& name);
 	EventRoot* GetCharacter(const std::wstring& name);
 

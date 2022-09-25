@@ -134,6 +134,10 @@ bool EventLibrary::LoadChara()
 								choise->Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
 								choise->Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
 								event->Options.push_back(choise);
+
+								if (OptionMap.find(choise->Title) == OptionMap.end()) {
+									OptionMap[choise->Title] = event;
+								}
 							}
 
 							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
@@ -241,10 +245,18 @@ void EventLibrary::InitCharaDB()
 	simstring::ngram_generator gen(3, false);
 	simstring::writer_base<std::wstring> dbw(gen, DBPath + "chara\\chara.db");
 
-	for (auto& pair : CharaEventMap) {
-		dbw.insert(pair.first);
+	simstring::ngram_generator gen2(3, false);
+	simstring::writer_base<std::wstring> dbw2(gen2, DBPath + "chara\\choises.db");
+
+	for (auto& source : CharaEventMap) {
+		dbw.insert(source.first);
+
+		for (auto& event : source.second->Options) {
+			dbw2.insert(event->Title);
+		}
 	}
 	dbw.close();
+	dbw2.close();
 }
 
 void EventLibrary::InitScenarioEventDB()
@@ -331,6 +343,30 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring
 
 	const auto& event = CharaEventMap.find(xstrs.front());
 	if (event == CharaEventMap.end()) return nullptr;
+
+	return event->second;
+}
+
+std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEventFromOptionTitle(const std::wstring& name)
+{
+	simstring::reader dbr;
+
+	dbr.open(DBPath + "chara\\choises.db");
+
+	std::vector<std::wstring> xstrs;
+
+	for (double ratio = 1.0; (float)ratio >= 0.4; ratio -= 0.05) {
+		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
+	dbr.close();
+
+	if (xstrs.empty()) return nullptr;
+
+	const auto& event = OptionMap.find(xstrs.front());
+	if (event == OptionMap.end()) return nullptr;
 
 	return event->second;
 }

@@ -418,6 +418,24 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 	return SkillLib.RetrieveEventFromOptionTitle(text);
 }
 
+std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& srcImg)
+{
+	cv::Mat rsImg, gray, bin;
+	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
+		Uma::BottomChoiseBound.x * srcImg.size().width,
+		Uma::BottomChoiseBound.y * srcImg.size().height,
+		Uma::BottomChoiseBound.width * srcImg.size().width,
+		Uma::BottomChoiseBound.height * srcImg.size().height
+	));
+
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+	cv::threshold(gray, bin, 85, 255, cv::THRESH_BINARY);
+
+	std::wstring text = GetTextFromImage(bin);
+	return SkillLib.RetrieveCharaEventFromOptionTitle(text);
+}
+
 bool Uma::UpdateFile(const std::wstring& url, const std::wstring& path)
 {
 	HINTERNET hInternetOpen = NULL;
@@ -528,6 +546,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 		events = RecognizeCharaEventText(srcImg);
 		if (!events.empty()) {
 			auto event = GetCharaEvent(events);
+			if (!event) event = GetCharaEventByBottomOption(srcImg);
 			if (event) {
 				return event.get();
 			}
