@@ -54,6 +54,7 @@ public:
 	std::shared_ptr<EventSource> GetCharaEventByBottomOption(const cv::Mat& srcImg);
 
 	bool UpdateLibrary();
+	bool IsStarted() const { return thread != nullptr; }
 
 public:
 	static cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);

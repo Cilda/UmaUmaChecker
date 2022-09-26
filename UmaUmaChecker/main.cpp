@@ -217,7 +217,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             int ids[3] = { IDC_EDITCHOISE1, IDC_EDITCHOISE2, IDC_EDITCHOISE3 };
             int detailids[3] = { IDC_EDIT1, IDC_EDIT2, IDC_EDIT3 };
             if (g_umaMgr->CurrentEvent) {
-                SetDlgItemTextW(hWnd, IDC_EDITEVENTNAME, g_umaMgr->EventName.c_str());
+                SetDlgItemTextW(hWnd, IDC_EDITEVENTNAME, g_umaMgr->CurrentEvent->Name.c_str());
                 for (int i = 0; i < 3; i++) {
                     if (i < g_umaMgr->CurrentEvent->Options.size()) {
                         SetDlgItemTextW(hWnd, ids[i], g_umaMgr->CurrentEvent->Options[i]->Title.c_str());
@@ -339,13 +339,15 @@ BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             DragQueryFile(hDrop, 0, FileName, 256);
 
             Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromFile(FileName);
-            cv::Mat srcImage = Uma::BitmapToCvMat(image);
-            std::wstring result;
-            EventSource* source = g_umaMgr->DetectEvent(srcImage);
+            if (!g_umaMgr->IsStarted()) {
+                cv::Mat srcImage = Uma::BitmapToCvMat(image);
+                std::wstring result;
+                EventSource* source = g_umaMgr->DetectEvent(srcImage);
 
-            HWND hParent = GetParent(hWnd);
-            if (hParent) {
-                SetDlgItemTextW(hParent, IDC_EDITEVENTNAME, result.c_str());
+                g_umaMgr->CurrentEvent = source;
+
+                HWND hParent = GetParent(hWnd);
+                SendMessage(hParent, WM_CHANGEUMAEVENT, 0, 0);
             }
 
             HWND hPicBoxWnd = GetDlgItem(hWnd, IDC_PICTUREBOX);
