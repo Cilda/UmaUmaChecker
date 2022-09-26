@@ -21,6 +21,8 @@
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 BOOL CALLBACK ConfigProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 BOOL CALLBACK PreviewProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+
+// コントロール拡張機能
 LRESULT CALLBACK DetailEditProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 LRESULT CALLBACK EditSubProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 
@@ -427,7 +429,7 @@ LRESULT WINAPI EditSubProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR u
                     //GetTextExtentPoint32(hdc, text, lstrlen(text), &size);
                     ReleaseDC(hWnd, hdc);
                     
-                    if (TextRect.bottom > rc.bottom - rc.top) {
+                    if (TextRect.bottom + 10 > rc.bottom - rc.top) {
                         hEdit = CreateWindow(TEXT("DETAILEDIT"), TEXT(""), WS_POPUP | WS_VISIBLE, rc.left, rc.top, rc.right - rc.left, TextRect.bottom + 10, GetParent(hWnd), NULL, hInst, NULL);
                         hEditID = GetWindowLongPtr(hWnd, GWLP_ID);
                         SetWindowPos(hEdit, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
@@ -435,13 +437,14 @@ LRESULT WINAPI EditSubProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR u
                     }
                 }
             }
-            return TRUE;
+            break;
         case WM_DESTROY:
             if (hEdit) {
                 DestroyWindow(hEdit);
                 hEdit = NULL;
                 hEditID = -1;
             }
+            break;
     }
 
     return DefSubclassProc(hWnd, msg, wp, lp);
