@@ -34,7 +34,7 @@ Uma *g_umaMgr = nullptr;
 HWND hPreviewWnd = NULL;
 
 static int hEditID = -1;
-static HWND hEdit = NULL;
+static HWND hPopupEdit = NULL;
 
 
 int WINAPI _tWinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int nCmdShow)
@@ -243,9 +243,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             g_umaMgr->config.WindowY = HIWORD(lp);
             break;
         case WM_MOUSEMOVE:
-            if (hEdit) {
-                DestroyWindow(hEdit);
-                hEdit = NULL;
+            if (hPopupEdit) {
+                DestroyWindow(hPopupEdit);
+                hPopupEdit = NULL;
                 hEditID = -1;
             }
             break;
@@ -384,12 +384,16 @@ LRESULT WINAPI DetailEditProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         case WM_CREATE:
             GetClientRect(hWnd, &rc);
             hFont = CreateFont(13, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, TEXT("MS Shell Dlg 2"));
-            hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("EDIT"), TEXT(""), WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_READONLY, 0, 0, rc.right, rc.bottom, hWnd, NULL, hInst, NULL);
+            hEdit = CreateWindowEx(WS_EX_CLIENTEDGE | WS_EX_NOACTIVATE, TEXT("EDIT"), TEXT(""), WS_CHILD | ES_MULTILINE | ES_READONLY, 0, 0, rc.right, rc.bottom, hWnd, NULL, hInst, NULL);
+            SetWindowPos(hEdit, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_SHOWWINDOW);
             SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
             break;
         case WM_CTLCOLORSTATIC:
             SetBkMode(((HDC)wp), TRANSPARENT);
             return (LRESULT)GetStockObject(WHITE_BRUSH);
+        case WM_MOUSEACTIVATE:
+            //SetActiveWindow(GetParent(hWnd));
+            return MA_NOACTIVATE;
         case WM_DESTROY:
             DeleteObject(hFont);
             DestroyWindow(hEdit);
@@ -409,13 +413,13 @@ LRESULT WINAPI EditSubProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR u
     switch (msg) {
         case WM_MOUSEMOVE:
             if (hEditID != -1 && hEditID != GetWindowLongPtr(hWnd, GWLP_ID)) {
-                if (hEdit) {
-                    DestroyWindow(hEdit);
-                    hEdit = NULL;
+                if (hPopupEdit) {
+                    DestroyWindow(hPopupEdit);
+                    hPopupEdit = NULL;
                     hEditID = -1;
                 }
             }
-            if (!hEdit) {
+            if (!hPopupEdit) {
                 TCHAR text[1024];
 
                 if (GetWindowText(hWnd, text, 1024)) {
@@ -432,18 +436,19 @@ LRESULT WINAPI EditSubProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR u
                     ReleaseDC(hWnd, hdc);
                     
                     if (TextRect.bottom + 10 > rc.bottom - rc.top) {
-                        hEdit = CreateWindow(TEXT("DETAILEDIT"), TEXT(""), WS_POPUP | WS_VISIBLE, rc.left, rc.top, rc.right - rc.left, TextRect.bottom + 10, GetParent(hWnd), NULL, hInst, NULL);
+                        hPopupEdit = CreateWindow(TEXT("DETAILEDIT"), TEXT(""), WS_POPUP, rc.left, rc.top, rc.right - rc.left, TextRect.bottom + 10, GetParent(hWnd), NULL, hInst, NULL);
+                        SetWindowPos(hPopupEdit, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOZORDER);
                         hEditID = GetWindowLongPtr(hWnd, GWLP_ID);
-                        SetWindowPos(hEdit, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-                        SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)text);
+                        //SetWindowPos(hPopupEdit, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+                        SendMessage(hPopupEdit, WM_SETTEXT, 0, (LPARAM)text);
                     }
                 }
             }
             break;
         case WM_DESTROY:
-            if (hEdit) {
-                DestroyWindow(hEdit);
-                hEdit = NULL;
+            if (hPopupEdit) {
+                DestroyWindow(hPopupEdit);
+                hPopupEdit = NULL;
                 hEditID = -1;
             }
             break;
