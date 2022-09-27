@@ -159,7 +159,7 @@ cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 	cv::bitwise_not(bin, bin);
 	*/
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
+	cv::threshold(gray, bin, 234, 255, cv::THRESH_BINARY_INV);
 
 	return bin.clone();
 }
@@ -352,7 +352,7 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 		cv::Mat gray;
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
-		std::wstring text = GetTextFromImage(bin);
+		//std::wstring text = GetTextFromImage(bin);
 
 		std::vector<std::wstring> text_list;
 		{
