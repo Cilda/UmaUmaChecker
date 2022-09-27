@@ -412,7 +412,7 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 85, 255, cv::THRESH_BINARY);
+	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
 
 	std::wstring text = GetTextFromImage(bin);
 	return SkillLib.RetrieveEventFromOptionTitle(text);
@@ -430,7 +430,7 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 85, 255, cv::THRESH_BINARY);
+	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
 
 	std::wstring text = GetTextFromImage(bin);
 	return SkillLib.RetrieveCharaEventFromOptionTitle(text);
