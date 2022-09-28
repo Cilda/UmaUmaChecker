@@ -37,6 +37,7 @@ bool EventLibrary::Load()
 	LoadEvent();
 	LoadChara();
 	LoadScenarioEvent();
+	DeleteDBFiles();
 	return true;
 }
 
@@ -323,7 +324,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveEventFromOptionTitle(const st
 	return event->second;
 }
 
-std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring& name)
+std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring& name, const std::wstring& CharaName)
 {
 	simstring::reader dbr;
 
@@ -341,8 +342,11 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring
 
 	if (xstrs.empty()) return nullptr;
 
-	const auto& event = CharaEventMap.find(xstrs.front());
-	if (event == CharaEventMap.end()) return nullptr;
+	const auto& chara = CharaMap.find(CharaName);
+	if (chara == CharaMap.end()) return nullptr;
+
+	const auto& event = chara->second->Events.find(xstrs.front());
+	if (event == chara->second->Events.end()) return nullptr;
 
 	return event->second;
 }
@@ -403,4 +407,9 @@ EventRoot* EventLibrary::GetCharacter(const std::wstring& name)
 	}
 
 	return nullptr;
+}
+
+void EventLibrary::DeleteDBFiles()
+{
+	std::filesystem::remove_all(DBPath);
 }

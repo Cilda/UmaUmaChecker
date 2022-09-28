@@ -579,8 +579,10 @@ std::shared_ptr<EventSource> Uma::GetCardEvent(const std::vector<std::wstring>& 
 
 std::shared_ptr<EventSource> Uma::GetCharaEvent(const std::vector<std::wstring>& text_list)
 {
+	if (!CurrentCharacter) return nullptr;
+
 	for (auto& text : text_list) {
-		auto ret = SkillLib.RetrieveCharaEvent(text);
+		auto ret = SkillLib.RetrieveCharaEvent(text, CurrentCharacter->Name);
 		if (ret) return ret;
 	}
 

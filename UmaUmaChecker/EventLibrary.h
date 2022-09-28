@@ -22,12 +22,15 @@ public:
 
 	std::shared_ptr<EventSource> RetrieveEvent(const std::wstring& name);
 	std::shared_ptr<EventSource> RetrieveEventFromOptionTitle(const std::wstring& name);
-	std::shared_ptr<EventSource> RetrieveCharaEvent(const std::wstring& name);
+	std::shared_ptr<EventSource> RetrieveCharaEvent(const std::wstring& name, const std::wstring& CharaName);
 	std::shared_ptr<EventSource> RetrieveCharaEventFromOptionTitle(const std::wstring& name);
 	std::shared_ptr<EventSource> RetrieveScenarioEvent(const std::wstring& name);
 	EventRoot* GetCharacter(const std::wstring& name);
 
 	const std::vector<std::shared_ptr<EventRoot>>& GetCharacters() const { return Charas; }
+
+private:
+	void DeleteDBFiles();
 
 private:
 	std::vector<std::shared_ptr<EventRoot>> Events; // サポートカードイベント保持用
