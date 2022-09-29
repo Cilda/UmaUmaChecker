@@ -434,9 +434,12 @@ LRESULT WINAPI EditSubProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR u
                     DrawText(hdc, text, -1, &TextRect, DT_CALCRECT);
                     //GetTextExtentPoint32(hdc, text, lstrlen(text), &size);
                     ReleaseDC(hWnd, hdc);
+
+                    int width = TextRect.left + 10;
+                    int height = TextRect.bottom + 10;
                     
-                    if (TextRect.bottom + 10 > rc.bottom - rc.top) {
-                        hPopupEdit = CreateWindow(TEXT("DETAILEDIT"), TEXT(""), WS_POPUP, rc.left, rc.top, rc.right - rc.left, TextRect.bottom + 10, GetParent(hWnd), NULL, hInst, NULL);
+                    if (width > rc.right - rc.left || height > rc.bottom - rc.top) {
+                        hPopupEdit = CreateWindow(TEXT("DETAILEDIT"), TEXT(""), WS_POPUP, rc.left, rc.top, width, height, GetParent(hWnd), NULL, hInst, NULL);
                         SetWindowPos(hPopupEdit, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOZORDER);
                         hEditID = GetWindowLongPtr(hWnd, GWLP_ID);
                         //SetWindowPos(hPopupEdit, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
