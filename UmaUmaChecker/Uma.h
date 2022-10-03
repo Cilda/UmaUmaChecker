@@ -1,10 +1,13 @@
 #pragma once
 
-
-
 #include "EventLibrary.h"
 #include "TextCollector.h"
 
+#include <wx/frame.h>
+
+#include <objbase.h>
+//#include <minmax.h>
+#include <gdiplus.h>
 #include <thread>
 #include <opencv2/opencv.hpp>
 #include <mutex>
@@ -21,7 +24,7 @@
 class Uma
 {
 public:
-	Uma();
+	Uma(wxFrame* frame);
 	~Uma();
 
 	void Init();
@@ -41,6 +44,16 @@ public:
 
 	EventSource* DetectEvent(const cv::Mat& srcImg);
 
+	bool Reload();
+	bool IsStarted() const { return thread != nullptr; }
+
+public:
+	static cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);
+	static cv::Mat ImageBinarization(cv::Mat& srcImg);
+
+private:
+	void MonitorThread();
+
 	// イベント名認識
 	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg);
 	std::vector<std::wstring> RecognizeCardEventText(const cv::Mat& srcImg);
@@ -53,23 +66,12 @@ public:
 	std::shared_ptr<EventSource> GetEventByBottomOption(const cv::Mat& srcImg);
 	std::shared_ptr<EventSource> GetCharaEventByBottomOption(const cv::Mat& srcImg);
 
-	bool UpdateLibrary();
-	bool IsStarted() const { return thread != nullptr; }
-
-public:
-	static cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);
-	static cv::Mat ImageBinarization(cv::Mat& srcImg);
-
-private:
-	void MonitorThread();
-
 	bool IsCharaEvent(const cv::Mat& srcImg);
 	bool IsCardEvent(const cv::Mat& srcImg);
 	bool IsScenarioEvent(const cv::Mat& srcImg);
 
 	std::wstring GetTextFromImage(cv::Mat& img);
 
-	bool UpdateFile(const std::wstring& url, const std::wstring& path);
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界
 	static const cv::Rect2d CardEventBound;
@@ -92,6 +94,8 @@ private:
 	tesseract::TessBaseAPI* api;
 	std::wstring DetectedEventName;
 	std::mutex mutex;
+
+	wxFrame* frame;
 
 private:
 	static const double ResizeRatio;

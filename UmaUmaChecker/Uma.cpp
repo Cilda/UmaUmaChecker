@@ -1,12 +1,16 @@
+#include <winsock2.h>
 #include <Windows.h>
-#include <gdiplus.h>
+#include <WinInet.h>
+
+//
+
+//#include <gdiplus.h>
 
 #include "Uma.h"
 
 #include <codecvt>
 #include <crtdbg.h>
 #include <future>
-#include <WinInet.h>
 #include "utility.h"
 
 #ifdef USE_MS_OCR
@@ -19,7 +23,7 @@ const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
 const cv::Rect2d Uma::ScenarioChoiseBound = { 0.1636, 0.1929, 0.6051, 0.02485 };
 const double Uma::ResizeRatio = 2.0;
 
-Uma::Uma()
+Uma::Uma(wxFrame* frame)
 {
 	bDetected = false;
 	bStop = false;
@@ -28,6 +32,8 @@ Uma::Uma()
 	CurrentCharacter = nullptr;
 	CurrentEvent = nullptr;
 	api = new tesseract::TessBaseAPI();
+
+	this->frame = frame;
 }
 
 Uma::~Uma()
@@ -176,115 +182,10 @@ void Uma::MonitorThread()
 				if (EventName != CurrentEvent->Name) {
 					EventName = CurrentEvent->Name;
 
-					if (hTargetWnd) PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
+					wxThreadEvent event(wxEVT_THREAD);
+					wxQueueEvent(frame, event.Clone());
 				}
 			}
-
-
-				/*
-				if (this->EventName != EventName) {
-					std::wstring OrgEventName = EventName;
-
-					// デバッグ
-					if (config.SaveMissingEvent && EventName.empty() && DetectedEventName != OrgEventName) {
-						DetectedEventName = OrgEventName;
-
-						CreateDirectoryW((utility::GetExeDirectory() + L"\\Logs\\").c_str(), NULL);
-						CreateDirectoryW((utility::GetExeDirectory() + L"\\Logs\\support\\").c_str(), NULL);
-
-						std::wstring path =
-							utility::GetExeDirectory() +
-							std::wstring(L"\\Logs\\support\\screenshot_") +
-							std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) +
-							L".png";
-
-						cv::imwrite(utility::to_string(path), srcImage);
-					}
-
-					if (!EventName.empty() && this->EventName != EventName) {
-						if (SkillLib.EventMap.find(EventName) != SkillLib.EventMap.end()) {
-							auto& skill = SkillLib.EventMap[EventName];
-
-							CurrentEvent = &skill;
-						}
-						else {
-							CurrentEvent = nullptr;
-						}
-					}
-					else {
-						CurrentEvent = nullptr;
-					}
-
-					if (hTargetWnd && this->EventName != EventName)
-						PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
-
-					this->EventName = EventName;
-				}
-			}
-			// キャライベント
-			else if (CurrentCharacter) {
-				std::vector<std::wstring> events = RecognizeCharaEventText(srcImage);
-				if (!events.empty()) {
-					std::wstring EventName = GetCharaEvent(events);
-					if (this->EventName != EventName) {
-						std::wstring OrgEventName = EventName;
-
-						// デバッグ
-						if (config.SaveMissingEvent && EventName.empty() && DetectedEventName != OrgEventName) {
-							DetectedEventName = OrgEventName;
-
-							CreateDirectoryW((utility::GetExeDirectory() + L"\\Logs\\").c_str(), NULL);
-							CreateDirectoryW((utility::GetExeDirectory() + L"\\Logs\\chara\\").c_str(), NULL);
-
-							std::wstring path =
-								utility::GetExeDirectory() +
-								std::wstring(L"\\Logs\\chara\\screenshot_") +
-								std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) +
-								L".png";
-
-							cv::imwrite(utility::to_string(path), srcImage);
-						}
-
-						if (!EventName.empty() && this->EventName != EventName) {
-							if (CurrentCharacter->Events.find(EventName) != CurrentCharacter->Events.end()) {
-								auto& skill = CurrentCharacter->Events[EventName];
-
-								CurrentEvent = &skill;
-							}
-							else {
-								CurrentEvent = nullptr;
-							}
-						}
-						else {
-							CurrentEvent = nullptr;
-						}
-
-						if (hTargetWnd && this->EventName != EventName)
-							PostMessage(hTargetWnd, WM_CHANGEUMAEVENT, 0, 0);
-
-						this->EventName = EventName;
-					}
-				}
-				else {
-
-					this->EventName = EventName;
-					CurrentEvent = nullptr;
-				}
-			}
-			// シナリオイベント
-			else {
-				std::vector<std::wstring> events = RecognizeScenarioEventText(srcImage);
-				if (!events.empty()) {
-					std::wstring EventName = GetScenarioEvent(events);
-					if (!EventName.empty() && this->EventName != EventName) {
-						const auto& itr = SkillLib.ScenarioEventMap.find(EventName);
-						if (itr != SkillLib.ScenarioEventMap.end()) {
-							CurrentEvent = &itr->second;
-						}
-					}
-				}
-			}
-			*/
 
 			delete image;
 		}
@@ -439,100 +340,6 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 	return SkillLib.RetrieveCharaEventFromOptionTitle(text);
 }
 
-bool Uma::UpdateFile(const std::wstring& url, const std::wstring& path)
-{
-	HINTERNET hInternetOpen = NULL;
-	HINTERNET hInternetConnect = NULL;
-	HINTERNET hInternetRequest = NULL;
-	int Version;
-	DWORD dwReadSize;
-
-	URL_COMPONENTSW urlcomponents;
-	wchar_t szHostName[256];
-	wchar_t szUrlPath[256];
-	DWORD bytes;
-
-	// URL解析
-	ZeroMemory(&urlcomponents, sizeof(URL_COMPONENTSW));
-	urlcomponents.dwStructSize = sizeof(URL_COMPONENTSW);
-	urlcomponents.lpszHostName = szHostName;
-	urlcomponents.lpszUrlPath = szUrlPath;
-	urlcomponents.dwHostNameLength = 256;
-	urlcomponents.dwUrlPathLength = 256;
-
-	if (!InternetCrackUrlW(url.c_str(), 0, 0, &urlcomponents)) {
-		return false;
-	}
-
-	DWORD dwFlags = 0;
-	if (urlcomponents.nScheme == INTERNET_SCHEME_HTTP) {
-		dwFlags = INTERNET_FLAG_RELOAD | INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_NO_AUTO_REDIRECT;
-	}
-	else if (urlcomponents.nScheme == INTERNET_SCHEME_HTTPS) {
-		dwFlags = INTERNET_FLAG_RELOAD | INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_SECURE | INTERNET_FLAG_NO_AUTO_REDIRECT;
-	}
-
-	hInternetOpen = InternetOpenW(L"downloader", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-	if (hInternetOpen == NULL) {
-		return false;
-	}
-
-	hInternetConnect = InternetConnectW(hInternetOpen, urlcomponents.lpszHostName, urlcomponents.nPort, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
-	if (hInternetConnect == NULL) {
-		InternetCloseHandle(hInternetOpen);
-		return false;
-	}
-
-	hInternetRequest = HttpOpenRequestW(hInternetConnect, L"GET", urlcomponents.lpszUrlPath, NULL, NULL, NULL, dwFlags, NULL);
-	if (hInternetRequest == NULL) {
-		InternetCloseHandle(hInternetConnect);
-		InternetCloseHandle(hInternetOpen);
-		return false;
-	}
-
-	if (!HttpSendRequest(hInternetRequest, NULL, 0, NULL, 0)) {
-		InternetCloseHandle(hInternetRequest);
-		InternetCloseHandle(hInternetConnect);
-		InternetCloseHandle(hInternetOpen);
-		return false;
-	}
-
-	DWORD dwStatusCode = 0;
-	DWORD dwStatusCodeLength = sizeof(dwStatusCode);
-
-	if (!HttpQueryInfo(hInternetRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &dwStatusCode, &dwStatusCodeLength, NULL))
-		return false;
-
-	if (dwStatusCode != HTTP_STATUS_OK) {
-		return false;
-	}
-
-	DWORD dwSize = 0;
-	DWORD dwMaxSizeLength = sizeof(dwSize);
-	HttpQueryInfo(hInternetRequest, HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER, &dwSize, &dwMaxSizeLength, NULL);
-
-	char* buf = new char[dwSize];
-
-	ZeroMemory(buf, dwSize);
-	InternetReadFile(hInternetRequest, buf, dwSize, &dwReadSize);
-
-	HANDLE hFile = CreateFileW(path.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile != INVALID_HANDLE_VALUE) {
-		DWORD bytes;
-
-		WriteFile(hFile, buf, dwSize, &bytes, NULL);
-		CloseHandle(hFile);
-	}
-	
-	delete[] buf;
-
-	InternetCloseHandle(hInternetRequest);
-	InternetCloseHandle(hInternetConnect);
-	InternetCloseHandle(hInternetOpen);
-
-	return true;
-}
-
 EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 {
 	// サポートカードイベント
@@ -599,14 +406,10 @@ std::shared_ptr<EventSource> Uma::GetScenarioEvent(const std::vector<std::wstrin
 	return nullptr;
 }
 
-bool Uma::UpdateLibrary()
+bool Uma::Reload()
 {
-	std::wstring directory = utility::GetExeDirectory() + L"\\Library\\";
-
-	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Chara.json", directory + L"Chara.json");
-	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Events.json", directory + L"Events.json");
-	
 	SkillLib.Clear();
+
 	if (SkillLib.Load()) {
 		SkillLib.InitEventDB();
 		SkillLib.InitCharaDB();

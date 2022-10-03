@@ -17,6 +17,7 @@
 #define IDC_EDIT3                       1019
 #define IDC_COMBO2                      1020
 #define IDC_COMBOSCREENSHOTTYPE         1020
+#define IDC_EDIT4                       1020
 #define IDC_BUTTONCONFIG                1021
 #define IDC_BUTTONUPDATE                1023
 #define IDC_CHECKDEBUG                  1024
@@ -32,7 +33,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        108
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1031
+#define _APS_NEXT_CONTROL_VALUE         1032
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
