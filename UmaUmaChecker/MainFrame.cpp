@@ -229,9 +229,15 @@ void MainFrame::OnChangeUmaEvent(wxThreadEvent& event)
 		wxTextCtrl* richCtrls[3] = { m_richText1, m_richText2, m_richText3 };
 		
 		for (int i = 0; i < 3; i++) {
-			controls[i]->SetValue(umaMgr->CurrentEvent->Options[i]->Title);
-			richCtrls[i]->SetValue(umaMgr->CurrentEvent->Options[i]->Effect);
-			SetStyle(richCtrls[i]);
+			if (i < umaMgr->CurrentEvent->Options.size()) {
+				controls[i]->SetValue(umaMgr->CurrentEvent->Options[i]->Title);
+				richCtrls[i]->SetValue(umaMgr->CurrentEvent->Options[i]->Effect);
+				SetStyle(richCtrls[i]);
+			}
+			else {
+				controls[i]->SetValue(wxT(""));
+				richCtrls[i]->SetValue(wxT(""));
+			}
 		}
 	}
 }
@@ -308,6 +314,8 @@ void MainFrame::SetStyle(wxTextCtrl* ctrl)
 		wxTextAttr attr;
 		wchar_t c = match[0].str().at(0);
 
+		int t = c == '~' ? 1 : 0;
+
 		if (c == '~') {
 			if (isPlus) c = '+';
 			else c = '-';
@@ -320,11 +328,12 @@ void MainFrame::SetStyle(wxTextCtrl* ctrl)
 				break;
 			case '-':
 				isPlus = false;
-				attr.SetTextColour(wxColor(0xCC0000));
+				attr.SetTextColour(wxColor(0x0000CC));
 				break;
 		}
 
-		ctrl->SetStyle(pos + match.position(), pos + match.position() + match.length(), attr);
+		
+		ctrl->SetStyle(pos + match.position() + t, pos + match.position() + match.length(), attr);
 
 		pos += match.position() + match.length();
 	} while (pos < search.length());
