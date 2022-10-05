@@ -81,7 +81,8 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 	bSizer39->Add(m_textCtrlEvent1, 0, wxALL, 5);
 
-	m_richText1 = new wxTextCtrl(sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxWANTS_CHARS | wxTE_RICH | wxTE_MULTILINE);
+	m_richText1 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
+	m_richText1->SetFont(wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxNORMAL_FONT->GetFaceName()));
 	bSizer39->Add(m_richText1, 1, wxALL | wxEXPAND, 5);
 
 	sbSizer3->Add(bSizer39, 1, wxEXPAND, 5);
@@ -95,7 +96,8 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 	bSizer41->Add(m_textCtrlEvent2, 0, wxALL, 5);
 
-	m_richText2 = new wxTextCtrl(sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxWANTS_CHARS | wxTE_RICH | wxTE_MULTILINE);
+	m_richText2 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
+	m_richText2->SetFont(wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxNORMAL_FONT->GetFaceName()));
 	bSizer41->Add(m_richText2, 1, wxEXPAND | wxALL, 5);
 
 
@@ -110,18 +112,15 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 	bSizer40->Add(m_textCtrlEvent3, 0, wxALL, 5);
 
-	m_richText3 = new wxTextCtrl(sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxWANTS_CHARS | wxTE_RICH | wxTE_MULTILINE);
+	m_richText3 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
+	m_richText3->SetFont(wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxNORMAL_FONT->GetFaceName()));
 	bSizer40->Add(m_richText3, 1, wxEXPAND | wxALL, 5);
 
 	sbSizer3->Add(bSizer40, 1, wxEXPAND, 5);
 	bSizer30->Add(sbSizer3, 1, wxEXPAND | wxALL, 5);
 
-	//m_textPopup = new wxTextPopupCtrl(this, wxDefaultPosition, wxDefaultSize);
-	//m_textPopup->Show(false);
-
 	this->SetSizer(bSizer30);
 	this->Layout();
-
 	this->Centre(wxBOTH);
 
 	this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this);
@@ -232,7 +231,6 @@ void MainFrame::OnChangeUmaEvent(wxThreadEvent& event)
 			if (i < umaMgr->CurrentEvent->Options.size()) {
 				controls[i]->SetValue(umaMgr->CurrentEvent->Options[i]->Title);
 				richCtrls[i]->SetValue(umaMgr->CurrentEvent->Options[i]->Effect);
-				SetStyle(richCtrls[i]);
 			}
 			else {
 				controls[i]->SetValue(wxT(""));
@@ -244,22 +242,34 @@ void MainFrame::OnChangeUmaEvent(wxThreadEvent& event)
 
 void MainFrame::OnEnterControl(wxMouseEvent& event)
 {
-	/*
-	if (m_textPopup->IsShown()) return;
-
 	wxTextCtrl* ctrl = (wxTextCtrl*)event.GetEventObject();
-	wxSize size = ctrl->GetTextExtent(ctrl->GetValue());
 	wxSize clientSize = ctrl->GetClientSize();
-	wxSize windowSize = ctrl->GetSize();
-	
-	if (size.x + 10 > clientSize.x || size.y + 10 > clientSize.y) {
-		m_textPopup->SetPosition(ctrl->GetScreenPosition());
-		m_textPopup->SetSize(wxSize(size.x + 10, size.y + 10));
-		m_textPopup->m_textCtrl->SetValue(ctrl->GetValue());
-		SetStyle(m_textPopup->m_textCtrl);
-		m_textPopup->Show(true);
+	wxString text = ctrl->GetValue();
+	int maxWidth = 0;
+	int maxLine = ctrl->GetNumberOfLines();
+
+	for (int i = 0; i < maxLine; i++) {
+		wxSize s = ctrl->GetTextExtent(ctrl->GetLineText(i));
+		if (s.x > maxWidth) maxWidth = s.x;
 	}
-	*/
+
+	wxTextAttr attr = ctrl->GetDefaultStyle();
+	wxWindowDC dc(ctrl);
+	dc.SetFont(attr.GetFont());
+	wxSize size = dc.GetMultiLineTextExtent(text);
+
+	//wxSize size = ctrl->GetSizeFromTextSize(maxWidth);
+
+	if (false) {
+		int width = size.x > clientSize.x ? size.x : clientSize.x;
+		int height = size.y > clientSize.y ? size.y : clientSize.y;
+
+		wxPoint pos = ctrl->ClientToScreen(wxPoint(-2, -2));
+		wxTextPopupCtrl* m_textPopup = new wxTextPopupCtrl(this, this->GetSize());
+		m_textPopup->Position(pos, wxSize(0, 0));
+		m_textPopup->SetText(text);
+		m_textPopup->Popup();
+	}
 }
 
 void MainFrame::OnLeaveControl(wxMouseEvent& event)
@@ -296,46 +306,3 @@ int MainFrame::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 	free(pImageCodecInfo);
 	return -1;
 }
-
-void MainFrame::SetStyle(wxTextCtrl* ctrl)
-{
-	std::wregex regex(L"(((\\+|-)\\d+)|(~\\d+))");
-	std::wstring search = ctrl->GetValue().wc_str();
-
-	int pos = 0;
-	bool isPlus = true;
-
-	do {
-		std::wcmatch match;
-		std::regex_search(search.c_str() + pos, match, regex);
-
-		if (match.empty()) break;
-
-		wxTextAttr attr;
-		wchar_t c = match[0].str().at(0);
-
-		int t = c == '~' ? 1 : 0;
-
-		if (c == '~') {
-			if (isPlus) c = '+';
-			else c = '-';
-		}
-
-		switch (c) {
-			case '+':
-				isPlus = true;
-				attr.SetTextColour(wxColor(0x00CC00));
-				break;
-			case '-':
-				isPlus = false;
-				attr.SetTextColour(wxColor(0x0000CC));
-				break;
-		}
-
-		
-		ctrl->SetStyle(pos + match.position() + t, pos + match.position() + match.length(), attr);
-
-		pos += match.position() + match.length();
-	} while (pos < search.length());
-}
-

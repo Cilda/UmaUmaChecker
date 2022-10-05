@@ -216,6 +216,7 @@
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="utility.cpp" />
     <ClCompile Include="wxTextPopupCtrl.cpp" />
+    <ClCompile Include="wxUmaTextCtrl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
@@ -230,6 +231,7 @@
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="wxTextPopupCtrl.h" />
+    <ClInclude Include="wxUmaTextCtrl.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UmaUmaChecker.rc" />

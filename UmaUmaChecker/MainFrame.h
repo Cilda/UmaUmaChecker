@@ -21,6 +21,7 @@
 #include <wx/frame.h>
 
 #include "wxTextPopupCtrl.h"
+#include "wxUmaTextCtrl.h"
 
 #include "Uma.h"
 
@@ -47,7 +48,6 @@ protected:
 
 private:
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
-	void SetStyle(wxTextCtrl* ctrl);
 
 private:
 	wxToggleButton* m_toggleBtnStart;
@@ -59,13 +59,11 @@ private:
 	wxStaticText* m_staticText10;
 	wxTextCtrl* m_textCtrlEventSource;
 	wxTextCtrl* m_textCtrlEvent1;
-	wxTextCtrl* m_richText1;
+	wxUmaTextCtrl* m_richText1;
 	wxTextCtrl* m_textCtrlEvent2;
-	wxTextCtrl* m_richText2;
+	wxUmaTextCtrl* m_richText2;
 	wxTextCtrl* m_textCtrlEvent3;
-	wxTextCtrl* m_richText3;
-
-	wxTextPopupCtrl* m_textPopup;
+	wxUmaTextCtrl* m_richText3;
 
 	Uma* umaMgr;
 };
