@@ -71,6 +71,7 @@ private:
 	bool IsScenarioEvent(const cv::Mat& srcImg);
 
 	std::wstring GetTextFromImage(cv::Mat& img);
+	void AppendCollectedText(std::vector<std::wstring>& text_list);
 
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界

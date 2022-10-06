@@ -42,11 +42,15 @@ void TextCollector::Load()
 	}
 }
 
-void TextCollector::Collect(std::wstring& text)
+bool TextCollector::Collect(std::wstring& text)
 {
+	std::wstring org = text;
+
 	for (auto& c : collections) {
 		std::wregex reg(c.Search);
 
 		text = std::regex_replace(text, reg, c.Replace);
 	}
+
+	return text != org;
 }

@@ -22,7 +22,7 @@ public:
 
 	void Load();
 
-	void Collect(std::wstring& text);
+	bool Collect(std::wstring& text);
 
 private:
 	std::vector<Replacement> collections;

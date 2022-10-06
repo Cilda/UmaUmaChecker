@@ -264,6 +264,8 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
 		}
 
+		AppendCollectedText(text_list);
+
 		return text_list;
 #endif
 	}
@@ -299,9 +301,22 @@ std::wstring Uma::GetTextFromImage(cv::Mat& img)
 	std::wstring text = utility::ConvertUtf8ToUtf16(api->GetUTF8Text());
 	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
-	Collector.Collect(text);
+	//Collector.Collect(text);
 
 	return text;
+}
+
+void Uma::AppendCollectedText(std::vector<std::wstring>& text_list)
+{
+	std::vector<std::wstring> vecs;
+
+	for (auto text : text_list) {
+		if (Collector.Collect(text)) {
+			vecs.push_back(text);
+		}
+	}
+
+	text_list.insert(text_list.end(), vecs.begin(), vecs.end());
 }
 
 std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
@@ -481,6 +496,8 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
 		}
 
+		AppendCollectedText(text_list);
+
 		return text_list;
 #endif
 	}
@@ -514,6 +531,8 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
 			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
 			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
 		}
+
+		AppendCollectedText(text_list);
 
 		return text_list;
 	}
