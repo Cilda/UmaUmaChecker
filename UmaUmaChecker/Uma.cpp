@@ -259,9 +259,9 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 
 		std::vector<std::wstring> text_list;
 		{
-			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
-			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
-			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
+			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
+			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+			auto a3 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
 		}
 
 		AppendCollectedText(text_list);
@@ -316,7 +316,7 @@ void Uma::AppendCollectedText(std::vector<std::wstring>& text_list)
 		}
 	}
 
-	text_list.insert(text_list.end(), vecs.begin(), vecs.end());
+	text_list.insert(text_list.begin(), vecs.begin(), vecs.end());
 }
 
 std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
@@ -491,9 +491,9 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 
 		std::vector<std::wstring> text_list;
 		{
-			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
-			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
-			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
+			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
+			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+			auto a3 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
 		}
 
 		AppendCollectedText(text_list);
@@ -528,8 +528,8 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
 
 		std::vector<std::wstring> text_list;
 		{
-			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
-			std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
+			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
+			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
 		}
 
 		AppendCollectedText(text_list);
