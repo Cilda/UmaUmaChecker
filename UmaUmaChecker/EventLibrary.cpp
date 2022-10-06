@@ -5,6 +5,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <regex>
 #include <nlohmann/json.hpp>
 #include "simstring/simstring.h"
 
@@ -28,6 +29,7 @@ void EventLibrary::Clear()
 	OptionMap.clear();
 	ScenarioEventMap.clear();
 	Events.clear();
+	CharasByRank.clear();
 	Charas.clear();
 	ScenarioEvents.clear();
 }
@@ -117,6 +119,7 @@ bool EventLibrary::LoadChara()
 			const char* types[] = { "3", "2", "1" };
 			for (int i = 0; i < 3; i++) {
 				auto cards = charas["Chara"][types[i]];
+				std::vector< std::shared_ptr<EventRoot>> byRank;
 
 				for (auto& card : cards.items()) {
 					auto name = card.key();
@@ -152,10 +155,23 @@ bool EventLibrary::LoadChara()
 					}
 
 					Charas.push_back(skill);
+					byRank.push_back(skill);
 
 					auto& bb = Charas.back();
 					CharaMap[skill->Name] = skill;
 				}
+
+				std::sort(byRank.begin(), byRank.end(), [](std::shared_ptr<EventRoot> a, std::shared_ptr<EventRoot> b) {
+					std::wregex regex(L"^m(.+?)n(.+?)$");
+					std::wcmatch m1, m2;
+
+					std::regex_search(a->Name.c_str(), m1, regex);
+					std::regex_search(b->Name.c_str(), m2, regex);
+					
+					return m1[2].str() < m2[2].str();
+				});
+				CharasByRank.push_back(byRank);
+				byRank.clear();
 			}
 		}
 		catch (json::exception& ex) {

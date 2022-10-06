@@ -144,8 +144,16 @@ void MainFrame::Init()
 {
 	umaMgr->Init();
 
-	for (auto& chara : umaMgr->GetCharacters()) {
-		m_comboBoxUma->Append(chara->Name);
+	int r = 3;
+
+	for (auto& rank : umaMgr->GetCharacters()) {
+		m_comboBoxUma->Append(std::wstring(L"™") + std::to_wstring(r));
+
+		for (auto& chara : rank) {
+			m_comboBoxUma->Append(chara->Name);
+		}
+		
+		r--;
 	}
 }
 

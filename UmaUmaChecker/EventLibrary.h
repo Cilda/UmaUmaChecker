@@ -27,7 +27,7 @@ public:
 	std::shared_ptr<EventSource> RetrieveScenarioEvent(const std::wstring& name);
 	EventRoot* GetCharacter(const std::wstring& name);
 
-	const std::vector<std::shared_ptr<EventRoot>>& GetCharacters() const { return Charas; }
+	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const { return CharasByRank; }
 
 private:
 	void DeleteDBFiles();
@@ -37,6 +37,7 @@ private:
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> EventMap; // キー: イベント名, 値: 選択肢
 
 	std::vector<std::shared_ptr<EventRoot>> Charas;
+	std::vector<std::vector<std::shared_ptr<EventRoot>>> CharasByRank;
 	std::unordered_map<std::wstring, std::shared_ptr<EventRoot>> CharaMap; // キャライベント保持用
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> CharaEventMap; // キー: イベント名, 値: 選択肢
 

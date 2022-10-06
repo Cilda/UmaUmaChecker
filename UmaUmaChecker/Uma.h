@@ -38,7 +38,7 @@ public:
 	void SetNotifyTarget(HWND hWnd);
 	void SetTrainingCharacter(const std::wstring& CharaName);
 
-	const std::vector<std::shared_ptr<EventRoot>>& GetCharacters() const {
+	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const {
 		return SkillLib.GetCharacters();
 	}
 
