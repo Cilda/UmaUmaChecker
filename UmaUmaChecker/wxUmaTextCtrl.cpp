@@ -20,6 +20,7 @@ void wxUmaTextCtrl::SetValue(const wxString& value)
 {
 	wchar_t prev_c = 0;
 	bool is_num = false;
+	int or_check = 0;
 	wxString text;
 	wxColour color = *wxBLACK;
 
@@ -37,6 +38,13 @@ void wxUmaTextCtrl::SetValue(const wxString& value)
 				this->AppendText(text);
 				text = wxEmptyString;
 				break;
+		}
+
+		if (or_check == 2) {
+			or_check = 0;
+			this->SetDefaultStyle(*wxBLACK);
+			this->AppendText(text);
+			text = wxEmptyString;
 		}
 
 		if (c == '+') {
@@ -64,9 +72,18 @@ void wxUmaTextCtrl::SetValue(const wxString& value)
 				text = wxEmptyString;
 				is_num = false;
 			}
-			else {
-				is_num = false;
-				color = *wxBLACK;
+
+			if (!is_num) {
+				if (or_check == 0 && c == 'o') {
+					or_check = 1;
+				}
+				else if (c == 'r' && or_check == 1) {
+					or_check = 2;
+				}
+				else {
+					is_num = false;
+					color = *wxBLACK;
+				}
 			}
 		}
 
