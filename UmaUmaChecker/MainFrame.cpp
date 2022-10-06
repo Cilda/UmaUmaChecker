@@ -82,7 +82,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	bSizer39->Add(m_textCtrlEvent1, 0, wxALL, 5);
 
 	m_richText1 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
-	m_richText1->SetFont(wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxNORMAL_FONT->GetFaceName()));
 	bSizer39->Add(m_richText1, 1, wxALL | wxEXPAND, 5);
 
 	sbSizer3->Add(bSizer39, 1, wxEXPAND, 5);
@@ -97,7 +96,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	bSizer41->Add(m_textCtrlEvent2, 0, wxALL, 5);
 
 	m_richText2 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
-	m_richText2->SetFont(wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxNORMAL_FONT->GetFaceName()));
 	bSizer41->Add(m_richText2, 1, wxEXPAND | wxALL, 5);
 
 
@@ -113,7 +111,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	bSizer40->Add(m_textCtrlEvent3, 0, wxALL, 5);
 
 	m_richText3 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
-	m_richText3->SetFont(wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxNORMAL_FONT->GetFaceName()));
 	bSizer40->Add(m_richText3, 1, wxEXPAND | wxALL, 5);
 
 	sbSizer3->Add(bSizer40, 1, wxEXPAND, 5);
@@ -225,7 +222,7 @@ void MainFrame::OnChangeUmaEvent(wxThreadEvent& event)
 	if (umaMgr->CurrentEvent) {
 		m_textCtrlEventSource->SetValue(umaMgr->CurrentEvent->Name);
 		wxTextCtrl* controls[3] = { m_textCtrlEvent1, m_textCtrlEvent2, m_textCtrlEvent3 };
-		wxTextCtrl* richCtrls[3] = { m_richText1, m_richText2, m_richText3 };
+		wxUmaTextCtrl* richCtrls[3] = { m_richText1, m_richText2, m_richText3 };
 		
 		for (int i = 0; i < 3; i++) {
 			if (i < umaMgr->CurrentEvent->Options.size()) {
@@ -244,28 +241,22 @@ void MainFrame::OnEnterControl(wxMouseEvent& event)
 {
 	wxTextCtrl* ctrl = (wxTextCtrl*)event.GetEventObject();
 	wxSize clientSize = ctrl->GetClientSize();
+	wxSize windowSize = ctrl->GetSize();
 	wxString text = ctrl->GetValue();
-	int maxWidth = 0;
-	int maxLine = ctrl->GetNumberOfLines();
-
-	for (int i = 0; i < maxLine; i++) {
-		wxSize s = ctrl->GetTextExtent(ctrl->GetLineText(i));
-		if (s.x > maxWidth) maxWidth = s.x;
-	}
-
 	wxTextAttr attr = ctrl->GetDefaultStyle();
-	wxWindowDC dc(ctrl);
+	wxClientDC dc(ctrl);
 	dc.SetFont(attr.GetFont());
 	wxSize size = dc.GetMultiLineTextExtent(text);
 
-	//wxSize size = ctrl->GetSizeFromTextSize(maxWidth);
+	int marginWidth = windowSize.x - clientSize.x;
+	int marginHeight = windowSize.y - clientSize.y;
 
-	if (false) {
+	if (size.x > clientSize.x || size.y > clientSize.y) {
 		int width = size.x > clientSize.x ? size.x : clientSize.x;
 		int height = size.y > clientSize.y ? size.y : clientSize.y;
 
 		wxPoint pos = ctrl->ClientToScreen(wxPoint(-2, -2));
-		wxTextPopupCtrl* m_textPopup = new wxTextPopupCtrl(this, this->GetSize());
+		wxTextPopupCtrl* m_textPopup = new wxTextPopupCtrl(this, wxSize(width + marginWidth, height + marginHeight));
 		m_textPopup->Position(pos, wxSize(0, 0));
 		m_textPopup->SetText(text);
 		m_textPopup->Popup();

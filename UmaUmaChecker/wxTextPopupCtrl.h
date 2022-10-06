@@ -16,6 +16,7 @@ public:
 	virtual void Dismiss();
 
 	void SetText(const wxString& text);
+	virtual bool ProcessLeftDown(wxMouseEvent& event);
 
 private:
 	void OnMouseMove(wxMouseEvent& event);

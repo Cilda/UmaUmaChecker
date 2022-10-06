@@ -7,18 +7,19 @@
 wxTextPopupCtrl::wxTextPopupCtrl(wxWindow* parent, const wxSize& size) : wxPopupTransientWindow(parent, wxBORDER_NONE | wxPU_CONTAINS_CONTROLS)
 {
 	m_panel = new wxWindow(this, wxID_ANY);
-	m_panel->SetBackgroundColour(*wxBLACK);
+	m_panel->SetSize(size);
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
 	m_textCtrl = new wxUmaTextCtrl(m_panel);
+	m_textCtrl->SetSize(size);
+	m_textCtrl->SetBackgroundColour(*wxLIGHT_GREY);
 	sizer->Add(m_textCtrl, 1, wxEXPAND, 0);
 
-	m_panel->SetSizerAndFit(sizer);
-	sizer->Fit(m_panel);
+	m_panel->SetSizer(sizer);
+	m_panel->Layout();
 
-	SetClientSize(m_panel->GetSize());
-	m_panel->Fit();
+	this->SetClientSize(m_panel->GetSize());
 
 	this->Bind(wxEVT_MOTION, &wxTextPopupCtrl::OnMouseMove, this);
 	this->Bind(wxEVT_LEAVE_WINDOW, &wxTextPopupCtrl::OnMouseLeave, this);
@@ -43,6 +44,11 @@ void wxTextPopupCtrl::Dismiss()
 void wxTextPopupCtrl::SetText(const wxString& text)
 {
 	m_textCtrl->SetValue(text);
+}
+
+bool wxTextPopupCtrl::ProcessLeftDown(wxMouseEvent& event)
+{
+	return true;
 }
 
 void wxTextPopupCtrl::OnMouseMove(wxMouseEvent& event)

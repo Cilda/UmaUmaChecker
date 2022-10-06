@@ -7,6 +7,7 @@ wxUmaTextCtrl::wxUmaTextCtrl(wxWindow* parent) : wxTextCtrl(parent, wxID_ANY, wx
 {
 	DWORD dwOptions = SendMessage(this->GetHWND(), EM_GETLANGOPTIONS, 0, 0);
 	dwOptions &= ~IMF_AUTOFONT;
+	dwOptions |= IMF_UIFONTS;
 	SendMessage(this->GetHWND(), EM_SETLANGOPTIONS, 0, (LPARAM)dwOptions);
 	SendMessage(this->GetHWND(), EM_SHOWSCROLLBAR, SB_HORZ, FALSE);
 }
