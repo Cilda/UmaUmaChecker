@@ -16,6 +16,8 @@ public:
 	SettingDialog(wxWindow* parent, Config* config);
 	~SettingDialog();
 
+	bool IsUpdated() const { return bUpdated; }
+
 private:
 	void OnInitDialog(wxInitDialogEvent& event);
 	void OnClickUpdate(wxCommandEvent& event);
@@ -36,5 +38,7 @@ private:
 	wxCheckBox* m_checkSaveScreenShot;
 
 	Config* config;
+
+	bool bUpdated;
 };
 

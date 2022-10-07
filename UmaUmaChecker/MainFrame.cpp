@@ -82,6 +82,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	bSizer39->Add(m_textCtrlEvent1, 0, wxALL, 5);
 
 	m_richText1 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
+	m_richText1->SetMinSize(wxSize(-1, 55));
 	bSizer39->Add(m_richText1, 1, wxALL | wxEXPAND, 5);
 
 	sbSizer3->Add(bSizer39, 1, wxEXPAND, 5);
@@ -96,6 +97,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	bSizer41->Add(m_textCtrlEvent2, 0, wxALL, 5);
 
 	m_richText2 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
+	m_richText2->SetMinSize(wxSize(-1, 55));
 	bSizer41->Add(m_richText2, 1, wxEXPAND | wxALL, 5);
 
 
@@ -111,12 +113,14 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	bSizer40->Add(m_textCtrlEvent3, 0, wxALL, 5);
 
 	m_richText3 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
+	m_richText3->SetMinSize(wxSize(-1, 55));
 	bSizer40->Add(m_richText3, 1, wxEXPAND | wxALL, 5);
 
 	sbSizer3->Add(bSizer40, 1, wxEXPAND, 5);
 	bSizer30->Add(sbSizer3, 1, wxEXPAND | wxALL, 5);
 
 	this->SetSizer(bSizer30);
+	this->Fit();
 	this->Layout();
 	this->Centre(wxBOTH);
 
@@ -217,6 +221,22 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 	if (frame->ShowModal() == 1) {
 
 	}
+	if (frame->IsUpdated()) {
+		m_comboBoxUma->Clear();
+		umaMgr->Reload();
+		int r = 3;
+
+		for (auto& rank : umaMgr->GetCharacters()) {
+			m_comboBoxUma->Append(std::wstring(L"™") + std::to_wstring(r));
+
+			for (auto& chara : rank) {
+				m_comboBoxUma->Append(chara->Name);
+			}
+
+			r--;
+		}
+	}
+
 	frame->Destroy();
 }
 

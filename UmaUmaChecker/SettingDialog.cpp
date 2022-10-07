@@ -11,6 +11,7 @@
 
 SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent, wxID_ANY, wxT("設定"), wxDefaultPosition, wxSize(500, -1), wxDEFAULT_DIALOG_STYLE)
 {
+	this->bUpdated = false;
 	this->config = config;
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
@@ -94,6 +95,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
 {
 	if (UpdateLibrary()) {
+		bUpdated = true;
 		wxMessageBox(wxT("更新が完了しました。"), wxT("ウマウマチェッカー"));
 	}
 }

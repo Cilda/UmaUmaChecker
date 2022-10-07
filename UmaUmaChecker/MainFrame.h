@@ -35,7 +35,7 @@ public:
 	void Init();
 	void UnInit();
 
-protected:
+private:
 	void OnClose(wxCloseEvent& event);
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
@@ -46,7 +46,6 @@ protected:
 	void OnEnterControl(wxMouseEvent& event);
 	void OnLeaveControl(wxMouseEvent& event);
 
-private:
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
 private:
