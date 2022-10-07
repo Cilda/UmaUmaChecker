@@ -29,7 +29,7 @@
 class MainFrame : public wxFrame
 {
 public:
-	MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ウマウマチェッカー"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(467, 356), long style = wxCAPTION | wxCLOSE_BOX | wxICONIZE | wxMINIMIZE_BOX | wxSYSTEM_MENU | wxTAB_TRAVERSAL);
+	MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ウマウマチェッカー"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(467, 380), long style = wxCAPTION | wxCLOSE_BOX | wxICONIZE | wxMINIMIZE_BOX | wxSYSTEM_MENU | wxTAB_TRAVERSAL);
 	~MainFrame();
 
 	void Init();
