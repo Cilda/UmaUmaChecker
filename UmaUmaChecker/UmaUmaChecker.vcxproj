@@ -204,6 +204,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AboutDialog.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="EventOption.cpp" />
     <ClCompile Include="EventSource.cpp" />
@@ -219,6 +220,7 @@
     <ClCompile Include="wxUmaTextCtrl.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AboutDialog.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="EventOption.h" />
     <ClInclude Include="EventSource.h" />
@@ -230,6 +232,7 @@
     <ClInclude Include="EventLibrary.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="utility.h" />
+    <ClInclude Include="version.h" />
     <ClInclude Include="wxTextPopupCtrl.h" />
     <ClInclude Include="wxUmaTextCtrl.h" />
   </ItemGroup>

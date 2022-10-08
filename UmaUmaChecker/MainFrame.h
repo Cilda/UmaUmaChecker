@@ -45,6 +45,7 @@ private:
 	void OnChangeUmaEvent(wxThreadEvent& event);
 	void OnEnterControl(wxMouseEvent& event);
 	void OnLeaveControl(wxMouseEvent& event);
+	void OnClickAbout(wxCommandEvent& event);
 
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
@@ -53,9 +54,9 @@ private:
 	wxButton* m_buttonScreenshot;
 	wxButton* m_buttonPreview;
 	wxButton* m_buttonSetting;
-	wxStaticText* m_staticText6;
+	wxStaticText* m_staticTextCharaName;
 	wxComboBox* m_comboBoxUma;
-	wxStaticText* m_staticText10;
+	wxStaticText* m_staticTextEventName;
 	wxTextCtrl* m_textCtrlEventSource;
 	wxTextCtrl* m_textCtrlEvent1;
 	wxUmaTextCtrl* m_richText1;
@@ -63,6 +64,7 @@ private:
 	wxUmaTextCtrl* m_richText2;
 	wxTextCtrl* m_textCtrlEvent3;
 	wxUmaTextCtrl* m_richText3;
+	wxButton* m_buttonAbout;
 
 	Uma* umaMgr;
 };

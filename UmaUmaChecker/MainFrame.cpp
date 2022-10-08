@@ -11,116 +11,106 @@
 #include "utility.h"
 
 #include "SettingDialog.h"
+#include "AboutDialog.h"
 
 MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, id, title, pos, size, style), umaMgr(new Uma(this))
 {
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	this->SetBackgroundColour(wxColour(255, 255, 255));
 
-	wxBoxSizer* bSizer30;
-	bSizer30 = new wxBoxSizer(wxVERTICAL);
-
-	wxBoxSizer* bSizer35;
-	bSizer35 = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* bSizerTop = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
 
 	m_toggleBtnStart = new wxToggleButton(this, wxID_ANY, wxT("スタート"), wxDefaultPosition, wxDefaultSize, 0);
-	bSizer35->Add(m_toggleBtnStart, 0, wxALL, 5);
+	bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
 
 	m_buttonScreenshot
 		= new wxButton(this, wxID_ANY, wxT("スクリーンショット"), wxDefaultPosition, wxDefaultSize, 0);
-	bSizer35->Add(m_buttonScreenshot
-		, 0, wxALL, 5);
+	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL, 5);
 
 	m_buttonPreview = new wxButton(this, wxID_ANY, wxT("プレビュー表示"), wxDefaultPosition, wxDefaultSize, 0);
 	m_buttonPreview->Enable(false);
-	bSizer35->Add(m_buttonPreview, 0, wxALL, 5);
+	bSizerButtons->Add(m_buttonPreview, 0, wxALL, 5);
 
 	m_buttonSetting = new wxButton(this, wxID_ANY, wxT("設定"), wxDefaultPosition, wxDefaultSize, 0);
-	bSizer35->Add(m_buttonSetting, 0, wxALL, 5);
+	bSizerButtons->Add(m_buttonSetting, 0, wxALL, 5);
 
+	m_buttonAbout = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxDefaultSize, 0);
+	bSizerButtons->Add(m_buttonAbout, 0, wxALL, 5);
 
-	bSizer30->Add(bSizer35, 0, wxEXPAND | wxFIXED_MINSIZE | wxRIGHT | wxLEFT, 5);
+	bSizerTop->Add(bSizerButtons, 0, wxEXPAND | wxFIXED_MINSIZE | wxRIGHT | wxLEFT, 5);
 
 	wxBoxSizer* bSizer42;
 	bSizer42 = new wxBoxSizer(wxVERTICAL);
 
-	wxFlexGridSizer* fgSizer5;
-	fgSizer5 = new wxFlexGridSizer(2, 2, 0, 0);
-	fgSizer5->SetFlexibleDirection(wxBOTH);
-	fgSizer5->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+	wxFlexGridSizer* fgSizerInfo = new wxFlexGridSizer(2, 2, 0, 0);
+	fgSizerInfo->SetFlexibleDirection(wxBOTH);
+	fgSizerInfo->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
-	m_staticText6 = new wxStaticText(this, wxID_ANY, wxT("育成ウマ娘"), wxDefaultPosition, wxDefaultSize, 0);
-	m_staticText6->Wrap(-1);
-	fgSizer5->Add(m_staticText6, 0, wxALL, 5);
+	m_staticTextCharaName = new wxStaticText(this, wxID_ANY, wxT("育成ウマ娘"), wxDefaultPosition, wxDefaultSize, 0);
+	m_staticTextCharaName->Wrap(-1);
+	fgSizerInfo->Add(m_staticTextCharaName, 0, wxALL, 5);
 
 	m_comboBoxUma = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0);
-	m_comboBoxUma->SetMinSize(wxSize(300, -1));
+	//m_comboBoxUma->SetMinSize(wxSize(300, -1));
 
-	fgSizer5->Add(m_comboBoxUma, 0, wxALL, 5);
+	fgSizerInfo->Add(m_comboBoxUma, 1, wxEXPAND | wxALL, 5);
 
-	m_staticText10 = new wxStaticText(this, wxID_ANY, wxT("イベント名"), wxDefaultPosition, wxDefaultSize, 0);
-	m_staticText10->Wrap(-1);
-	fgSizer5->Add(m_staticText10, 0, wxALL, 5);
+	m_staticTextEventName = new wxStaticText(this, wxID_ANY, wxT("イベント名"), wxDefaultPosition, wxDefaultSize, 0);
+	m_staticTextEventName->Wrap(-1);
+	fgSizerInfo->Add(m_staticTextEventName, 0, wxALL, 5);
 
 	m_textCtrlEventSource = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(300, -1), wxTE_READONLY);
 	m_textCtrlEventSource->SetBackgroundColour(wxColour(255, 255, 255));
 
-	fgSizer5->Add(m_textCtrlEventSource, 0, wxALL, 5);
-	bSizer42->Add(fgSizer5, 0, wxEXPAND, 5);
-	bSizer30->Add(bSizer42, 0, wxEXPAND | wxRIGHT | wxLEFT, 5);
+	fgSizerInfo->Add(m_textCtrlEventSource, 0, wxALL, 5);
+	bSizer42->Add(fgSizerInfo, 0, wxEXPAND, 5);
+	bSizerTop->Add(bSizer42, 0, wxEXPAND | wxRIGHT | wxLEFT, 5);
 
-	wxStaticBoxSizer* sbSizer3;
-	sbSizer3 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("選択肢")), wxVERTICAL);
+	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("選択肢")), wxVERTICAL);
 
-	wxBoxSizer* bSizer39;
-	bSizer39 = new wxBoxSizer(wxHORIZONTAL);
-
-	m_textCtrlEvent1 = new wxTextCtrl(sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	// 選択肢1
+	wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);
+	m_textCtrlEvent1 = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	m_textCtrlEvent1->SetBackgroundColour(wxColour(200, 255, 150));
 	m_textCtrlEvent1->SetMinSize(wxSize(180, -1));
+	bSizerOption1->Add(m_textCtrlEvent1, 0, wxALL, 5);
 
-	bSizer39->Add(m_textCtrlEvent1, 0, wxALL, 5);
-
-	m_richText1 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
+	m_richText1 = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
 	m_richText1->SetMinSize(wxSize(-1, 55));
-	bSizer39->Add(m_richText1, 1, wxALL | wxEXPAND, 5);
+	bSizerOption1->Add(m_richText1, 1, wxALL | wxEXPAND, 5);
 
-	sbSizer3->Add(bSizer39, 1, wxEXPAND, 5);
-
-	wxBoxSizer* bSizer41;
-	bSizer41 = new wxBoxSizer(wxHORIZONTAL);
-
-	m_textCtrlEvent2 = new wxTextCtrl(sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	sbSizerOptions->Add(bSizerOption1, 1, wxEXPAND, 5);
+	
+	// 選択肢2
+	wxBoxSizer* bSizerOption2 = new wxBoxSizer(wxHORIZONTAL);
+	m_textCtrlEvent2 = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	m_textCtrlEvent2->SetBackgroundColour(wxColour(255, 240, 140));
 	m_textCtrlEvent2->SetMinSize(wxSize(180, -1));
+	bSizerOption2->Add(m_textCtrlEvent2, 0, wxALL, 5);
 
-	bSizer41->Add(m_textCtrlEvent2, 0, wxALL, 5);
-
-	m_richText2 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
+	m_richText2 = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
 	m_richText2->SetMinSize(wxSize(-1, 55));
-	bSizer41->Add(m_richText2, 1, wxEXPAND | wxALL, 5);
+	bSizerOption2->Add(m_richText2, 1, wxEXPAND | wxALL, 5);
 
+	sbSizerOptions->Add(bSizerOption2, 1, wxEXPAND, 5);
 
-	sbSizer3->Add(bSizer41, 1, wxEXPAND, 5);
-
-	wxBoxSizer* bSizer40;
-	bSizer40 = new wxBoxSizer(wxHORIZONTAL);
-
-	m_textCtrlEvent3 = new wxTextCtrl(sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	// 選択肢3
+	wxBoxSizer* bSizerOption3 = new wxBoxSizer(wxHORIZONTAL);
+	m_textCtrlEvent3 = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	m_textCtrlEvent3->SetBackgroundColour(wxColour(255, 200, 200));
 	m_textCtrlEvent3->SetMinSize(wxSize(180, -1));
+	bSizerOption3->Add(m_textCtrlEvent3, 0, wxALL, 5);
 
-	bSizer40->Add(m_textCtrlEvent3, 0, wxALL, 5);
-
-	m_richText3 = new wxUmaTextCtrl(sbSizer3->GetStaticBox());
+	m_richText3 = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
 	m_richText3->SetMinSize(wxSize(-1, 55));
-	bSizer40->Add(m_richText3, 1, wxEXPAND | wxALL, 5);
+	bSizerOption3->Add(m_richText3, 1, wxEXPAND | wxALL, 5);
 
-	sbSizer3->Add(bSizer40, 1, wxEXPAND, 5);
-	bSizer30->Add(sbSizer3, 1, wxEXPAND | wxALL, 5);
+	sbSizerOptions->Add(bSizerOption3, 1, wxEXPAND, 5);
 
-	this->SetSizer(bSizer30);
-	this->Fit();
+	bSizerTop->Add(sbSizerOptions, 1, wxEXPAND | wxALL, 5);
+
+	this->SetSizer(bSizerTop);
 	this->Layout();
 	this->Centre(wxBOTH);
 
@@ -137,6 +127,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	m_richText3->Bind(wxEVT_ENTER_WINDOW, &MainFrame::OnEnterControl, this);
 	m_richText3->Bind(wxEVT_LEAVE_WINDOW, &MainFrame::OnLeaveControl, this);
 	this->Bind(wxEVT_THREAD, &MainFrame::OnChangeUmaEvent, this);
+	m_buttonAbout->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickAbout, this);
 }
 
 MainFrame::~MainFrame()
@@ -293,6 +284,13 @@ void MainFrame::OnEnterControl(wxMouseEvent& event)
 
 void MainFrame::OnLeaveControl(wxMouseEvent& event)
 {
+}
+
+void MainFrame::OnClickAbout(wxCommandEvent& event)
+{
+	AboutDialog* dialog = new AboutDialog(this);
+	dialog->ShowModal();
+	dialog->Destroy();
 }
 
 int MainFrame::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
