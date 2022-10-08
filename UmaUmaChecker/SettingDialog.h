@@ -26,7 +26,7 @@ private:
 	void OnClickOkButton(wxCommandEvent& event);
 
 	bool UpdateLibrary();
-	bool UpdateFile(const wxString& url);
+	void UpdateFile(const wxString& url);
 
 private:
 	wxStaticText* m_staticTextUpdate;

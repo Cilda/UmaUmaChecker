@@ -128,15 +128,17 @@ bool SettingDialog::UpdateLibrary()
 		}
 	}
 
+	requests.clear();
+
 	return true;
 }
 
-bool SettingDialog::UpdateFile(const wxString& url)
+void SettingDialog::UpdateFile(const wxString& url)
 {
 	wxWebRequest request = wxWebSession::GetDefault().CreateRequest(this, url);
 	
 	if (!request.IsOk()) {
-		return false;
+		return;
 	}
 
 	this->Bind(wxEVT_WEBREQUEST_STATE, [this](wxWebRequestEvent& event) {
