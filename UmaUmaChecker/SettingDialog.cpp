@@ -1,8 +1,8 @@
 #include "SettingDialog.h"
 
-#include <WinInet.h>
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>
+#include <wx/wfstream.h>
 
 #include "utility.h"
 
@@ -117,103 +117,51 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 
 bool SettingDialog::UpdateLibrary()
 {
-	std::wstring directory = utility::GetExeDirectory() + L"\\Library\\";
+	wxWindowDisabler disabler;
 
-	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Chara.json", directory + L"Chara.json");
-	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Events.json", directory + L"Events.json");
+	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Chara.json");
+	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Events.json");
+	
+	for (auto& request : requests) {
+		while (request.IsOk() && request.GetState() == wxWebRequest::State_Active) {
+			wxYield();
+		}
+	}
+
 	return true;
 }
 
-bool SettingDialog::UpdateFile(const std::wstring& url, const std::wstring& path)
+bool SettingDialog::UpdateFile(const wxString& url)
 {
-	HINTERNET hInternetOpen = NULL;
-	HINTERNET hInternetConnect = NULL;
-	HINTERNET hInternetRequest = NULL;
-	int Version;
-	DWORD dwReadSize;
-
-	URL_COMPONENTSW urlcomponents;
-	wchar_t szHostName[256];
-	wchar_t szUrlPath[256];
-	DWORD bytes;
-
-	// URL‰ðÍ
-	ZeroMemory(&urlcomponents, sizeof(URL_COMPONENTSW));
-	urlcomponents.dwStructSize = sizeof(URL_COMPONENTSW);
-	urlcomponents.lpszHostName = szHostName;
-	urlcomponents.lpszUrlPath = szUrlPath;
-	urlcomponents.dwHostNameLength = 256;
-	urlcomponents.dwUrlPathLength = 256;
-
-	if (!InternetCrackUrlW(url.c_str(), 0, 0, &urlcomponents)) {
+	wxWebRequest request = wxWebSession::GetDefault().CreateRequest(this, url);
+	
+	if (!request.IsOk()) {
 		return false;
 	}
 
-	DWORD dwFlags = 0;
-	if (urlcomponents.nScheme == INTERNET_SCHEME_HTTP) {
-		dwFlags = INTERNET_FLAG_RELOAD | INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_NO_AUTO_REDIRECT;
-	}
-	else if (urlcomponents.nScheme == INTERNET_SCHEME_HTTPS) {
-		dwFlags = INTERNET_FLAG_RELOAD | INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_SECURE | INTERNET_FLAG_NO_AUTO_REDIRECT;
-	}
+	this->Bind(wxEVT_WEBREQUEST_STATE, [this](wxWebRequestEvent& event) {
+		switch (event.GetState()) {
+			case wxWebRequest::State_Completed: {
+				const wxWebResponse& response = event.GetResponse();
+				if (response.GetStatus() == 200) {
+					auto stream = response.GetStream();
+					wxString path = utility::GetExeDirectory() + L"\\Library\\" + response.GetSuggestedFileName();
+					wxFileOutputStream output(path);
 
-	hInternetOpen = InternetOpenW(L"downloader", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-	if (hInternetOpen == NULL) {
-		return false;
-	}
+					if (output.IsOk()) {
+						output.Write(*stream);
+						output.Close();
+					}
+				}
+				break;
+			}
+			case wxWebRequest::State_Failed:
+			case wxWebRequest::State_Cancelled:
+				break;
+		}
+	});
 
-	hInternetConnect = InternetConnectW(hInternetOpen, urlcomponents.lpszHostName, urlcomponents.nPort, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
-	if (hInternetConnect == NULL) {
-		InternetCloseHandle(hInternetOpen);
-		return false;
-	}
+	request.Start();
 
-	hInternetRequest = HttpOpenRequestW(hInternetConnect, L"GET", urlcomponents.lpszUrlPath, NULL, NULL, NULL, dwFlags, NULL);
-	if (hInternetRequest == NULL) {
-		InternetCloseHandle(hInternetConnect);
-		InternetCloseHandle(hInternetOpen);
-		return false;
-	}
-
-	if (!HttpSendRequest(hInternetRequest, NULL, 0, NULL, 0)) {
-		InternetCloseHandle(hInternetRequest);
-		InternetCloseHandle(hInternetConnect);
-		InternetCloseHandle(hInternetOpen);
-		return false;
-	}
-
-	DWORD dwStatusCode = 0;
-	DWORD dwStatusCodeLength = sizeof(dwStatusCode);
-
-	if (!HttpQueryInfo(hInternetRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &dwStatusCode, &dwStatusCodeLength, NULL))
-		return false;
-
-	if (dwStatusCode != HTTP_STATUS_OK) {
-		return false;
-	}
-
-	DWORD dwSize = 0;
-	DWORD dwMaxSizeLength = sizeof(dwSize);
-	HttpQueryInfo(hInternetRequest, HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER, &dwSize, &dwMaxSizeLength, NULL);
-
-	char* buf = new char[dwSize];
-
-	ZeroMemory(buf, dwSize);
-	InternetReadFile(hInternetRequest, buf, dwSize, &dwReadSize);
-
-	HANDLE hFile = CreateFileW(path.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile != INVALID_HANDLE_VALUE) {
-		DWORD bytes;
-
-		WriteFile(hFile, buf, dwSize, &bytes, NULL);
-		CloseHandle(hFile);
-	}
-
-	delete[] buf;
-
-	InternetCloseHandle(hInternetRequest);
-	InternetCloseHandle(hInternetConnect);
-	InternetCloseHandle(hInternetOpen);
-
-	return true;
+	requests.push_back(std::move(request));
 }

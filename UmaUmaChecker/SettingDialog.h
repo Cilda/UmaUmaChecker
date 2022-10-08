@@ -7,6 +7,7 @@
 #include <wx/button.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
+#include <wx/webrequest.h>
 
 class Config;
 
@@ -25,7 +26,7 @@ private:
 	void OnClickOkButton(wxCommandEvent& event);
 
 	bool UpdateLibrary();
-	bool UpdateFile(const std::wstring& url, const std::wstring& path);
+	bool UpdateFile(const wxString& url);
 
 private:
 	wxStaticText* m_staticTextUpdate;
@@ -38,7 +39,7 @@ private:
 	wxCheckBox* m_checkSaveScreenShot;
 
 	Config* config;
-
+	std::vector<wxWebRequest> requests;
 	bool bUpdated;
 };
 
