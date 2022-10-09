@@ -17,17 +17,17 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ƒEƒ
 	wxBoxSizer* sizerInfo = new wxBoxSizer(wxVERTICAL);
 
 	wxBoxSizer* sizerTitle = new wxBoxSizer(wxHORIZONTAL);
-	m_bitmap = new wxStaticBitmap(this, wxID_ANY, wxNullIcon, wxDefaultPosition, wxSize(32, 32), wxBORDER);
+	m_bitmap = new wxStaticBitmap(this, wxID_ANY, wxICON(AppIcon), wxDefaultPosition, wxSize(32, 32));
 	sizerTitle->Add(m_bitmap, 0, wxRIGHT, 5);
 
-	wxStaticText* staticTextTitle = new wxStaticText(this, wxID_ANY, wxT("ƒEƒ}ƒEƒ}ƒ`ƒFƒbƒJ["));
+	wxStaticText* staticTextTitle = new wxStaticText(this, wxID_ANY, app_title);
 	staticTextTitle->Wrap(-1);
 	staticTextTitle->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxEmptyString));
 	sizerTitle->Add(staticTextTitle);
 
 	sizerInfo->Add(sizerTitle, 0, wxALL | wxCENTER, 5);
 
-	wxStaticText* staticTextVersion = new wxStaticText(this, wxID_ANY, wxString::Format(wxT("%s\n%s"), app_version, app_copyright), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
+	wxStaticText* staticTextVersion = new wxStaticText(this, wxID_ANY, wxString::Format(wxT("%s"), app_copyright), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	staticTextVersion->Wrap(-1);
 	sizerInfo->Add(staticTextVersion, 0, wxALL | wxCENTER, 5);
 

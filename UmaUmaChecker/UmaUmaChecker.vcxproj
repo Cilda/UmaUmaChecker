@@ -241,6 +241,9 @@
   <ItemGroup>
     <ResourceCompile Include="UmaUmaChecker.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="app.ico" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>
