@@ -50,7 +50,7 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ƒEƒ
 	m_buttonOk = new wxButton(this, wxID_OK);
 	bSizerButtons->Add(m_buttonOk, 0, wxLEFT | wxRIGHT, 5);
 
-	m_buttonLicense = new wxButton(this, wxID_ANY, wxT("ƒ‰ƒCƒZƒ“ƒX"));
+	m_buttonLicense = new wxButton(this, wxID_ANY, wxT("ƒNƒŒƒWƒbƒg"));
 	m_buttonLicense->Disable();
 	bSizerButtons->Add(m_buttonLicense, 0, wxLEFT | wxRIGHT, 5);
 
