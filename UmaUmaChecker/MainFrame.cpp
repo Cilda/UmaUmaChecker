@@ -207,6 +207,8 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 
 void MainFrame::OnClickPreview(wxCommandEvent& event)
 {
+	if (m_PreviewWindow && m_PreviewWindow->IsShown()) return;
+
 	if (!m_PreviewWindow) {
 		m_PreviewWindow = new PreviewFrame(this);
 		m_PreviewWindow->Bind(DROP_IMAGE, &MainFrame::OnPreviewDragFile, this);
