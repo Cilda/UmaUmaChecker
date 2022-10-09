@@ -12,6 +12,7 @@ class MyApp : public wxApp {
 public:
 	virtual bool OnInit() {
 		Gdiplus::GdiplusStartup(&token, &input, NULL);
+		wxInitAllImageHandlers();
 
 		MainFrame* frame = new MainFrame(NULL);
 		frame->Init();

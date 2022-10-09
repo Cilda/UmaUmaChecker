@@ -13,7 +13,7 @@
 #include "SettingDialog.h"
 #include "AboutDialog.h"
 
-MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, id, title, pos, size, style), umaMgr(new Uma(this))
+MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, id, title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL)
 {
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	this->SetBackgroundColour(wxColour(255, 255, 255));
@@ -29,7 +29,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL, 5);
 
 	m_buttonPreview = new wxButton(this, wxID_ANY, wxT("プレビュー表示"), wxDefaultPosition, wxDefaultSize, 0);
-	m_buttonPreview->Enable(false);
 	bSizerButtons->Add(m_buttonPreview, 0, wxALL, 5);
 
 	m_buttonSetting = new wxButton(this, wxID_ANY, wxT("設定"), wxDefaultPosition, wxDefaultSize, 0);
@@ -114,6 +113,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	this->Layout();
 	this->Centre(wxBOTH);
 
+	// イベントバインド
 	this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this);
 	m_toggleBtnStart->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnClickStart, this);
 	m_buttonScreenshot->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickScreenShot, this);
@@ -204,6 +204,16 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 
 void MainFrame::OnClickPreview(wxCommandEvent& event)
 {
+	if (!m_PreviewWindow) {
+		m_PreviewWindow = new PreviewFrame(this);
+		m_PreviewWindow->Bind(DROP_IMAGE, &MainFrame::OnPreviewDragFile, this);
+	}
+
+	wxPoint pos = this->GetPosition();
+	wxSize size = this->GetSize();
+
+	m_PreviewWindow->SetPosition(wxPoint(pos.x + size.x, pos.y));
+	m_PreviewWindow->Show();
 }
 
 void MainFrame::OnClickSetting(wxCommandEvent& event)
@@ -239,20 +249,7 @@ void MainFrame::OnSelectedUma(wxCommandEvent& event)
 void MainFrame::OnChangeUmaEvent(wxThreadEvent& event)
 {
 	if (umaMgr->CurrentEvent) {
-		m_textCtrlEventSource->SetValue(umaMgr->CurrentEvent->Name);
-		wxTextCtrl* controls[3] = { m_textCtrlEvent1, m_textCtrlEvent2, m_textCtrlEvent3 };
-		wxUmaTextCtrl* richCtrls[3] = { m_richText1, m_richText2, m_richText3 };
-		
-		for (int i = 0; i < 3; i++) {
-			if (i < umaMgr->CurrentEvent->Options.size()) {
-				controls[i]->SetValue(umaMgr->CurrentEvent->Options[i]->Title);
-				richCtrls[i]->SetValue(umaMgr->CurrentEvent->Options[i]->Effect);
-			}
-			else {
-				controls[i]->SetValue(wxT(""));
-				richCtrls[i]->SetValue(wxT(""));
-			}
-		}
+		ChangeEventOptions(umaMgr->CurrentEvent);
 	}
 }
 
@@ -291,6 +288,43 @@ void MainFrame::OnClickAbout(wxCommandEvent& event)
 	AboutDialog* dialog = new AboutDialog(this);
 	dialog->ShowModal();
 	dialog->Destroy();
+}
+
+void MainFrame::OnPreviewDragFile(wxCommandEvent& event)
+{
+	if (m_PreviewWindow) {
+		const auto& image = m_PreviewWindow->GetImage();
+
+		Gdiplus::Bitmap* gimage = new Gdiplus::Bitmap(image.GetHBITMAP(), NULL);
+		cv::Mat mat = Uma::BitmapToCvMat(gimage);
+
+		EventSource* EventSrc = umaMgr->DetectEvent(mat);
+		if (EventSrc) {
+			ChangeEventOptions(EventSrc);
+		}
+
+		delete gimage;
+	}
+}
+
+void MainFrame::ChangeEventOptions(EventSource* event)
+{
+	if (event) {
+		m_textCtrlEventSource->SetValue(event->Name);
+		wxTextCtrl* controls[3] = { m_textCtrlEvent1, m_textCtrlEvent2, m_textCtrlEvent3 };
+		wxUmaTextCtrl* richCtrls[3] = { m_richText1, m_richText2, m_richText3 };
+
+		for (int i = 0; i < 3; i++) {
+			if (i < event->Options.size()) {
+				controls[i]->SetValue(event->Options[i]->Title);
+				richCtrls[i]->SetValue(event->Options[i]->Effect);
+			}
+			else {
+				controls[i]->SetValue(wxT(""));
+				richCtrls[i]->SetValue(wxT(""));
+			}
+		}
+	}
 }
 
 int MainFrame::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)

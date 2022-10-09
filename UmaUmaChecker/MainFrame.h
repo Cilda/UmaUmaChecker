@@ -23,6 +23,8 @@
 #include "wxTextPopupCtrl.h"
 #include "wxUmaTextCtrl.h"
 
+#include "PreviewFrame.h"
+
 #include "Uma.h"
 
 
@@ -46,7 +48,9 @@ private:
 	void OnEnterControl(wxMouseEvent& event);
 	void OnLeaveControl(wxMouseEvent& event);
 	void OnClickAbout(wxCommandEvent& event);
+	void OnPreviewDragFile(wxCommandEvent& event);
 
+	void ChangeEventOptions(EventSource* event);
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
 private:
@@ -65,6 +69,8 @@ private:
 	wxTextCtrl* m_textCtrlEvent3;
 	wxUmaTextCtrl* m_richText3;
 	wxButton* m_buttonAbout;
+
+	PreviewFrame* m_PreviewWindow;
 
 	Uma* umaMgr;
 };

@@ -210,6 +210,7 @@
     <ClCompile Include="EventSource.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="EventRoot.cpp" />
+    <ClCompile Include="PreviewFrame.cpp" />
     <ClCompile Include="SettingDialog.cpp" />
     <ClCompile Include="TextCollector.cpp" />
     <ClCompile Include="Uma.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="EventOption.h" />
     <ClInclude Include="EventSource.h" />
+    <ClInclude Include="PreviewFrame.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="EventRoot.h" />
     <ClInclude Include="SettingDialog.h" />
