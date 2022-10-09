@@ -13,7 +13,7 @@ wxTextPopupCtrl::wxTextPopupCtrl(wxWindow* parent, const wxSize& size) : wxPopup
 
 	m_textCtrl = new wxUmaTextCtrl(m_panel);
 	m_textCtrl->SetSize(size);
-	m_textCtrl->SetBackgroundColour(*wxLIGHT_GREY);
+	m_textCtrl->SetBackgroundColour(wxColour(235, 253, 250));
 	sizer->Add(m_textCtrl, 1, wxEXPAND, 0);
 
 	m_panel->SetSizer(sizer);
