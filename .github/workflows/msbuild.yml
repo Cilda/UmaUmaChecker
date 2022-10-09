@@ -34,7 +34,7 @@ jobs:
       
     - name: Vcpkg
       run: |
-        vcpkg vcpkg integrate install
+        vcpkg integrate install
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
