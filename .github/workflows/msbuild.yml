@@ -17,7 +17,7 @@ env:
   
   VCPKG_DEFAULT_TRIPLET: x64-windows-static
   
-  VCPKG_INSTALLED_DIR: ${{env.SOLUTION_FILE_PATH}}/vcpkg_installed/${{env.VCPKG_DEFAULT_TRIPLET}}
+  VCPKG_INSTALLED_DIR: ./vcpkg_installed/x64-windows-static
 
 permissions:
   contents: read
