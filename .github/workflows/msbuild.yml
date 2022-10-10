@@ -36,26 +36,23 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
       
-    - name: run-vcpkg
-      uses: lukka/run-vcpkg@v10.5
-      id: runvcpkg
+    - uses: actions/cache@v3.0.10
+      id: vcpkgcache
       with:
-        vcpkgJsonGlob: '**/vcpkg.json'
-        appendedCacheKey: vcpkginstall
-        vcpkgGitCommitId: 'acc3bcf76b84ae5041c86ab55fe138ae7b8255c7'
-        runVcpkgInstall: true
+        path: ${{env.SOLUTION_FILE_PATH}}/vcpkg_installed/${{env.VCPKG_DEFAULT_TRIPLET}}
+        key: ${{env.VCPKG_DEFAULT_TRIPLET}}-vcpkg-${{hashFiles('./vcpkg.json')}}
         
-    - name: vcpkg integrate install
+    - name: vcpkg integratation
       run: vcpkg integrate install
 
     - name: Build
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} /p:OutDir="${{env.SOLUTION_FILE_PATH}}/install/"
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} /p:OutDir="${{env.SOLUTION_FILE_PATH}}/Release/"
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
       with:
         name: UmaUmaChecker-${{matrix.arch}}
-        path: ${{env.SOLUTION_FILE_PATH}}/install
+        path: ${{env.SOLUTION_FILE_PATH}}/Release
