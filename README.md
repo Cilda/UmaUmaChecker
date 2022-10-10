@@ -1,4 +1,5 @@
-# UmaUmaChecker  
+[![MSBuild](https://github.com/Cilda/UmaUmaChecker/actions/workflows/msbuild.yml/badge.svg)](https://github.com/Cilda/UmaUmaChecker/actions/workflows/msbuild.yml)
+# ウマウマチェッカー(UmaUmaChecker)
 ## 目的
 ウマ娘プリティダービーの育成モード選択肢において条件分岐で取得するステータスの可視化をして効率的な育成のサポートをする。
 
