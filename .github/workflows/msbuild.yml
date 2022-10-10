@@ -39,6 +39,7 @@ jobs:
       with:
         vcpkgJsonGlob: '**/vcpkg.json'
         appendedCacheKey: vcpkginstall
+        vcpkgGitCommitId: 'acc3bcf76b84ae5041c86ab55fe138ae7b8255c7'
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
