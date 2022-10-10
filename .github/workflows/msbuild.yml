@@ -46,7 +46,7 @@ jobs:
         runVcpkgInstall: true
         
     - name: vcpkg integrate install
-      run: ${{steps.runvcpkg.inputs.vcpkgDirectory}}/vcpkg integrate install
+      run: vcpkg integrate install
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
