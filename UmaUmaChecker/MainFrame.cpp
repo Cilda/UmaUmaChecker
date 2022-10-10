@@ -24,17 +24,17 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	wxBoxSizer* bSizerTop = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
 
-	m_toggleBtnStart = new wxToggleButton(this, wxID_ANY, wxT("ƒXƒ^[ƒg"), wxDefaultPosition, wxDefaultSize, 0);
+	m_toggleBtnStart = new wxToggleButton(this, wxID_ANY, wxT("ã‚¹ã‚¿ãƒ¼ãƒˆ"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
 
 	m_buttonScreenshot
-		= new wxButton(this, wxID_ANY, wxT("ƒXƒNƒŠ[ƒ“ƒVƒ‡ƒbƒg"), wxDefaultPosition, wxDefaultSize, 0);
+		= new wxButton(this, wxID_ANY, wxT("ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚·ãƒ§ãƒƒãƒˆ"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL, 5);
 
-	m_buttonPreview = new wxButton(this, wxID_ANY, wxT("ƒvƒŒƒrƒ…[•\Ž¦"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonPreview = new wxButton(this, wxID_ANY, wxT("ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼è¡¨ç¤º"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonPreview, 0, wxALL, 5);
 
-	m_buttonSetting = new wxButton(this, wxID_ANY, wxT("Ý’è"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonSetting = new wxButton(this, wxID_ANY, wxT("è¨­å®š"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonSetting, 0, wxALL, 5);
 
 	m_buttonAbout = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxDefaultSize, 0);
@@ -49,7 +49,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	fgSizerInfo->SetFlexibleDirection(wxBOTH);
 	fgSizerInfo->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
-	m_staticTextCharaName = new wxStaticText(this, wxID_ANY, wxT("ˆç¬ƒEƒ}–º"), wxDefaultPosition, wxDefaultSize, 0);
+	m_staticTextCharaName = new wxStaticText(this, wxID_ANY, wxT("è‚²æˆã‚¦ãƒžå¨˜"), wxDefaultPosition, wxDefaultSize, 0);
 	m_staticTextCharaName->Wrap(-1);
 	fgSizerInfo->Add(m_staticTextCharaName, 0, wxALL, 5);
 
@@ -58,7 +58,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 	fgSizerInfo->Add(m_comboBoxUma, 1, wxEXPAND | wxALL, 5);
 
-	m_staticTextEventName = new wxStaticText(this, wxID_ANY, wxT("ƒCƒxƒ“ƒg–¼"), wxDefaultPosition, wxDefaultSize, 0);
+	m_staticTextEventName = new wxStaticText(this, wxID_ANY, wxT("ã‚¤ãƒ™ãƒ³ãƒˆå"), wxDefaultPosition, wxDefaultSize, 0);
 	m_staticTextEventName->Wrap(-1);
 	fgSizerInfo->Add(m_staticTextEventName, 0, wxALL, 5);
 
@@ -69,9 +69,9 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	bSizer42->Add(fgSizerInfo, 0, wxEXPAND, 5);
 	bSizerTop->Add(bSizer42, 0, wxEXPAND | wxRIGHT | wxLEFT, 5);
 
-	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("‘I‘ðŽˆ")), wxVERTICAL);
+	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("é¸æŠžè‚¢")), wxVERTICAL);
 
-	// ‘I‘ðŽˆ1
+	// é¸æŠžè‚¢1
 	wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);
 	m_textCtrlEvent1 = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	m_textCtrlEvent1->SetBackgroundColour(wxColour(200, 255, 150));
@@ -84,7 +84,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 	sbSizerOptions->Add(bSizerOption1, 1, wxEXPAND, 5);
 	
-	// ‘I‘ðŽˆ2
+	// é¸æŠžè‚¢2
 	wxBoxSizer* bSizerOption2 = new wxBoxSizer(wxHORIZONTAL);
 	m_textCtrlEvent2 = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	m_textCtrlEvent2->SetBackgroundColour(wxColour(255, 240, 140));
@@ -97,7 +97,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 	sbSizerOptions->Add(bSizerOption2, 1, wxEXPAND, 5);
 
-	// ‘I‘ðŽˆ3
+	// é¸æŠžè‚¢3
 	wxBoxSizer* bSizerOption3 = new wxBoxSizer(wxHORIZONTAL);
 	m_textCtrlEvent3 = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	m_textCtrlEvent3->SetBackgroundColour(wxColour(255, 200, 200));
@@ -116,7 +116,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	this->Layout();
 	this->Centre(wxBOTH);
 
-	// ƒCƒxƒ“ƒgƒoƒCƒ“ƒh
+	// ã‚¤ãƒ™ãƒ³ãƒˆãƒã‚¤ãƒ³ãƒ‰
 	this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this);
 	m_toggleBtnStart->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnClickStart, this);
 	m_buttonScreenshot->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickScreenShot, this);
@@ -145,7 +145,7 @@ void MainFrame::Init()
 	int r = 3;
 
 	for (auto& rank : umaMgr->GetCharacters()) {
-		m_comboBoxUma->Append(std::wstring(L"™") + std::to_wstring(r));
+		m_comboBoxUma->Append(std::wstring(L"â˜†") + std::to_wstring(r));
 
 		for (auto& chara : rank) {
 			m_comboBoxUma->Append(chara->Name);
@@ -170,11 +170,11 @@ void MainFrame::OnClickStart(wxCommandEvent& event)
 {
 	if (!m_toggleBtnStart->GetValue()) {
 		umaMgr->Stop();
-		m_toggleBtnStart->SetLabelText(wxT("ƒXƒ^[ƒg"));
+		m_toggleBtnStart->SetLabelText(wxT("ã‚¹ã‚¿ãƒ¼ãƒˆ"));
 	}
 	else {
 		umaMgr->Start();
-		m_toggleBtnStart->SetLabelText(wxT("ƒXƒgƒbƒv"));
+		m_toggleBtnStart->SetLabelText(wxT("ã‚¹ãƒˆãƒƒãƒ—"));
 	}
 }
 
@@ -200,7 +200,7 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 		delete image;
 	}
 	else {
-		wxMessageBox(wxT("ƒEƒ}–º‚ÌƒEƒBƒ“ƒhƒE‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB"), wxT("ƒEƒ}ƒEƒ}ƒ`ƒFƒbƒJ["));
+		wxMessageBox(wxT("ã‚¦ãƒžå¨˜ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚"), wxT("ã‚¦ãƒžã‚¦ãƒžãƒã‚§ãƒƒã‚«ãƒ¼"));
 
 	}
 }
@@ -233,7 +233,7 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 		int r = 3;
 
 		for (auto& rank : umaMgr->GetCharacters()) {
-			m_comboBoxUma->Append(std::wstring(L"™") + std::to_wstring(r));
+			m_comboBoxUma->Append(std::wstring(L"â˜†") + std::to_wstring(r));
 
 			for (auto& chara : rank) {
 				m_comboBoxUma->Append(chara->Name);

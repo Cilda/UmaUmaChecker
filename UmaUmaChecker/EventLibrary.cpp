@@ -162,7 +162,7 @@ bool EventLibrary::LoadChara()
 				}
 
 				std::sort(byRank.begin(), byRank.end(), [](std::shared_ptr<EventRoot> a, std::shared_ptr<EventRoot> b) {
-					std::wregex regex(L"^m(.+?)n(.+?)$");
+					std::wregex regex(L"^ï¼»(.+?)ï¼½(.+?)$");
 					std::wcmatch m1, m2;
 
 					std::regex_search(a->Name.c_str(), m1, regex);
@@ -195,7 +195,7 @@ bool EventLibrary::LoadScenarioEvent()
 		try {
 			json events = json::parse(text.str());
 
-			const std::filesystem::path types[] = { L"URA", L"ƒAƒIƒnƒ‹", L"ƒNƒ‰ƒ}", L"ƒOƒ‰ƒ‰ƒC" };
+			const std::filesystem::path types[] = { L"URA", L"ã‚¢ã‚ªãƒãƒ«", L"ã‚¯ãƒ©ãƒ", L"ã‚°ãƒ©ãƒ©ã‚¤" };
 			for (int i = 0; i < 4; i++) {
 				auto scenario = events[types[i].u8string()];
 				std::shared_ptr<EventRoot> root(new EventRoot());
@@ -286,7 +286,7 @@ void EventLibrary::InitScenarioEventDB()
 
 	for (auto& scenario : ScenarioEvents) {
 		for (auto& event : scenario->Events) {
-			dbw.insert(event.first); // ƒCƒxƒ“ƒg–¼
+			dbw.insert(event.first); // ã‚¤ãƒ™ãƒ³ãƒˆå
 		}
 	}
 	dbw.close();

@@ -7,7 +7,7 @@
 
 class EventSource {
 public:
-	std::wstring Name; // イベント名
-	std::vector<std::shared_ptr<EventOption>> Options; // 選択肢
+	std::wstring Name; // 繧､繝吶Φ繝亥錐
+	std::vector<std::shared_ptr<EventOption>> Options; // 驕ｸ謚櫁い
 };
 

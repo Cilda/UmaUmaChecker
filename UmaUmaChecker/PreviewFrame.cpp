@@ -7,7 +7,7 @@
 wxDEFINE_EVENT(DROP_IMAGE, wxCommandEvent);
 
 
-PreviewFrame::PreviewFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("ƒvƒŒƒrƒ…["), wxDefaultPosition, wxSize(400, 500), wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE)
+PreviewFrame::PreviewFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼"), wxDefaultPosition, wxSize(400, 500), wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE)
 {
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 

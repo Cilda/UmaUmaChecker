@@ -54,12 +54,12 @@ public:
 private:
 	void MonitorThread();
 
-	// ƒCƒxƒ“ƒg–¼”F¯
+	// ã‚¤ãƒ™ãƒ³ãƒˆåèªè­˜
 	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg);
 	std::vector<std::wstring> RecognizeCardEventText(const cv::Mat& srcImg);
 	std::vector<std::wstring> RecognizeScenarioEventText(const cv::Mat& srcImg);
 
-	// ƒCƒxƒ“ƒgæ“¾
+	// ã‚¤ãƒ™ãƒ³ãƒˆå–å¾—
 	std::shared_ptr<EventSource> GetCardEvent(const std::vector<std::wstring>& text_list);
 	std::shared_ptr<EventSource> GetCharaEvent(const std::vector<std::wstring>& text_list);
 	std::shared_ptr<EventSource> GetScenarioEvent(const std::vector<std::wstring>& text_list);
@@ -74,7 +74,7 @@ private:
 	void AppendCollectedText(std::vector<std::wstring>& text_list);
 
 public:
-	static const cv::Rect2d CharaEventBound; // ƒLƒƒƒ‰ƒCƒxƒ“ƒg‹«ŠE
+	static const cv::Rect2d CharaEventBound; // ã‚­ãƒ£ãƒ©ã‚¤ãƒ™ãƒ³ãƒˆå¢ƒç•Œ
 	static const cv::Rect2d CardEventBound;
 	static const cv::Rect2d BottomChoiseBound;
 	static const cv::Rect2d ScenarioChoiseBound;

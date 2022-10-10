@@ -33,18 +33,18 @@ private:
 	void DeleteDBFiles();
 
 private:
-	std::vector<std::shared_ptr<EventRoot>> Events; // ƒTƒ|[ƒgƒJ[ƒhƒCƒxƒ“ƒg•Û—p
-	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> EventMap; // ƒL[: ƒCƒxƒ“ƒg–¼, ’l: ‘I‘ğˆ
+	std::vector<std::shared_ptr<EventRoot>> Events; // ã‚µãƒãƒ¼ãƒˆã‚«ãƒ¼ãƒ‰ã‚¤ãƒ™ãƒ³ãƒˆä¿æŒç”¨
+	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> EventMap; // ã‚­ãƒ¼: ã‚¤ãƒ™ãƒ³ãƒˆå, å€¤: é¸æŠè‚¢
 
 	std::vector<std::shared_ptr<EventRoot>> Charas;
 	std::vector<std::vector<std::shared_ptr<EventRoot>>> CharasByRank;
-	std::unordered_map<std::wstring, std::shared_ptr<EventRoot>> CharaMap; // ƒLƒƒƒ‰ƒCƒxƒ“ƒg•Û—p
-	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> CharaEventMap; // ƒL[: ƒCƒxƒ“ƒg–¼, ’l: ‘I‘ğˆ
+	std::unordered_map<std::wstring, std::shared_ptr<EventRoot>> CharaMap; // ã‚­ãƒ£ãƒ©ã‚¤ãƒ™ãƒ³ãƒˆä¿æŒç”¨
+	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> CharaEventMap; // ã‚­ãƒ¼: ã‚¤ãƒ™ãƒ³ãƒˆå, å€¤: é¸æŠè‚¢
 
-	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> OptionMap; // ƒL[: ‘I‘ğˆ, ’l: ƒCƒxƒ“ƒgƒ\[ƒX
+	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> OptionMap; // ã‚­ãƒ¼: é¸æŠè‚¢, å€¤: ã‚¤ãƒ™ãƒ³ãƒˆã‚½ãƒ¼ã‚¹
 
-	std::vector<std::shared_ptr<EventRoot>> ScenarioEvents; // ƒVƒiƒŠƒIƒCƒxƒ“ƒg
-	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> ScenarioEventMap; // ƒL[: ƒCƒxƒ“ƒg–¼, ’l: ‘I‘ğˆ
+	std::vector<std::shared_ptr<EventRoot>> ScenarioEvents; // ã‚·ãƒŠãƒªã‚ªã‚¤ãƒ™ãƒ³ãƒˆ
+	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> ScenarioEventMap; // ã‚­ãƒ¼: ã‚¤ãƒ™ãƒ³ãƒˆå, å€¤: é¸æŠè‚¢
 
 	std::string DBPath;
 };

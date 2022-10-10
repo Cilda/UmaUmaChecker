@@ -357,7 +357,7 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 
 EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 {
-	// ƒTƒ|[ƒgƒJ[ƒhƒCƒxƒ“ƒg
+	// ã‚µãƒãƒ¼ãƒˆã‚«ãƒ¼ãƒ‰ã‚¤ãƒ™ãƒ³ãƒˆ
 	std::vector<std::wstring> events = RecognizeCardEventText(srcImg);
 	if (!events.empty()) {
 		auto event = GetCardEvent(events);

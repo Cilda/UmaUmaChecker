@@ -8,7 +8,7 @@
 #include "version.h"
 
 
-AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ƒEƒ}ƒEƒ}ƒ`ƒFƒbƒJ[‚É‚Â‚¢‚Ä"))
+AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ã‚¦ãƒžã‚¦ãƒžãƒã‚§ãƒƒã‚«ãƒ¼ã«ã¤ã„ã¦"))
 {
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	this->SetBackgroundColour(wxColour(255, 255, 255));
@@ -42,7 +42,7 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ƒEƒ
 
 	sizerTop->Add(sizerInfo, 0, wxALL, 20);
 
-	// ƒ{ƒ^ƒ“—Þ
+	// ãƒœã‚¿ãƒ³é¡ž
 	wxStaticLine* staticLine = new wxStaticLine(this, wxID_ANY);
 	sizerTop->Add(staticLine, 0, wxEXPAND, 5);
 
@@ -50,7 +50,7 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ƒEƒ
 	m_buttonOk = new wxButton(this, wxID_OK);
 	bSizerButtons->Add(m_buttonOk, 0, wxLEFT | wxRIGHT, 5);
 
-	m_buttonLicense = new wxButton(this, wxID_ANY, wxT("ƒNƒŒƒWƒbƒg"));
+	m_buttonLicense = new wxButton(this, wxID_ANY, wxT("ã‚¯ãƒ¬ã‚¸ãƒƒãƒˆ"));
 	m_buttonLicense->Disable();
 	bSizerButtons->Add(m_buttonLicense, 0, wxLEFT | wxRIGHT, 5);
 

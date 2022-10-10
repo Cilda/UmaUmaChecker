@@ -9,7 +9,7 @@
 #include "Config.h"
 
 
-SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent, wxID_ANY, wxT("Ý’è"), wxDefaultPosition, wxSize(500, -1), wxDEFAULT_DIALOG_STYLE)
+SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent, wxID_ANY, wxT("è¨­å®š"), wxDefaultPosition, wxSize(500, -1), wxDEFAULT_DIALOG_STYLE)
 {
 	this->bUpdated = false;
 	this->config = config;
@@ -19,12 +19,12 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 
 	wxBoxSizer* sizeParent = new wxBoxSizer(wxVERTICAL);
 
-	// ˆê”Ê
-	wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("ˆê”Ê")), wxVERTICAL);
+	// ä¸€èˆ¬
+	wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("ä¸€èˆ¬")), wxVERTICAL);
 	wxBoxSizer* sizeSB = new wxBoxSizer(wxHORIZONTAL);
 
-	m_staticTextUpdate = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ƒCƒxƒ“ƒgî•ñ‚ðÅV‚ÉXV‚·‚é"));
-	m_buttonUpdate = new wxButton(sizeS1->GetStaticBox(), wxID_ANY, wxT("XV"));
+	m_staticTextUpdate = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ã‚¤ãƒ™ãƒ³ãƒˆæƒ…å ±ã‚’æœ€æ–°ã«æ›´æ–°ã™ã‚‹"));
+	m_buttonUpdate = new wxButton(sizeS1->GetStaticBox(), wxID_ANY, wxT("æ›´æ–°"));
 
 	sizeSB->Add(m_staticTextUpdate, 0, wxALL, 5);
 	sizeSB->Add(m_buttonUpdate, 0, wxALL, 5);
@@ -32,15 +32,15 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	sizeS1->Add(sizeSB, 1, wxALL, 5);
 	sizeParent->Add(sizeS1, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 
-	// ƒXƒNƒŠ[ƒ“ƒVƒ‡ƒbƒg
-	wxStaticBoxSizer* sizeS2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("ƒXƒNƒŠ[ƒ“ƒVƒ‡ƒbƒg")), wxVERTICAL);
+	// ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚·ãƒ§ãƒƒãƒˆ
+	wxStaticBoxSizer* sizeS2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚·ãƒ§ãƒƒãƒˆ")), wxVERTICAL);
 	wxFlexGridSizer* fgSize = new wxFlexGridSizer(0, 3, 0, 0);
 	fgSize->SetFlexibleDirection(wxBOTH);
 	fgSize->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_ALL);
 
-	m_staticTextScreenShotPath = new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("êŠ:"));
+	m_staticTextScreenShotPath = new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("å ´æ‰€:"));
 	m_textCtrlScreenShotPath = new wxTextCtrl(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(280, -1));
-	m_buttonBrowse = new wxButton(sizeS2->GetStaticBox(), wxID_ANY, wxT("ŽQÆ"));
+	m_buttonBrowse = new wxButton(sizeS2->GetStaticBox(), wxID_ANY, wxT("å‚ç…§"));
 
 	fgSize->Add(m_staticTextScreenShotPath, 0, wxALL, 5);
 	fgSize->Add(m_textCtrlScreenShotPath, 0, wxALL, 5);
@@ -49,11 +49,11 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	sizeS2->Add(fgSize, 1, wxEXPAND, 5);
 	sizeParent->Add(sizeS2, 1, wxEXPAND | wxLEFT | wxRIGHT, 5);
 
-	// ‚“x‚È‹@”\
-	wxStaticBoxSizer* sizeS3 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("‚“x‚È‹@”\")), wxVERTICAL);
-	m_checkDebugEnable = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("ƒfƒoƒbƒO‚ð—LŒø‚É‚·‚é"));
+	// é«˜åº¦ãªæ©Ÿèƒ½
+	wxStaticBoxSizer* sizeS3 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("é«˜åº¦ãªæ©Ÿèƒ½")), wxVERTICAL);
+	m_checkDebugEnable = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("ãƒ‡ãƒãƒƒã‚°ã‚’æœ‰åŠ¹ã«ã™ã‚‹"));
 	m_checkDebugEnable->Enable(false);
-	m_checkSaveScreenShot = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("ƒCƒxƒ“ƒg‚ðŽ¯•Ê‚Å‚«‚È‚©‚Á‚½ê‡‚ÉƒLƒƒƒvƒ`ƒƒ‚·‚é"));
+	m_checkSaveScreenShot = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("ã‚¤ãƒ™ãƒ³ãƒˆã‚’è­˜åˆ¥ã§ããªã‹ã£ãŸå ´åˆã«ã‚­ãƒ£ãƒ—ãƒãƒ£ã™ã‚‹"));
 	m_checkSaveScreenShot->Enable(false);
 
 	sizeS3->Add(m_checkDebugEnable, 0, wxALL, 5);
@@ -61,11 +61,11 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 
 	sizeParent->Add(sizeS3, 1, wxEXPAND | wxLEFT | wxRIGHT, 5);
 
-	// ƒ_ƒCƒAƒƒOƒ{ƒ^ƒ“
+	// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœã‚¿ãƒ³
 	m_dialogButtonSizer = new wxStdDialogButtonSizer();
 	wxButton* dbSizerOk = new wxButton(this, wxID_OK);
 	m_dialogButtonSizer->SetAffirmativeButton(dbSizerOk);
-	wxButton* dbSizerCancel = new wxButton(this, wxID_CANCEL, wxT("ƒLƒƒƒ“ƒZƒ‹"));
+	wxButton* dbSizerCancel = new wxButton(this, wxID_CANCEL, wxT("ã‚­ãƒ£ãƒ³ã‚»ãƒ«"));
 	m_dialogButtonSizer->SetCancelButton(dbSizerCancel);
 	m_dialogButtonSizer->Realize();
 
@@ -96,13 +96,13 @@ void SettingDialog::OnClickUpdate(wxCommandEvent& event)
 {
 	if (UpdateLibrary()) {
 		bUpdated = true;
-		wxMessageBox(wxT("XV‚ªŠ®—¹‚µ‚Ü‚µ‚½B"), wxT("ƒEƒ}ƒEƒ}ƒ`ƒFƒbƒJ["));
+		wxMessageBox(wxT("æ›´æ–°ãŒå®Œäº†ã—ã¾ã—ãŸã€‚"), wxT("ã‚¦ãƒžã‚¦ãƒžãƒã‚§ãƒƒã‚«ãƒ¼"));
 	}
 }
 
 void SettingDialog::OnClickBrowse(wxCommandEvent& event)
 {
-	wxDirDialog* dlg = new wxDirDialog(this, wxT("ƒXƒNƒŠ[ƒ“ƒVƒ‡ƒbƒg•Û‘¶æ‚ð‘I‘ð"), wxT(""), wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+	wxDirDialog* dlg = new wxDirDialog(this, wxT("ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚·ãƒ§ãƒƒãƒˆä¿å­˜å…ˆã‚’é¸æŠž"), wxT(""), wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
 	if (dlg->ShowModal() == wxID_OK) {
 		m_textCtrlScreenShotPath->SetValue(dlg->GetPath());
 	}
