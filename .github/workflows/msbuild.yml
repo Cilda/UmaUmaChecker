@@ -38,11 +38,15 @@ jobs:
       
     - name: run-vcpkg
       uses: lukka/run-vcpkg@v10.5
+      id: runvcpkg
       with:
         vcpkgJsonGlob: '**/vcpkg.json'
         appendedCacheKey: vcpkginstall
         vcpkgGitCommitId: 'acc3bcf76b84ae5041c86ab55fe138ae7b8255c7'
         runVcpkgInstall: true
+        
+    - name: vcpkg integrate install
+      run: ${{steps.runvcpkg.inputs.vcpkgDirectory}}/vcpkg integrate install
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
