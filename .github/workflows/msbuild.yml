@@ -16,6 +16,8 @@ env:
   BUILD_CONFIGURATION: Release
   
   VCPKG_DEFAULT_TRIPLET: x64-windows-static
+  
+  VCPKG_INSTALLED_DIR: ${{env.SOLUTION_FILE_PATH}}/vcpkg_installed/${{env.VCPKG_DEFAULT_TRIPLET}}
 
 permissions:
   contents: read
@@ -40,6 +42,7 @@ jobs:
         vcpkgJsonGlob: '**/vcpkg.json'
         appendedCacheKey: vcpkginstall
         vcpkgGitCommitId: 'acc3bcf76b84ae5041c86ab55fe138ae7b8255c7'
+        runVcpkgInstall: true
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
