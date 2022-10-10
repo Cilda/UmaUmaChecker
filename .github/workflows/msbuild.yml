@@ -55,5 +55,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
-        name: UmaUmaChecker-${{matrix.arch}}
+        name: UmaUmaChecker-${{env.BUILD_PLATFORM}}
         path: ${{env.SOLUTION_FILE_PATH}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}
