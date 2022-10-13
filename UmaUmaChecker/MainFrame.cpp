@@ -4,9 +4,10 @@
 #include <Windows.h>
 #include <gdiplus.h>
 #include <chrono>
+#include <regex>
 #include <wx/msgdlg.h>
 #include <wx/dcclient.h>
-#include <regex>
+#include <wx/log.h>
 
 #include "utility.h"
 
@@ -71,48 +72,37 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("選択肢")), wxVERTICAL);
 
-	// 選択肢1
-	wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);
-	m_textCtrlEvent1 = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-	m_textCtrlEvent1->SetBackgroundColour(wxColour(200, 255, 150));
-	m_textCtrlEvent1->SetMinSize(wxSize(180, -1));
-	bSizerOption1->Add(m_textCtrlEvent1, 0, wxALL, 5);
+	std::vector<wxColour> bgColors = {
+		wxColour(200, 255, 150),
+		wxColour(255, 240, 140),
+		wxColour(255, 200, 200),
+		wxColour(106, 227, 255),
+		wxColour(182, 193, 255),
+	};
+	for (int i = 0; i < EventOptionCount; i++) {
+		wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);
+		wxTextCtrl* TitleCtrl = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 
-	m_richText1 = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
-	m_richText1->SetMinSize(wxSize(-1, 55));
-	bSizerOption1->Add(m_richText1, 1, wxALL | wxEXPAND, 5);
+		if (i < bgColors.size()) TitleCtrl->SetBackgroundColour(bgColors[i]);
+		else TitleCtrl->SetBackgroundColour(*wxWHITE);
 
-	sbSizerOptions->Add(bSizerOption1, 1, wxEXPAND, 5);
-	
-	// 選択肢2
-	wxBoxSizer* bSizerOption2 = new wxBoxSizer(wxHORIZONTAL);
-	m_textCtrlEvent2 = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-	m_textCtrlEvent2->SetBackgroundColour(wxColour(255, 240, 140));
-	m_textCtrlEvent2->SetMinSize(wxSize(180, -1));
-	bSizerOption2->Add(m_textCtrlEvent2, 0, wxALL, 5);
+		TitleCtrl->SetMinSize(wxSize(180, -1));
+		bSizerOption1->Add(TitleCtrl, 0, wxALL, 5);
 
-	m_richText2 = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
-	m_richText2->SetMinSize(wxSize(-1, 55));
-	bSizerOption2->Add(m_richText2, 1, wxEXPAND | wxALL, 5);
+		wxUmaTextCtrl* OptionCtrl = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
+		OptionCtrl->SetMinSize(wxSize(-1, 55));
+		bSizerOption1->Add(OptionCtrl, 1, wxALL | wxEXPAND, 5);
 
-	sbSizerOptions->Add(bSizerOption2, 1, wxEXPAND, 5);
+		sbSizerOptions->Add(bSizerOption1, 1, wxEXPAND, 5);
 
-	// 選択肢3
-	wxBoxSizer* bSizerOption3 = new wxBoxSizer(wxHORIZONTAL);
-	m_textCtrlEvent3 = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-	m_textCtrlEvent3->SetBackgroundColour(wxColour(255, 200, 200));
-	m_textCtrlEvent3->SetMinSize(wxSize(180, -1));
-	bSizerOption3->Add(m_textCtrlEvent3, 0, wxALL, 5);
-
-	m_richText3 = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
-	m_richText3->SetMinSize(wxSize(-1, 55));
-	bSizerOption3->Add(m_richText3, 1, wxEXPAND | wxALL, 5);
-
-	sbSizerOptions->Add(bSizerOption3, 1, wxEXPAND, 5);
+		m_textCtrlEventTitles.push_back(TitleCtrl);
+		m_textCtrlEventOptions.push_back(OptionCtrl);
+	}
 
 	bSizerTop->Add(sbSizerOptions, 1, wxEXPAND | wxALL, 5);
 
 	this->SetSizer(bSizerTop);
+	this->Fit();
 	this->Layout();
 	this->Centre(wxBOTH);
 
@@ -123,12 +113,10 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	m_buttonPreview->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickPreview, this);
 	m_buttonSetting->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickSetting, this);
 	m_comboBoxUma->Bind(wxEVT_COMMAND_COMBOBOX_SELECTED, &MainFrame::OnSelectedUma, this);
-	m_richText1->Bind(wxEVT_ENTER_WINDOW, &MainFrame::OnEnterControl, this);
-	m_richText1->Bind(wxEVT_LEAVE_WINDOW, &MainFrame::OnLeaveControl, this);
-	m_richText2->Bind(wxEVT_ENTER_WINDOW, &MainFrame::OnEnterControl, this);
-	m_richText2->Bind(wxEVT_LEAVE_WINDOW, &MainFrame::OnLeaveControl, this);
-	m_richText3->Bind(wxEVT_ENTER_WINDOW, &MainFrame::OnEnterControl, this);
-	m_richText3->Bind(wxEVT_LEAVE_WINDOW, &MainFrame::OnLeaveControl, this);
+	for (int i = 0; i < EventOptionCount; i++) {
+		m_textCtrlEventOptions[i]->Bind(wxEVT_ENTER_WINDOW, &MainFrame::OnEnterControl, this);
+		m_textCtrlEventOptions[i]->Bind(wxEVT_LEAVE_WINDOW, &MainFrame::OnLeaveControl, this);
+	}
 	this->Bind(wxEVT_THREAD, &MainFrame::OnChangeUmaEvent, this);
 	m_buttonAbout->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickAbout, this);
 }
@@ -153,6 +141,10 @@ void MainFrame::Init()
 		
 		r--;
 	}
+
+#ifdef _DEBUG
+	new wxLogWindow(this, wxT("ログ"));
+#endif
 }
 
 void MainFrame::UnInit()
@@ -316,17 +308,15 @@ void MainFrame::ChangeEventOptions(EventSource* event)
 {
 	if (event) {
 		m_textCtrlEventSource->SetValue(event->Name);
-		wxTextCtrl* controls[3] = { m_textCtrlEvent1, m_textCtrlEvent2, m_textCtrlEvent3 };
-		wxUmaTextCtrl* richCtrls[3] = { m_richText1, m_richText2, m_richText3 };
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < EventOptionCount; i++) {
 			if (i < event->Options.size()) {
-				controls[i]->SetValue(event->Options[i]->Title);
-				richCtrls[i]->SetValue(event->Options[i]->Effect);
+				m_textCtrlEventTitles[i]->SetValue(event->Options[i]->Title);
+				m_textCtrlEventOptions[i]->SetValue(event->Options[i]->Effect);
 			}
 			else {
-				controls[i]->SetValue(wxT(""));
-				richCtrls[i]->SetValue(wxT(""));
+				m_textCtrlEventTitles[i]->SetValue(wxT(""));
+				m_textCtrlEventOptions[i]->SetValue(wxT(""));
 			}
 		}
 	}

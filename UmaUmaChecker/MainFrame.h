@@ -31,7 +31,7 @@
 class MainFrame : public wxFrame
 {
 public:
-	MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = app_title, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(467, 380), long style = wxCAPTION | wxCLOSE_BOX | wxICONIZE | wxMINIMIZE_BOX | wxSYSTEM_MENU | wxTAB_TRAVERSAL);
+	MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = app_title, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(467, 500), long style = wxCAPTION | wxCLOSE_BOX | wxICONIZE | wxMINIMIZE_BOX | wxSYSTEM_MENU | wxTAB_TRAVERSAL);
 	~MainFrame();
 
 	void Init();
@@ -54,21 +54,21 @@ private:
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
 private:
+	const int EventOptionCount = 5;
+
+private:
 	wxToggleButton* m_toggleBtnStart;
 	wxButton* m_buttonScreenshot;
 	wxButton* m_buttonPreview;
 	wxButton* m_buttonSetting;
+	wxButton* m_buttonAbout;
 	wxStaticText* m_staticTextCharaName;
 	wxComboBox* m_comboBoxUma;
 	wxStaticText* m_staticTextEventName;
 	wxTextCtrl* m_textCtrlEventSource;
-	wxTextCtrl* m_textCtrlEvent1;
-	wxUmaTextCtrl* m_richText1;
-	wxTextCtrl* m_textCtrlEvent2;
-	wxUmaTextCtrl* m_richText2;
-	wxTextCtrl* m_textCtrlEvent3;
-	wxUmaTextCtrl* m_richText3;
-	wxButton* m_buttonAbout;
+
+	std::vector<wxTextCtrl*> m_textCtrlEventTitles;
+	std::vector<wxTextCtrl*> m_textCtrlEventOptions;
 
 	PreviewFrame* m_PreviewWindow;
 

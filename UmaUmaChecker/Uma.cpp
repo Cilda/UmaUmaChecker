@@ -13,6 +13,9 @@
 #include <future>
 #include "utility.h"
 
+#include <wx/log.h>
+#include <wx/utils.h>
+
 #ifdef USE_MS_OCR
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
 #endif
@@ -118,6 +121,9 @@ bool Uma::Start()
 
 	bStop = false;
 	thread = new std::thread(&Uma::MonitorThread, this);
+
+	wxLogDebug(wxT("スタート====================="));
+
 	return true;
 }
 
@@ -129,6 +135,8 @@ void Uma::Stop()
 	thread->join();
 	delete thread;
 	thread = nullptr;
+
+	wxLogDebug(wxT("ストップ====================="));
 }
 
 void Uma::SetNotifyTarget(HWND hWnd)
@@ -173,6 +181,8 @@ cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 void Uma::MonitorThread()
 {
 	while (!bStop) {
+		auto start = std::chrono::system_clock::now();
+
 		Gdiplus::Bitmap* image = ScreenShot();
 		if (image) {
 			cv::Mat srcImage = BitmapToCvMat(image);
@@ -189,6 +199,11 @@ void Uma::MonitorThread()
 
 			delete image;
 		}
+
+		auto end = std::chrono::system_clock::now();
+		auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+		//wxLogDebug(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
 
 		Sleep(100);
 	}
@@ -216,40 +231,6 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCharaEvent(rsImg)) {
-#ifdef USE_MS_OCR
-		cv::Mat recognizeImage = rsImg.clone();
-
-		std::wstring text;
-		wchar_t wText[1024];
-		if (RecognizeText(
-			recognizeImage.size().width,
-			recognizeImage.size().height,
-			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
-			recognizeImage.step,
-			wText, 1024
-		)) {
-			text = wText;
-			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-
-			return text;
-		}
-
-		cv::Mat bin = Uma::ImageBinarization(rsImg);
-		recognizeImage = bin;
-
-		if (RecognizeTextFromGrayImage(
-			recognizeImage.size().width,
-			recognizeImage.size().height,
-			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
-			recognizeImage.step,
-			wText, 1024
-		)) {
-			text = wText;
-			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-
-			return text;
-		}
-#else
 		cv::Mat gray;
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
@@ -267,7 +248,6 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 		AppendCollectedText(text_list);
 
 		return text_list;
-#endif
 	}
 
 	return std::vector<std::wstring>();
@@ -293,6 +273,8 @@ bool Uma::IsScenarioEvent(const cv::Mat& srcImg)
 
 std::wstring Uma::GetTextFromImage(cv::Mat& img)
 {
+	auto start = std::chrono::system_clock::now();
+
 	std::lock_guard<std::mutex> lock(mutex);
 
 	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
@@ -302,6 +284,11 @@ std::wstring Uma::GetTextFromImage(cv::Mat& img)
 	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
 	//Collector.Collect(text);
+
+	auto end = std::chrono::system_clock::now();
+	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+	wxLogDebug(wxT("GetTextFromImage(): %lld"), msec);
 
 	return text;
 }
@@ -386,6 +373,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 		}
 	}
 
+
+
 	return nullptr;
 }
 
@@ -447,40 +436,6 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCardEvent(cut)) {
-#ifdef USE_MS_OCR
-		cv::Mat recognizeImage = rsImg.clone();
-		
-		std::wstring text;
-		wchar_t wText[1024];
-		if (RecognizeText(
-			recognizeImage.size().width,
-			recognizeImage.size().height,
-			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
-			recognizeImage.step,
-			wText, 1024
-		)) {
-			text = wText;
-			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-
-			return text;
-		}
-
-		cv::Mat bin = Uma::ImageBinarization(rsImg);
-		recognizeImage = bin;
-
-		if (RecognizeTextFromGrayImage(
-			recognizeImage.size().width,
-			recognizeImage.size().height,
-			recognizeImage.data, recognizeImage.total() * recognizeImage.elemSize(),
-			recognizeImage.step,
-			wText, 1024
-		)) {
-			text = wText;
-			text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-
-			return text;
-		}
-#else
 		cv::Mat gray;
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
@@ -499,7 +454,6 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		AppendCollectedText(text_list);
 
 		return text_list;
-#endif
 	}
 
 	return std::vector<std::wstring>();
