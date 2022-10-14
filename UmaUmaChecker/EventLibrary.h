@@ -31,6 +31,7 @@ public:
 
 private:
 	void DeleteDBFiles();
+	std::wstring GetBestMatchString(const std::vector<std::wstring>& xstrs, const std::wstring& text);
 
 private:
 	std::vector<std::shared_ptr<EventRoot>> Events; // サポートカードイベント保持用

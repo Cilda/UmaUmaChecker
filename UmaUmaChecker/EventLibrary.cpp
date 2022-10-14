@@ -300,7 +300,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveEvent(const std::wstring& nam
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; (float)ratio >= 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -310,7 +310,12 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveEvent(const std::wstring& nam
 
 	if (xstrs.empty()) return nullptr;
 
-	const auto& event = EventMap.find(xstrs.front());
+	std::wstring match = xstrs.front();
+	if (xstrs.size() >= 2) {
+		match = GetBestMatchString(xstrs, name);
+	}
+
+	const auto& event = EventMap.find(match);
 	if (event == EventMap.end()) return nullptr;
 
 	return event->second;
@@ -324,7 +329,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveEventFromOptionTitle(const st
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; (float)ratio >= 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -334,7 +339,12 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveEventFromOptionTitle(const st
 
 	if (xstrs.empty()) return nullptr;
 
-	const auto& event = OptionMap.find(xstrs.front());
+	std::wstring match = xstrs.front();
+	if (xstrs.size() >= 2) {
+		match = GetBestMatchString(xstrs, name);
+	}
+
+	const auto& event = OptionMap.find(match);
 	if (event == OptionMap.end()) return nullptr;
 
 	return event->second;
@@ -348,7 +358,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring
 
 	std::vector<std::wstring> xstrs;
 	
-	for (double ratio = 1.0; (float)ratio > 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -361,7 +371,12 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring
 	const auto& chara = CharaMap.find(CharaName);
 	if (chara == CharaMap.end()) return nullptr;
 
-	const auto& event = chara->second->Events.find(xstrs.front());
+	std::wstring match = xstrs.front();
+	if (xstrs.size() >= 2) {
+		match = GetBestMatchString(xstrs, name);
+	}
+
+	const auto& event = chara->second->Events.find(match);
 	if (event == chara->second->Events.end()) return nullptr;
 
 	return event->second;
@@ -375,7 +390,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEventFromOptionTitle(con
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; (float)ratio >= 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -385,7 +400,12 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEventFromOptionTitle(con
 
 	if (xstrs.empty()) return nullptr;
 
-	const auto& event = OptionMap.find(xstrs.front());
+	std::wstring match = xstrs.front();
+	if (xstrs.size() >= 2) {
+		match = GetBestMatchString(xstrs, name);
+	}
+
+	const auto& event = OptionMap.find(match);
 	if (event == OptionMap.end()) return nullptr;
 
 	return event->second;
@@ -399,7 +419,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveScenarioEvent(const std::wstr
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; (float)ratio > 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -428,4 +448,39 @@ EventRoot* EventLibrary::GetCharacter(const std::wstring& name)
 void EventLibrary::DeleteDBFiles()
 {
 	std::filesystem::remove_all(DBPath);
+}
+
+std::wstring EventLibrary::GetBestMatchString(const std::vector<std::wstring>& xstrs, const std::wstring& text)
+{
+	simstring::ngram_generator gen(1, false);
+
+	double max_rate = 0.0;
+	std::wstring best_match;
+	std::vector<std::wstring> basengrams;
+
+	gen(text, std::inserter(basengrams, basengrams.end()));
+
+	for (auto& str : xstrs) {
+		std::vector<std::wstring> ngrams;
+		int total = 0, equal = 0;
+
+		gen(str, std::inserter(ngrams, ngrams.end()));
+
+		for (auto& word1 : basengrams) {
+			for (auto& word2 : ngrams) {
+				if (word1 == word2) {
+					equal++;
+				}
+			}
+
+			total++;
+		}
+
+		if (max_rate > (double)equal / total) {
+			max_rate = (double)equal / total;
+			best_match = str;
+		}
+	}
+
+	return best_match;
 }
