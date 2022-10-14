@@ -1,30 +1,29 @@
-[![MSBuild](https://github.com/Cilda/UmaUmaChecker/actions/workflows/msbuild.yml/badge.svg)](https://github.com/Cilda/UmaUmaChecker/actions/workflows/msbuild.yml)
 # ウマウマチェッカー(UmaUmaChecker)
+[![MSBuild](https://github.com/Cilda/UmaUmaChecker/actions/workflows/msbuild.yml/badge.svg)](https://github.com/Cilda/UmaUmaChecker/actions/workflows/msbuild.yml)
 
 ## 目的
-ウマ娘プリティダービーの育成モードで表示されるイベント(育成・サポート・シナリオ)の選択肢から
+ウマ娘プリティダービーの育成モードで表示される育成・サポート・シナリオイベントの選択肢から  
 実際の数値(例: スピード+10)を見える形で表示します。
 
 ## 動作環境
-- Windows10以降のOS(64bit)
+- Windows10/11 64bitで動作を確認しています。
 
 ## 注記  
 このアプリケーションはウマ娘プリティダービーの育成モードにて動作します。  
-ゲーム画面をキャプチャして動作しますのでゲーム本体に不正アクセスは一切しておりません。
+画像認識によって各種イベントを識別しています。
 
 ## インストール
-https://github.com/Cilda/UmaUmaChecker/releases から最新バージョンのUmaUmaChecker_vX.X.X.zipをダウンロードし、
-zipファイルを解凍して作成されたUmaUmaChecker.exe を実行するだけです。
+https://github.com/Cilda/UmaUmaChecker/releases から最新のUmaUmaChecker_vX.X.X.zipをダウンロードします。  
+その後、ダウンロードしたzipファイルを解凍して作成されたUmaUmaChecker.exeを実行すると起動します。
 
 ## 利用方法
-育成を行うウマ娘を「育成ウマ娘」リストから選択します。
+育成を行うウマ娘を「育成ウマ娘」リストから選択します。  
 その後「スタート」ボタンを押すと開始され、イベントが表示された際に認識しウマウマチェッカー内の選択肢にステータスが表示されます。
 
 ### イベントのアップデート
   新規育成ウマ娘・サポートカードが追加された際は
- 「設定」→「一般」欄の「イベント情報を最新に更新する」の右隣にある「更新」ボタンを押してください。  
+ 「設定」→「一般」欄から「イベント情報を最新に更新する」の右隣にある「更新」ボタンを押してください。  
  　※イベントデータは [GameWith](https://gamewith.jp/uma-musume/)様のサイトよりデータを抽出し生成しています。
- 　※イベントデータは手動で更新を行っているので、すぐには反映されないことがあります。
 
 ## 不具合＆実装予定(実装されない機能もあります)
 - UIの変更
@@ -39,17 +38,38 @@ zipファイルを解凍して作成されたUmaUmaChecker.exe を実行する�
 
 ## 使用ライブラリ一覧
 - OpenCV
-- Microsoft OCR (Microsoft.Media.OCR)
+- ~~Microsoft OCR (Microsoft.Media.OCR)~~
 - nlohmann-json
 - simstring
 - Tesseract OCR
 - wxWidgets
 
 ## 免責事項  
-本ソフトウェアを利用によって生じたすべての障害・損害・不具合等に関しては本ソフトウェアの作成者は一切の責任を負いません。各自の責任においてご使用ください。また、作成者は本ソフトウェアの開発をいつでも停止できるものとします。
+本ソフトウェアを利用によって生じたすべての障害・損害・不具合等に関しては本ソフトウェアの作成者は一切の責任を負いません。  
+各自の責任においてご使用ください。  
+また、作成者は本ソフトウェアの開発をいつでも停止できるものとします。
+
+## ライセンス
+このソースコードはMITライセンスの元ライセンスされています。  
+詳しくはLICENSEをご覧ください。  
+__注__: このソフトウェアは異なるライセンスのパッケージに依存しています。
 
 ## 更新履歴
 <pre>
+v1.2
+[Update]
+・GUIにwxWidgetsを使うように変更
+・イベント名識別率の向上
+[Add]
+・Aboutダイアログ追加
+・効果のテキストを色分けするように
+・育成ウマのコンボボックスを☆順、ウマ娘順で並び替えるように
+・アプリアイコン追加
+[Fix]
+・ポップアップ表示の修正
+・イベント名「お疲れさまです……！」から「お疲れ様です……！」に修正
+・キャラ共通イベントで関係のない選択肢名が表示される問題を修正
+
 v1.1
 [Update]
 ・各シナリオイベントを識別できるように追加
