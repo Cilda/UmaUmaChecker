@@ -19,6 +19,8 @@ env:
   
   VCPKG_DEFAULT_TRIPLET: x64-windows-static
   VCPKG_INSTALLED_DIR: ./vcpkg_installed/x64-windows-static
+  
+  cache-version: v1
 
 permissions:
   contents: read
@@ -41,7 +43,9 @@ jobs:
       id: vcpkgcache
       with:
         path: ${{env.SOLUTION_FILE_PATH}}/vcpkg_installed/${{env.VCPKG_DEFAULT_TRIPLET}}
-        key: ${{env.VCPKG_DEFAULT_TRIPLET}}-vcpkg-${{hashFiles('./vcpkg.json')}}
+        key: ${{env.VCPKG_DEFAULT_TRIPLET}}-vcpkg-${{hashFiles('./vcpkg.json')}}-${{env.cache-version}}
+        restore-keys: |
+          ${{env.VCPKG_DEFAULT_TRIPLET}}-vcpkg-${{hashFiles('./vcpkg.json')}}
         
     - name: vcpkg integratation
       run: vcpkg integrate install
