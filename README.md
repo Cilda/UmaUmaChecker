@@ -46,6 +46,10 @@ https://github.com/Cilda/UmaUmaChecker/releases から最新のUmaUmaChecker_vX.
 - Tesseract OCR
 - wxWidgets
 
+## 不具合の報告
+不具合(イベントが認識しない、バグが発生した等)があれば  
+Issuesより報告をお願いします。
+
 ## 免責事項  
 本ソフトウェアを利用によって生じたすべての障害・損害・不具合等に関しては本ソフトウェアの作成者は一切の責任を負いません。  
 各自の責任においてご使用ください。  
