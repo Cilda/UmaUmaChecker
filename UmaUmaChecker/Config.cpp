@@ -71,3 +71,10 @@ void Config::Save()
 	output << std::setw(4) << config << std::endl;
 }
 
+Config* Config::GetInstance()
+{
+	static Config config;
+
+	return &config;
+}
+

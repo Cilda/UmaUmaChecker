@@ -2,26 +2,36 @@
 
 #include <winsock2.h>
 
-#include "Uma.h"
-#include "MainFrame.h"
-
 #include <wx/app.h>
 #include <gdiplus.h>
+
+#include "Uma.h"
+#include "MainFrame.h"
+#include "Config.h"
+
 
 class MyApp : public wxApp {
 public:
 	virtual bool OnInit() {
+		if (!wxApp::OnInit()) return false;
+
 		Gdiplus::GdiplusStartup(&token, &input, NULL);
 		wxInitAllImageHandlers();
 
+		Config* config = Config::GetInstance();
+		config->Load();
+
 		MainFrame* frame = new MainFrame(NULL);
-		frame->Init();
 		frame->Show(true);
 		SetTopWindow(frame);
+
 		return true;
 	}
 
 	virtual int OnExit() {
+		Config* config = Config::GetInstance();
+		config->Save();
+
 		Gdiplus::GdiplusShutdown(token);
 		return 0;
 	}

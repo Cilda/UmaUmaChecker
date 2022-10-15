@@ -15,7 +15,7 @@
 #include "AboutDialog.h"
 
 
-MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, id, title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL)
+MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL)
 {
 	this->SetIcon(wxICON(AppIcon));
 
@@ -107,7 +107,6 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	this->Centre(wxBOTH);
 
 	// イベントバインド
-	this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this);
 	m_toggleBtnStart->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnClickStart, this);
 	m_buttonScreenshot->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickScreenShot, this);
 	m_buttonPreview->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickPreview, this);
@@ -119,10 +118,25 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	}
 	this->Bind(wxEVT_THREAD, &MainFrame::OnChangeUmaEvent, this);
 	m_buttonAbout->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickAbout, this);
+
+	Config* config = Config::GetInstance();
+	if (config->WindowX != 0 || config->WindowY != 0) {
+		this->Move(config->WindowX, config->WindowY);
+	}
+
+	Init();
 }
 
 MainFrame::~MainFrame()
 {
+	Config* config = Config::GetInstance();
+	int x, y;
+
+	GetPosition(&x, &y);
+
+	config->WindowX = x;
+	config->WindowY = y;
+
 	delete umaMgr;
 }
 
@@ -147,17 +161,6 @@ void MainFrame::Init()
 #endif
 }
 
-void MainFrame::UnInit()
-{
-	umaMgr->config.Save();
-}
-
-void MainFrame::OnClose(wxCloseEvent& event)
-{
-	umaMgr->config.Save();
-	Destroy();
-}
-
 void MainFrame::OnClickStart(wxCommandEvent& event)
 {
 	if (!m_toggleBtnStart->GetValue()) {
@@ -175,9 +178,10 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 	Gdiplus::Bitmap* image = umaMgr->ScreenShot();
 	if (image) {
 		CLSID clsid;
+		Config* config = Config::GetInstance();
 
-		std::wstring directory = umaMgr->config.ScreenshotSavePath + L"\\";
-		if (umaMgr->config.ScreenshotSavePath.empty()) {
+		std::wstring directory = config->ScreenshotSavePath + L"\\";
+		if (config->ScreenshotSavePath.empty()) {
 			directory = utility::GetExeDirectory() + L"\\screenshots\\";
 			CreateDirectoryW(directory.c_str(), NULL);
 		}
@@ -215,7 +219,8 @@ void MainFrame::OnClickPreview(wxCommandEvent& event)
 
 void MainFrame::OnClickSetting(wxCommandEvent& event)
 {
-	SettingDialog* frame = new SettingDialog(this, &umaMgr->config);
+	Config* config = Config::GetInstance();
+	SettingDialog* frame = new SettingDialog(this, config);
 	if (frame->ShowModal() == 1) {
 
 	}

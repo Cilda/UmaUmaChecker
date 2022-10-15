@@ -13,6 +13,9 @@ public:
 	void Save();
 
 public:
+	static Config* GetInstance();
+
+public:
 	int WindowX = 0;
 	int WindowY = 0;
 	bool EnableDebug = false;

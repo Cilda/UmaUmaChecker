@@ -31,14 +31,10 @@
 class MainFrame : public wxFrame
 {
 public:
-	MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = app_title, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(467, 500), long style = wxCAPTION | wxCLOSE_BOX | wxICONIZE | wxMINIMIZE_BOX | wxSYSTEM_MENU | wxTAB_TRAVERSAL);
-	~MainFrame();
-
-	void Init();
-	void UnInit();
+	MainFrame(wxWindow* parent, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(467, 500), long style = wxCAPTION | wxCLOSE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU);
+	virtual ~MainFrame();
 
 private:
-	void OnClose(wxCloseEvent& event);
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
 	void OnClickPreview(wxCommandEvent& event);
@@ -52,6 +48,9 @@ private:
 
 	void ChangeEventOptions(EventSource* event);
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
+
+private:
+	void Init();
 
 private:
 	const int EventOptionCount = 5;

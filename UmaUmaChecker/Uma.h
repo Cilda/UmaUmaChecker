@@ -82,7 +82,6 @@ public:
 public:
 	std::wstring EventName;
 	EventSource* CurrentEvent;
-	Config config;
 
 private:
 	bool bDetected;

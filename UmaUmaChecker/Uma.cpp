@@ -65,7 +65,6 @@ void Uma::Init()
 	InitOCR();
 #endif
 
-	config.Load();
 	Collector.Load();
 }
 
