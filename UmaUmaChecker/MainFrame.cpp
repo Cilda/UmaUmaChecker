@@ -248,9 +248,20 @@ void MainFrame::OnSelectedUma(wxCommandEvent& event)
 
 void MainFrame::OnChangeUmaEvent(wxThreadEvent& event)
 {
+	HBITMAP hBmp = event.GetPayload<HBITMAP>();
+
 	if (umaMgr->CurrentEvent) {
 		ChangeEventOptions(umaMgr->CurrentEvent);
+
+		if (m_PreviewWindow) {
+			BITMAP bmp;
+
+			GetObject(hBmp, sizeof(BITMAP), &bmp);
+			m_PreviewWindow->SetImage(hBmp, bmp.bmWidth, bmp.bmHeight);
+		}
 	}
+
+	//DeleteObject(hBmp);
 }
 
 void MainFrame::OnEnterControl(wxMouseEvent& event)

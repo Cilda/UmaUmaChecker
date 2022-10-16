@@ -191,7 +191,12 @@ void Uma::MonitorThread()
 				if (EventName != CurrentEvent->Name) {
 					EventName = CurrentEvent->Name;
 
+					HBITMAP hBmp;
+
+					image->GetHBITMAP(Gdiplus::Color(0, 0, 0), &hBmp);
+
 					wxThreadEvent event(wxEVT_THREAD);
+					event.SetPayload(hBmp);
 					wxQueueEvent(frame, event.Clone());
 				}
 			}

@@ -26,6 +26,12 @@ PreviewFrame::~PreviewFrame()
 {
 }
 
+void PreviewFrame::SetImage(WXHBITMAP hBmp, int width, int height)
+{
+	image.InitFromHBITMAP(hBmp, width, height, 32);
+	this->Refresh();
+}
+
 void PreviewFrame::OnClose(wxCloseEvent& event)
 {
 	Hide();

@@ -13,6 +13,8 @@ public:
 
 	const wxBitmap& GetImage() const { return image; }
 
+	void SetImage(WXHBITMAP hBmp, int width, int height);
+
 private:
 	void OnClose(wxCloseEvent& event);
 	void OnDropFiles(wxDropFilesEvent& event);
