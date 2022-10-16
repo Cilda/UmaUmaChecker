@@ -17,7 +17,6 @@ wxTextPopupCtrl::wxTextPopupCtrl(wxWindow* parent, const wxSize& size) : wxPopup
 	sizer->Add(m_textCtrl, 1, wxEXPAND, 0);
 
 	m_panel->SetSizer(sizer);
-	m_panel->Layout();
 
 	this->SetClientSize(m_panel->GetSize());
 

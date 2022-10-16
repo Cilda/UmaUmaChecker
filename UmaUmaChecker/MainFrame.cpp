@@ -28,8 +28,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	m_toggleBtnStart = new wxToggleButton(this, wxID_ANY, wxT("スタート"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
 
-	m_buttonScreenshot
-		= new wxButton(this, wxID_ANY, wxT("スクリーンショット"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonScreenshot = new wxButton(this, wxID_ANY, wxT("スクリーンショット"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL, 5);
 
 	m_buttonPreview = new wxButton(this, wxID_ANY, wxT("プレビュー表示"), wxDefaultPosition, wxDefaultSize, 0);
@@ -50,20 +49,19 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	fgSizerInfo->SetFlexibleDirection(wxBOTH);
 	fgSizerInfo->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
-	m_staticTextCharaName = new wxStaticText(this, wxID_ANY, wxT("育成ウマ娘"), wxDefaultPosition, wxDefaultSize, 0);
+	m_staticTextCharaName = new wxStaticText(this, wxID_ANY, wxT("育成ウマ娘"));
 	m_staticTextCharaName->Wrap(-1);
 	fgSizerInfo->Add(m_staticTextCharaName, 0, wxALL, 5);
 
-	m_comboBoxUma = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0);
-	//m_comboBoxUma->SetMinSize(wxSize(300, -1));
+	m_comboBoxUma = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(300, -1)));
 
 	fgSizerInfo->Add(m_comboBoxUma, 1, wxEXPAND | wxALL, 5);
 
-	m_staticTextEventName = new wxStaticText(this, wxID_ANY, wxT("イベント名"), wxDefaultPosition, wxDefaultSize, 0);
+	m_staticTextEventName = new wxStaticText(this, wxID_ANY, wxT("イベント名"));
 	m_staticTextEventName->Wrap(-1);
 	fgSizerInfo->Add(m_staticTextEventName, 0, wxALL, 5);
 
-	m_textCtrlEventSource = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(300, -1), wxTE_READONLY);
+	m_textCtrlEventSource = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(300, -1)), wxTE_READONLY);
 	m_textCtrlEventSource->SetBackgroundColour(wxColour(255, 255, 255));
 
 	fgSizerInfo->Add(m_textCtrlEventSource, 0, wxALL, 5);
@@ -86,11 +84,11 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		if (i < bgColors.size()) TitleCtrl->SetBackgroundColour(bgColors[i]);
 		else TitleCtrl->SetBackgroundColour(*wxWHITE);
 
-		TitleCtrl->SetMinSize(wxSize(180, -1));
+		TitleCtrl->SetMinSize(FromDIP(wxSize(180, -1)));
 		bSizerOption1->Add(TitleCtrl, 0, wxALL, 5);
 
 		wxUmaTextCtrl* OptionCtrl = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
-		OptionCtrl->SetMinSize(wxSize(-1, 55));
+		OptionCtrl->SetMinSize(FromDIP(wxSize(-1, 55)));
 		bSizerOption1->Add(OptionCtrl, 1, wxALL | wxEXPAND, 5);
 
 		sbSizerOptions->Add(bSizerOption1, 1, wxEXPAND, 5);
@@ -269,6 +267,9 @@ void MainFrame::OnEnterControl(wxMouseEvent& event)
 	int marginWidth = windowSize.x - clientSize.x;
 	int marginHeight = windowSize.y - clientSize.y;
 
+	wxLogDebug(wxT("ClientSize: %d, %d"), clientSize.x, clientSize.y);
+	wxLogDebug(wxT("TextSize: %d, %d"), size.x, size.y);
+
 	if (size.x > clientSize.x || size.y > clientSize.y) {
 		int width = size.x > clientSize.x ? size.x : clientSize.x;
 		int height = size.y > clientSize.y ? size.y : clientSize.y;
@@ -276,6 +277,7 @@ void MainFrame::OnEnterControl(wxMouseEvent& event)
 		wxPoint pos = ctrl->ClientToScreen(wxPoint(-2, -2));
 		wxTextPopupCtrl* m_textPopup = new wxTextPopupCtrl(this, wxSize(width + marginWidth, height + marginHeight));
 		m_textPopup->Position(pos, wxSize(0, 0));
+		m_textPopup->SetSize(wxSize(width + marginWidth, height + marginHeight));
 		m_textPopup->SetText(text);
 		m_textPopup->Popup();
 	}
