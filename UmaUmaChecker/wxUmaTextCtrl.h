@@ -10,5 +10,7 @@ public:
 
 	virtual void SetValue(const wxString& value);
 	virtual void AppendText(const wxString& text);
+
+	virtual bool SetFont(const wxFont& font);
 };
 
