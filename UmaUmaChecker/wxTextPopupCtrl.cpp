@@ -6,6 +6,8 @@
 
 wxTextPopupCtrl::wxTextPopupCtrl(wxWindow* parent, const wxSize& size) : wxPopupTransientWindow(parent, wxBORDER_NONE | wxPU_CONTAINS_CONTROLS)
 {
+	this->SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Yu Gothic UI")));
+
 	m_panel = new wxWindow(this, wxID_ANY);
 	m_panel->SetSize(size);
 

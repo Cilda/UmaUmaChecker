@@ -14,6 +14,8 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	this->bUpdated = false;
 	this->config = config;
 
+	this->SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Yu Gothic UI")));
+
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	this->SetBackgroundColour(wxColour(255, 255, 255));
 
