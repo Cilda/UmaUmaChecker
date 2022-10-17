@@ -25,7 +25,7 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 
 	wxStaticText* staticTextTitle = new wxStaticText(this, wxID_ANY, app_title);
 	staticTextTitle->Wrap(-1);
-	staticTextTitle->SetFont(wxFont(14, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxEmptyString));
+	staticTextTitle->SetFont(wxFont(20, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Yu Gothic UI")));
 	sizerTitle->Add(staticTextTitle);
 
 	sizerInfo->Add(sizerTitle, 0, wxALL | wxCENTER, 5);
