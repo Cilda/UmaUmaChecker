@@ -6,12 +6,14 @@
 #include <wx/stattext.h>
 #include <wx/msgdlg.h>
 
+#include "Config.h"
 #include "version.h"
 
 
 AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウマウマチェッカーについて"))
 {
-	this->SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Yu Gothic UI")));
+	Config* config = Config::GetInstance();
+	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	this->SetBackgroundColour(wxColour(255, 255, 255));

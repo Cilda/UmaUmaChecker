@@ -17,8 +17,10 @@
 
 MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL)
 {
+	Config* config = Config::GetInstance();
+
 	this->SetIcon(wxICON(AppIcon));
-	this->SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Yu Gothic UI")));
+	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	this->SetBackgroundColour(wxColour(255, 255, 255));
@@ -118,7 +120,6 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->Bind(wxEVT_THREAD, &MainFrame::OnChangeUmaEvent, this);
 	m_buttonAbout->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickAbout, this);
 
-	Config* config = Config::GetInstance();
 	if (config->WindowX != 0 || config->WindowY != 0) {
 		this->Move(config->WindowX, config->WindowY);
 	}
@@ -137,6 +138,20 @@ MainFrame::~MainFrame()
 	config->WindowY = y;
 
 	delete umaMgr;
+}
+
+void MainFrame::SetFontAllChildren(wxWindow* parent, const wxFont& font)
+{
+	if (!parent) return;
+
+	parent->SetFont(font);
+
+	wxWindowList& children = parent->GetChildren();
+
+	for (wxWindowList::Node* node = children.GetFirst(); node; node = node->GetNext()) {
+		wxWindow* current = node->GetData();
+		SetFontAllChildren(current, font);
+	}
 }
 
 void MainFrame::Init()
@@ -221,7 +236,9 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 	Config* config = Config::GetInstance();
 	SettingDialog* frame = new SettingDialog(this, config);
 	if (frame->ShowModal() == 1) {
-
+		SetFontAllChildren(this, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
+		Layout();
+		Fit();
 	}
 	if (frame->IsUpdated()) {
 		m_comboBoxUma->Clear();

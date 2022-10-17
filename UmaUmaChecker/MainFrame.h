@@ -34,6 +34,9 @@ public:
 	MainFrame(wxWindow* parent, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION | wxCLOSE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU);
 	virtual ~MainFrame();
 
+public:
+	static void SetFontAllChildren(wxWindow* parent, const wxFont& font);
+
 private:
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
@@ -49,7 +52,6 @@ private:
 	void ChangeEventOptions(EventSource* event);
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
-private:
 	void Init();
 
 private:
