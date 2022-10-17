@@ -89,7 +89,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		bSizerOption1->Add(TitleCtrl, 0, wxALL, 5);
 
 		wxUmaTextCtrl* OptionCtrl = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
-		OptionCtrl->SetMinSize(FromDIP(wxSize(-1, 55)));
+		OptionCtrl->SetMinSize(FromDIP(wxSize(-1, 64)));
 		bSizerOption1->Add(OptionCtrl, 1, wxALL | wxEXPAND, 5);
 
 		sbSizerOptions->Add(bSizerOption1, 1, wxEXPAND, 5);
