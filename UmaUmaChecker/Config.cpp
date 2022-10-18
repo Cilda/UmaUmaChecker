@@ -49,16 +49,15 @@ void Config::Create()
 {
 	json config;
 
-	config["WindowX"] = 0;
-	config["WindowY"] = 0;
-	config["Debug"] = false;
-	config["SaveMissingEventName"] = false;
-	config["ScreenshotSavePath"] = L"";
-	config["FontName"] = "Yu Gothic UI";
-	config["FontSize"] = 9;
+	WindowX = 0;
+	WindowY = 0;
+	EnableDebug = false;
+	SaveMissingEvent = false;
+	ScreenshotSavePath = L"";
+	FontName = L"Yu Gothic UI";
+	FontSize = 9;
 
-	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
-	output << std::setw(4) << config << std::endl;
+	Save();
 }
 
 void Config::Save()
