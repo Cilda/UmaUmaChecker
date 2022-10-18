@@ -4,12 +4,15 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 
+#include "Config.h"
+
 wxDEFINE_EVENT(DROP_IMAGE, wxCommandEvent);
 
 
 PreviewFrame::PreviewFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("プレビュー"), wxDefaultPosition, wxSize(400, 500), wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE)
 {
-	this->SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Yu Gothic UI")));
+	Config* config = Config::GetInstance();
+	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 

@@ -30,6 +30,13 @@ void wxUmaTextCtrl::SetValue(const wxString& value)
 	for (wxString::const_iterator itr = value.begin(); itr != value.end(); itr++) {
 		wchar_t c = *itr;
 
+		if (or_check == 2) {
+			or_check = 0;
+			this->SetDefaultStyle(*wxBLACK);
+			this->AppendText(text);
+			text = wxEmptyString;
+		}
+
 		switch (c) {
 			case '+':
 			case '-':
@@ -38,13 +45,6 @@ void wxUmaTextCtrl::SetValue(const wxString& value)
 				this->AppendText(text);
 				text = wxEmptyString;
 				break;
-		}
-
-		if (or_check == 2) {
-			or_check = 0;
-			this->SetDefaultStyle(*wxBLACK);
-			this->AppendText(text);
-			text = wxEmptyString;
 		}
 
 		if (c == '+') {
@@ -99,4 +99,19 @@ void wxUmaTextCtrl::AppendText(const wxString& text)
 {
 	this->SetInsertionPointEnd();
 	this->WriteText(text);
+}
+
+bool wxUmaTextCtrl::SetFont(const wxFont& font)
+{
+	bool ret = wxTextCtrl::SetFont(font);
+	wxTextAttr attr = this->GetDefaultStyle();
+
+	attr.SetFont(font);
+
+	this->SetDefaultStyle(attr);
+	
+	wxString text = this->GetValue();
+
+	this->SetValue(text);
+	return ret;
 }

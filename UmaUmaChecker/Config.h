@@ -21,5 +21,7 @@ public:
 	bool EnableDebug = false;
 	bool SaveMissingEvent = false;
 	std::wstring ScreenshotSavePath;
+	std::wstring FontName;
+	int FontSize;
 };
 

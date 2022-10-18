@@ -14,24 +14,33 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	this->bUpdated = false;
 	this->config = config;
 
-	this->SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Yu Gothic UI")));
+	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	this->SetBackgroundColour(wxColour(255, 255, 255));
 
 	wxBoxSizer* sizeParent = new wxBoxSizer(wxVERTICAL);
 
-	// 一般
+	// 更新
 	wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("一般")), wxVERTICAL);
-	wxBoxSizer* sizeSB = new wxBoxSizer(wxHORIZONTAL);
 
+	wxBoxSizer* sizeSB = new wxBoxSizer(wxHORIZONTAL);
 	m_staticTextUpdate = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("イベント情報を最新に更新する"));
 	m_buttonUpdate = new wxButton(sizeS1->GetStaticBox(), wxID_ANY, wxT("更新"));
 
-	sizeSB->Add(m_staticTextUpdate, 0, wxALL, 5);
+	sizeSB->Add(m_staticTextUpdate, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 	sizeSB->Add(m_buttonUpdate, 0, wxALL, 5);
-
 	sizeS1->Add(sizeSB, 1, wxALL, 5);
+
+	// フォント選択
+	wxBoxSizer* sizeFont = new wxBoxSizer(wxHORIZONTAL);
+	m_staticTextFontSelect = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ウィンドウのフォント"));
+	m_fontPickerCtrl = new wxFontPickerCtrl(sizeS1->GetStaticBox(), wxID_ANY, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
+
+	sizeFont->Add(m_staticTextFontSelect, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+	sizeFont->Add(m_fontPickerCtrl, 0, wxALL, 5);
+	sizeS1->Add(sizeFont, 1, wxALL, 5);
+
 	sizeParent->Add(sizeS1, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 
 	// スクリーンショット
@@ -44,7 +53,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	m_textCtrlScreenShotPath = new wxTextCtrl(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(280, -1)));
 	m_buttonBrowse = new wxButton(sizeS2->GetStaticBox(), wxID_ANY, wxT("参照"));
 
-	fgSize->Add(m_staticTextScreenShotPath, 0, wxALL, 5);
+	fgSize->Add(m_staticTextScreenShotPath, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 	fgSize->Add(m_textCtrlScreenShotPath, 0, wxALL, 5);
 	fgSize->Add(m_buttonBrowse, 0, wxALL, 5);
 
@@ -114,7 +123,15 @@ void SettingDialog::OnClickBrowse(wxCommandEvent& event)
 void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 {
 	config->ScreenshotSavePath = m_textCtrlScreenShotPath->GetValue().wc_str();
+	config->FontName = m_fontPickerCtrl->GetSelectedFont().GetFaceName();
+	config->FontSize = m_fontPickerCtrl->GetSelectedFont().GetPointSize();
+
+	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);
+}
+
+void SettingDialog::OnClickFontSelect(wxCommandEvent& event)
+{
 }
 
 bool SettingDialog::UpdateLibrary()

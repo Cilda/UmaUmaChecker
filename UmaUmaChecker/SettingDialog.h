@@ -8,6 +8,7 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/webrequest.h>
+#include <wx/fontpicker.h>
 
 class Config;
 
@@ -24,6 +25,7 @@ private:
 	void OnClickUpdate(wxCommandEvent& event);
 	void OnClickBrowse(wxCommandEvent& event);
 	void OnClickOkButton(wxCommandEvent& event);
+	void OnClickFontSelect(wxCommandEvent& event);
 
 	bool UpdateLibrary();
 	void UpdateFile(const wxString& url);
@@ -37,6 +39,8 @@ private:
 	wxStdDialogButtonSizer* m_dialogButtonSizer;
 	wxCheckBox* m_checkDebugEnable;
 	wxCheckBox* m_checkSaveScreenShot;
+	wxStaticText* m_staticTextFontSelect;
+	wxFontPickerCtrl* m_fontPickerCtrl;
 
 	Config* config;
 	std::vector<wxWebRequest> requests;
