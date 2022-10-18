@@ -43,34 +43,31 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	m_buttonAbout = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonAbout, 0, wxALL, 5);
 
-	bSizerTop->Add(bSizerButtons, 0, wxEXPAND | wxFIXED_MINSIZE | wxRIGHT | wxLEFT, 5);
+	bSizerTop->Add(bSizerButtons, 0, wxEXPAND | wxFIXED_MINSIZE | wxRIGHT | wxLEFT | wxBOTTOM, 5);
 
-	wxBoxSizer* bSizer42;
-	bSizer42 = new wxBoxSizer(wxVERTICAL);
+	wxFlexGridSizer* sizerEventInfo = new wxFlexGridSizer(2, 2, 9, 9);
 
-	wxFlexGridSizer* fgSizerInfo = new wxFlexGridSizer(2, 2, 0, 0);
-	fgSizerInfo->SetFlexibleDirection(wxBOTH);
-	fgSizerInfo->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-
+	// 育成ウマ娘
 	m_staticTextCharaName = new wxStaticText(this, wxID_ANY, wxT("育成ウマ娘"));
 	m_staticTextCharaName->Wrap(-1);
-	fgSizerInfo->Add(m_staticTextCharaName, 0, wxALL, 5);
+	sizerEventInfo->Add(m_staticTextCharaName, wxALIGN_CENTER_VERTICAL);
 
-	m_comboBoxUma = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(300, -1)));
+	m_comboBoxUma = new wxComboBox(this, wxID_ANY);
+	sizerEventInfo->Add(m_comboBoxUma, 1, wxEXPAND);
 
-	fgSizerInfo->Add(m_comboBoxUma, 1, wxEXPAND | wxALL, 5);
-
+	// イベント名
 	m_staticTextEventName = new wxStaticText(this, wxID_ANY, wxT("イベント名"));
 	m_staticTextEventName->Wrap(-1);
-	fgSizerInfo->Add(m_staticTextEventName, 0, wxALL, 5);
+	sizerEventInfo->Add(m_staticTextEventName, wxALIGN_CENTER_VERTICAL);
 
-	m_textCtrlEventSource = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(300, -1)), wxTE_READONLY);
+	m_textCtrlEventSource = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	m_textCtrlEventSource->SetBackgroundColour(wxColour(255, 255, 255));
+	sizerEventInfo->Add(m_textCtrlEventSource, 1, wxEXPAND);
+	sizerEventInfo->AddGrowableCol(1, 1);
 
-	fgSizerInfo->Add(m_textCtrlEventSource, 0, wxALL, 5);
-	bSizer42->Add(fgSizerInfo, 0, wxEXPAND, 5);
-	bSizerTop->Add(bSizer42, 0, wxEXPAND | wxRIGHT | wxLEFT, 5);
+	bSizerTop->Add(sizerEventInfo, 0, wxEXPAND | wxRIGHT | wxLEFT, 15);
 
+	// 選択肢
 	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("選択肢")), wxVERTICAL);
 
 	std::vector<wxColour> bgColors = {
@@ -87,12 +84,12 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		if (i < bgColors.size()) TitleCtrl->SetBackgroundColour(bgColors[i]);
 		else TitleCtrl->SetBackgroundColour(*wxWHITE);
 
-		TitleCtrl->SetMinSize(FromDIP(wxSize(180, -1)));
-		bSizerOption1->Add(TitleCtrl, 0, wxALL, 5);
+		TitleCtrl->SetSize(FromDIP(wxSize(180, -1)));
+		bSizerOption1->Add(TitleCtrl, 2, wxALL, 5);
 
 		wxUmaTextCtrl* OptionCtrl = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
 		OptionCtrl->SetMinSize(FromDIP(wxSize(-1, 64)));
-		bSizerOption1->Add(OptionCtrl, 1, wxALL | wxEXPAND, 5);
+		bSizerOption1->Add(OptionCtrl, 3, wxALL | wxEXPAND, 5);
 
 		sbSizerOptions->Add(bSizerOption1, 1, wxEXPAND, 5);
 
