@@ -34,7 +34,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 
 	// フォント選択
 	wxBoxSizer* sizeFont = new wxBoxSizer(wxHORIZONTAL);
-	m_staticTextFontSelect = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ウィンドウのフォントを変更"));
+	m_staticTextFontSelect = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ウィンドウのフォント"));
 	m_fontPickerCtrl = new wxFontPickerCtrl(sizeS1->GetStaticBox(), wxID_ANY, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
 	sizeFont->Add(m_staticTextFontSelect, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
