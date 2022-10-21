@@ -8,6 +8,7 @@
 #include <wx/msgdlg.h>
 #include <wx/dcclient.h>
 #include <wx/log.h>
+#include <wx/msw/msvcrt.h>
 
 #include "utility.h"
 
@@ -274,9 +275,10 @@ void MainFrame::OnChangeUmaEvent(wxThreadEvent& event)
 			GetObject(hBmp, sizeof(BITMAP), &bmp);
 			m_PreviewWindow->SetImage(hBmp, bmp.bmWidth, bmp.bmHeight);
 		}
+		else {
+			DeleteObject(hBmp);
+		}
 	}
-
-	//DeleteObject(hBmp);
 }
 
 void MainFrame::OnEnterControl(wxMouseEvent& event)
@@ -325,7 +327,7 @@ void MainFrame::OnPreviewDragFile(wxCommandEvent& event)
 	if (m_PreviewWindow) {
 		const auto& image = m_PreviewWindow->GetImage();
 
-		Gdiplus::Bitmap* gimage = new Gdiplus::Bitmap(image.GetHBITMAP(), NULL);
+		Gdiplus::Bitmap* gimage = Gdiplus::Bitmap::FromHBITMAP(image.GetHBITMAP(), NULL);
 		cv::Mat mat = Uma::BitmapToCvMat(gimage);
 
 		EventSource* EventSrc = umaMgr->DetectEvent(mat);

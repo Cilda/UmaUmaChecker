@@ -15,6 +15,7 @@
 
 #include <wx/log.h>
 #include <wx/utils.h>
+#include <wx/msw/msvcrt.h>
 
 #ifdef USE_MS_OCR
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
@@ -24,6 +25,8 @@ const cv::Rect2d Uma::CharaEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
 const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
 const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
 const cv::Rect2d Uma::ScenarioChoiseBound = { 0.1636, 0.1929, 0.6051, 0.02485 };
+const cv::Rect2d Uma::TrainingCharaSingleLineBound = { 0.3186, 0.1358, 0.66839, 0.02769 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
+const cv::Rect2d Uma::TrainingCharaMultiLineBound = { 0.3186, 0.1107, 0.66839, 0.05410 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
 const double Uma::ResizeRatio = 2.0;
 
 Uma::Uma(wxFrame* frame)
@@ -35,6 +38,7 @@ Uma::Uma(wxFrame* frame)
 	CurrentCharacter = nullptr;
 	CurrentEvent = nullptr;
 	api = new tesseract::TessBaseAPI();
+	apiMulti = new tesseract::TessBaseAPI();
 
 	this->frame = frame;
 }
@@ -45,6 +49,7 @@ Uma::~Uma()
 		Stop();
 	}
 	delete api;
+	delete apiMulti;
 }
 
 void Uma::Init()
@@ -60,6 +65,8 @@ void Uma::Init()
 
 	api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
 	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
+
+	apiMulti->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
 
 #ifdef USE_OCR
 	InitOCR();
@@ -105,7 +112,7 @@ Gdiplus::Bitmap *Uma::ScreenShot()
 	SelectObject(hdc_mem, hBmp);	
 	BitBlt(hdc_mem, 0, 0, rc.right, rc.bottom, hdc, pt.x, pt.y, SRCCOPY);
 
-	Gdiplus::Bitmap* image = new Gdiplus::Bitmap(hBmp, NULL);
+	Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromHBITMAP(hBmp, NULL);
 
 	DeleteDC(hdc_mem);
 	DeleteObject(hBmp);
@@ -134,6 +141,7 @@ void Uma::Stop()
 	thread->join();
 	delete thread;
 	thread = nullptr;
+	CurrentEvent = nullptr;
 
 	wxLogDebug(wxT("ストップ====================="));
 }
@@ -200,6 +208,8 @@ void Uma::MonitorThread()
 					wxQueueEvent(frame, event.Clone());
 				}
 			}
+
+			//DetectTrainingCharaName(srcImage);
 
 			delete image;
 		}
@@ -284,7 +294,8 @@ std::wstring Uma::GetTextFromImage(cv::Mat& img)
 	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
 	api->Recognize(NULL);
 
-	std::wstring text = utility::ConvertUtf8ToUtf16(api->GetUTF8Text());
+	const std::unique_ptr<const char[]> utf8_text(api->GetUTF8Text());
+	std::wstring text = utility::ConvertUtf8ToUtf16(utf8_text.get());
 	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
 	//Collector.Collect(text);
@@ -293,6 +304,29 @@ std::wstring Uma::GetTextFromImage(cv::Mat& img)
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
 	wxLogDebug(wxT("GetTextFromImage(): %lld"), msec);
+
+	return text;
+}
+
+std::wstring Uma::GetMultiTextFromImage(cv::Mat& img)
+{
+	auto start = std::chrono::system_clock::now();
+
+	std::lock_guard<std::mutex> lock(mutex);
+
+	apiMulti->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
+	apiMulti->Recognize(NULL);
+
+	const std::unique_ptr<const char[]> utf8_text(apiMulti->GetUTF8Text());
+	std::wstring text = utility::ConvertUtf8ToUtf16(utf8_text.get());
+	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
+
+	//Collector.Collect(text);
+
+	auto end = std::chrono::system_clock::now();
+	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+	wxLogDebug(wxT("GetMultiTextFromImage(): %lld"), msec);
 
 	return text;
 }
@@ -378,6 +412,29 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 	}
 
 
+
+	return nullptr;
+}
+
+EventSource* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
+{
+	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
+		Uma::TrainingCharaMultiLineBound.x * srcImg.size().width,
+		Uma::TrainingCharaMultiLineBound.y * srcImg.size().height,
+		Uma::TrainingCharaMultiLineBound.width * srcImg.size().width,
+		Uma::TrainingCharaMultiLineBound.height * srcImg.size().height
+	));
+	cv::Mat rsImg, gray, bin;
+
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+	cv::threshold(gray, bin, 130, 255, cv::THRESH_BINARY_INV);
+
+	double r = (double)(bin.size().area() - cv::countNonZero(bin)) / bin.size().area();
+
+	cv::medianBlur(bin, bin, 5);
+
+	//cv::imwrite("test.png", bin);
 
 	return nullptr;
 }

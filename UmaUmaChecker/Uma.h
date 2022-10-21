@@ -19,8 +19,6 @@
 #include "Config.h"
 
 
-#define WM_CHANGEUMAEVENT (WM_USER + 1)
-
 class Uma
 {
 public:
@@ -43,6 +41,7 @@ public:
 	}
 
 	EventSource* DetectEvent(const cv::Mat& srcImg);
+	EventSource* DetectTrainingCharaName(const cv::Mat& srcImg);
 
 	bool Reload();
 	bool IsStarted() const { return thread != nullptr; }
@@ -66,11 +65,14 @@ private:
 	std::shared_ptr<EventSource> GetEventByBottomOption(const cv::Mat& srcImg);
 	std::shared_ptr<EventSource> GetCharaEventByBottomOption(const cv::Mat& srcImg);
 
+	// イベント判定
 	bool IsCharaEvent(const cv::Mat& srcImg);
 	bool IsCardEvent(const cv::Mat& srcImg);
 	bool IsScenarioEvent(const cv::Mat& srcImg);
 
 	std::wstring GetTextFromImage(cv::Mat& img);
+	std::wstring GetMultiTextFromImage(cv::Mat& img);
+
 	void AppendCollectedText(std::vector<std::wstring>& text_list);
 
 public:
@@ -78,6 +80,8 @@ public:
 	static const cv::Rect2d CardEventBound;
 	static const cv::Rect2d BottomChoiseBound;
 	static const cv::Rect2d ScenarioChoiseBound;
+	static const cv::Rect2d TrainingCharaSingleLineBound;
+	static const cv::Rect2d TrainingCharaMultiLineBound;
 
 public:
 	std::wstring EventName;
@@ -92,9 +96,11 @@ private:
 	TextCollector Collector;
 	EventRoot* CurrentCharacter;
 	tesseract::TessBaseAPI* api;
+	tesseract::TessBaseAPI* apiMulti;
 	std::wstring DetectedEventName;
 	std::mutex mutex;
 
+	// for event
 	wxFrame* frame;
 
 private:
