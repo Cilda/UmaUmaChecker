@@ -14,7 +14,7 @@ Windows10/11 64bitで動作を確認しています。
 画像認識によって各種イベントを識別しています。
 
 ## インストール
-https://github.com/Cilda/UmaUmaChecker/releases から最新のUmaUmaChecker_vX.X.X.zipをダウンロードします。  
+[こちら](https://github.com/Cilda/UmaUmaChecker/releases) から最新のUmaUmaChecker_vX.X.X.zipをダウンロードします。  
 その後、ダウンロードしたzipファイルを解凍して作成されたUmaUmaChecker.exeを実行すると起動します。
 
 ## 利用方法
@@ -24,7 +24,14 @@ https://github.com/Cilda/UmaUmaChecker/releases から最新のUmaUmaChecker_vX.
 ### イベントのアップデート
   新規育成ウマ娘・サポートカードが追加された際は
  「設定」→「一般」欄から「イベント情報を最新に更新する」の右隣にある「更新」ボタンを押してください。  
- 　※イベントデータは [GameWith](https://gamewith.jp/uma-musume/)様のサイトよりデータを抽出し生成しています。
+ 　※イベントデータは [GameWith](https://gamewith.jp/uma-musume/)様のサイトよりデータを抽出し生成しています。  
+
+## 詳細設定  
+### フォントの変更  
+　「設定」→「一般」欄から「ウィンドウのフォント」の横の枠をクリックして変更してください  
+ ![設定1](images/002.png)  
+ ![設定2](images/004.png)  
+
 
 ## 不具合＆実装予定(実装されない機能もあります)
 - UIの変更
