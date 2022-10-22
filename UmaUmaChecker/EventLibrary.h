@@ -12,24 +12,27 @@ public:
 	void Clear();
 	bool Load();
 
+	std::shared_ptr<EventSource> RetrieveEvent(const std::wstring& name);
+	std::shared_ptr<EventSource> RetrieveEventFromOptionTitle(const std::wstring& name);
+	std::shared_ptr<EventSource> RetrieveCharaEvent(const std::wstring& name, const std::wstring& CharaName);
+	std::shared_ptr<EventSource> RetrieveCharaEventFromOptionTitle(const std::wstring& name);
+	std::shared_ptr<EventSource> RetrieveScenarioEvent(const std::wstring& name);
+	std::shared_ptr<EventRoot> RetrieveCharaName(const std::wstring& name);
+
+	EventRoot* GetCharacter(const std::wstring& name);
+
+	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const { return CharasByRank; }
+
+private:
 	bool LoadEvent();
 	bool LoadChara();
 	bool LoadScenarioEvent();
 
 	void InitEventDB();
 	void InitCharaDB();
+	void InitCharaNameDB();
 	void InitScenarioEventDB();
 
-	std::shared_ptr<EventSource> RetrieveEvent(const std::wstring& name);
-	std::shared_ptr<EventSource> RetrieveEventFromOptionTitle(const std::wstring& name);
-	std::shared_ptr<EventSource> RetrieveCharaEvent(const std::wstring& name, const std::wstring& CharaName);
-	std::shared_ptr<EventSource> RetrieveCharaEventFromOptionTitle(const std::wstring& name);
-	std::shared_ptr<EventSource> RetrieveScenarioEvent(const std::wstring& name);
-	EventRoot* GetCharacter(const std::wstring& name);
-
-	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const { return CharasByRank; }
-
-private:
 	void DeleteDBFiles();
 	std::wstring GetBestMatchString(const std::vector<std::wstring>& xstrs, const std::wstring& text);
 

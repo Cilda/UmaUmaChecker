@@ -115,7 +115,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		m_textCtrlEventOptions[i]->Bind(wxEVT_ENTER_WINDOW, &MainFrame::OnEnterControl, this);
 		m_textCtrlEventOptions[i]->Bind(wxEVT_LEAVE_WINDOW, &MainFrame::OnLeaveControl, this);
 	}
-	this->Bind(wxEVT_THREAD, &MainFrame::OnChangeUmaEvent, this);
+	this->Bind(wxEVT_THREAD, &MainFrame::OnUmaThreadEvent, this);
 	m_buttonAbout->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickAbout, this);
 
 	if (config->WindowX != 0 || config->WindowY != 0) {
@@ -262,22 +262,28 @@ void MainFrame::OnSelectedUma(wxCommandEvent& event)
 	umaMgr->SetTrainingCharacter(m_comboBoxUma->GetValue().wc_str());
 }
 
-void MainFrame::OnChangeUmaEvent(wxThreadEvent& event)
+void MainFrame::OnUmaThreadEvent(wxThreadEvent& event)
 {
-	HBITMAP hBmp = event.GetPayload<HBITMAP>();
+	if (event.GetId() == 1) {
+		HBITMAP hBmp = event.GetPayload<HBITMAP>();
 
-	if (umaMgr->CurrentEvent) {
-		ChangeEventOptions(umaMgr->CurrentEvent);
+		if (umaMgr->CurrentEvent) {
+			ChangeEventOptions(umaMgr->CurrentEvent);
 
-		if (m_PreviewWindow) {
-			BITMAP bmp;
+			if (m_PreviewWindow) {
+				BITMAP bmp;
 
-			GetObject(hBmp, sizeof(BITMAP), &bmp);
-			m_PreviewWindow->SetImage(hBmp, bmp.bmWidth, bmp.bmHeight);
+				GetObject(hBmp, sizeof(BITMAP), &bmp);
+				m_PreviewWindow->SetImage(hBmp, bmp.bmWidth, bmp.bmHeight);
+			}
+			else {
+				DeleteObject(hBmp);
+			}
 		}
-		else {
-			DeleteObject(hBmp);
-		}
+	}
+	else if (event.GetId() == 2) {
+		m_comboBoxUma->SetValue(event.GetString());
+		umaMgr->SetTrainingCharacter(event.GetString().ToStdWstring());
 	}
 }
 

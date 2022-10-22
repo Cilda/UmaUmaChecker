@@ -40,6 +40,11 @@ bool EventLibrary::Load()
 	LoadChara();
 	LoadScenarioEvent();
 	DeleteDBFiles();
+
+	InitEventDB();
+	InitCharaDB();
+	InitCharaNameDB();
+	InitScenarioEventDB();
 	return true;
 }
 
@@ -276,6 +281,17 @@ void EventLibrary::InitCharaDB()
 	dbw2.close();
 }
 
+void EventLibrary::InitCharaNameDB()
+{
+	simstring::ngram_generator gen(3, false);
+	simstring::writer_base<std::wstring> dbw(gen, DBPath + "chara\\charaname.db");
+
+	for (auto& source : Charas) {
+		dbw.insert(source->Name);
+	}
+	dbw.close();
+}
+
 void EventLibrary::InitScenarioEventDB()
 {
 	CreateDirectoryA(DBPath.c_str(), NULL);
@@ -433,6 +449,37 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveScenarioEvent(const std::wstr
 	if (event == ScenarioEventMap.end()) return nullptr;
 
 	return event->second;
+}
+
+std::shared_ptr<EventRoot> EventLibrary::RetrieveCharaName(const std::wstring& name)
+{
+	simstring::reader dbr;
+
+	dbr.open(DBPath + "chara\\charaname.db");
+
+	std::vector<std::wstring> xstrs;
+
+	for (double ratio = 1.0; ratio > 0.2; ratio -= 0.05) {
+		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
+	dbr.close();
+
+	if (xstrs.empty()) return nullptr;
+
+	std::wstring match = xstrs.front();
+	if (xstrs.size() >= 2) {
+		match = GetBestMatchString(xstrs, name);
+	}
+
+	const auto& itr = CharaMap.find(match);
+	if (itr != CharaMap.end()) {
+		return itr->second;
+	}
+
+	return nullptr;
 }
 
 EventRoot* EventLibrary::GetCharacter(const std::wstring& name)

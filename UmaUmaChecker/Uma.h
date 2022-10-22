@@ -41,7 +41,7 @@ public:
 	}
 
 	EventSource* DetectEvent(const cv::Mat& srcImg);
-	EventSource* DetectTrainingCharaName(const cv::Mat& srcImg);
+	EventRoot* DetectTrainingCharaName(const cv::Mat& srcImg);
 
 	bool Reload();
 	bool IsStarted() const { return thread != nullptr; }

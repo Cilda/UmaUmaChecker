@@ -43,7 +43,7 @@ private:
 	void OnClickPreview(wxCommandEvent& event);
 	void OnClickSetting(wxCommandEvent& event);
 	void OnSelectedUma(wxCommandEvent& event);
-	void OnChangeUmaEvent(wxThreadEvent& event);
+	void OnUmaThreadEvent(wxThreadEvent& event);
 	void OnEnterControl(wxMouseEvent& event);
 	void OnLeaveControl(wxMouseEvent& event);
 	void OnClickAbout(wxCommandEvent& event);

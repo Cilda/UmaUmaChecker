@@ -58,9 +58,6 @@ void Uma::Init()
 	CurrentCharacter = nullptr;
 
 	if (SkillLib.Load()) {
-		SkillLib.InitEventDB();
-		SkillLib.InitCharaDB();
-		SkillLib.InitScenarioEventDB();
 	}
 
 	api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
@@ -204,12 +201,20 @@ void Uma::MonitorThread()
 					image->GetHBITMAP(Gdiplus::Color(0, 0, 0), &hBmp);
 
 					wxThreadEvent event(wxEVT_THREAD);
+					event.SetId(1);
 					event.SetPayload(hBmp);
 					wxQueueEvent(frame, event.Clone());
 				}
 			}
-
-			//DetectTrainingCharaName(srcImage);
+			else {
+				EventRoot* root = DetectTrainingCharaName(srcImage);
+				if (root) {
+					wxThreadEvent event(wxEVT_THREAD);
+					event.SetId(2);
+					event.SetString(root->Name);
+					wxQueueEvent(frame, event.Clone());
+				}
+			}
 
 			delete image;
 		}
@@ -416,7 +421,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 	return nullptr;
 }
 
-EventSource* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
+EventRoot* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 {
 	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
 		Uma::TrainingCharaMultiLineBound.x * srcImg.size().width,
@@ -424,17 +429,23 @@ EventSource* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 		Uma::TrainingCharaMultiLineBound.width * srcImg.size().width,
 		Uma::TrainingCharaMultiLineBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg, gray, bin;
+	cv::Mat rsImg, gray, bin, bg;
+	cv::Mat cloneImg;
 
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 130, 255, cv::THRESH_BINARY_INV);
+	// 判定
+	cv::inRange(cut, cv::Scalar(15, 55, 115), cv::Scalar(80, 114, 160), bg);
+	double ratio = (double)cv::countNonZero(bg) / bg.size().area();
 
-	double r = (double)(bin.size().area() - cv::countNonZero(bin)) / bin.size().area();
+	if (ratio > 0.05) {
+		cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+		cv::threshold(gray, bin, 85, 255, cv::THRESH_BINARY_INV);
 
-	cv::medianBlur(bin, bin, 5);
+		std::wstring text = GetMultiTextFromImage(bin);
 
-	//cv::imwrite("test.png", bin);
+		auto chara = SkillLib.RetrieveCharaName(text);
+		return chara ? chara.get() : nullptr;
+	}
 
 	return nullptr;
 }
@@ -475,11 +486,7 @@ bool Uma::Reload()
 {
 	SkillLib.Clear();
 
-	if (SkillLib.Load()) {
-		SkillLib.InitEventDB();
-		SkillLib.InitCharaDB();
-		SkillLib.InitScenarioEventDB();
-	}
+	SkillLib.Load();
 
 	return true;
 }
