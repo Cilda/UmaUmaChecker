@@ -416,8 +416,6 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 		}
 	}
 
-
-
 	return nullptr;
 }
 
@@ -444,6 +442,8 @@ EventRoot* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 		std::wstring text = GetMultiTextFromImage(bin);
 
 		auto chara = SkillLib.RetrieveCharaName(text);
+		if (chara.get() == CurrentCharacter) return nullptr;
+
 		return chara ? chara.get() : nullptr;
 	}
 
