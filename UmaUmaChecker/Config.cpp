@@ -35,6 +35,7 @@ bool Config::Load()
 			ScreenshotSavePath = utility::ConvertUtf8ToUtf16(config.value("ScreenshotSavePath", "").c_str());
 			FontName = utility::ConvertUtf8ToUtf16(config.value("FontName", "Yu Gothic UI").c_str());
 			FontSize = config.value("FontSize", 9);
+			IsHideNoneChoise = config.value("IsHideNoneChoise", false);
 		}
 		catch (json::exception& ex) {
 			return false;
@@ -56,6 +57,7 @@ void Config::Create()
 	ScreenshotSavePath = L"";
 	FontName = L"Yu Gothic UI";
 	FontSize = 9;
+	IsHideNoneChoise = false;
 
 	Save();
 }
@@ -71,6 +73,7 @@ void Config::Save()
 	config["ScreenshotSavePath"] = std::filesystem::path(ScreenshotSavePath.begin(), ScreenshotSavePath.end()).u8string();
 	config["FontName"] = std::filesystem::path(FontName.begin(), FontName.end()).u8string();
 	config["FontSize"] = FontSize;
+	config["IsHideNoneChoise"] = IsHideNoneChoise;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

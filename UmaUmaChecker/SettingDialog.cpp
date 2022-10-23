@@ -20,26 +20,30 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	this->SetBackgroundColour(wxColour(255, 255, 255));
 
 	wxBoxSizer* sizeParent = new wxBoxSizer(wxVERTICAL);
-
-	// 更新
+	
 	wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("一般")), wxVERTICAL);
 
+	// 更新
 	wxBoxSizer* sizeSB = new wxBoxSizer(wxHORIZONTAL);
 	m_staticTextUpdate = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("イベント情報を最新に更新する"));
 	m_buttonUpdate = new wxButton(sizeS1->GetStaticBox(), wxID_ANY, wxT("更新"));
 
-	sizeSB->Add(m_staticTextUpdate, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-	sizeSB->Add(m_buttonUpdate, 0, wxALL, 5);
-	sizeS1->Add(sizeSB, 1, wxALL, 5);
+	sizeSB->Add(m_staticTextUpdate, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+	sizeSB->Add(m_buttonUpdate, 0);
+	sizeS1->Add(sizeSB, 1, wxLEFT | wxBOTTOM, 5);
 
 	// フォント選択
 	wxBoxSizer* sizeFont = new wxBoxSizer(wxHORIZONTAL);
 	m_staticTextFontSelect = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ウィンドウのフォント"));
 	m_fontPickerCtrl = new wxFontPickerCtrl(sizeS1->GetStaticBox(), wxID_ANY, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
-	sizeFont->Add(m_staticTextFontSelect, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-	sizeFont->Add(m_fontPickerCtrl, 0, wxALL, 5);
-	sizeS1->Add(sizeFont, 1, wxALL, 5);
+	sizeFont->Add(m_staticTextFontSelect, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+	sizeFont->Add(m_fontPickerCtrl);
+	sizeS1->Add(sizeFont, 1, wxLEFT | wxBOTTOM, 5);
+
+	// 選択肢表示チェック
+	m_checkBoxHideOption = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("「選択肢なし」のイベントを表示しない"));
+	sizeS1->Add(m_checkBoxHideOption, 0, wxLEFT | wxBOTTOM, 5);
 
 	sizeParent->Add(sizeS1, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 
@@ -101,6 +105,7 @@ SettingDialog::~SettingDialog()
 void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 {
 	m_textCtrlScreenShotPath->SetLabelText(config->ScreenshotSavePath.c_str());
+	m_checkBoxHideOption->Set3StateValue(config->IsHideNoneChoise ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -125,6 +130,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->ScreenshotSavePath = m_textCtrlScreenShotPath->GetValue().wc_str();
 	config->FontName = m_fontPickerCtrl->GetSelectedFont().GetFaceName();
 	config->FontSize = m_fontPickerCtrl->GetSelectedFont().GetPointSize();
+	config->IsHideNoneChoise = m_checkBoxHideOption->IsChecked();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);

@@ -350,6 +350,19 @@ void MainFrame::OnPreviewDragFile(wxCommandEvent& event)
 void MainFrame::ChangeEventOptions(EventSource* event)
 {
 	if (event) {
+		Config* config = Config::GetInstance();
+		bool bShow = config->IsHideNoneChoise ? false : true;
+		if (config->IsHideNoneChoise) {
+			for (auto& option : event->Options) {
+				if (!option->Title.empty() && option->Title != L"選択肢なし") {
+					bShow = true;
+					break;
+				}
+			}
+		}
+
+		if (!bShow) return;
+
 		m_textCtrlEventSource->SetValue(event->Name);
 
 		for (int i = 0; i < EventOptionCount; i++) {

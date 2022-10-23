@@ -23,5 +23,6 @@ public:
 	std::wstring ScreenshotSavePath;
 	std::wstring FontName;
 	int FontSize;
+	bool IsHideNoneChoise;
 };
 

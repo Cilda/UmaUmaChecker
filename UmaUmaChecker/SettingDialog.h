@@ -41,6 +41,7 @@ private:
 	wxCheckBox* m_checkSaveScreenShot;
 	wxStaticText* m_staticTextFontSelect;
 	wxFontPickerCtrl* m_fontPickerCtrl;
+	wxCheckBox* m_checkBoxHideOption;
 
 	Config* config;
 	std::vector<wxWebRequest> requests;
