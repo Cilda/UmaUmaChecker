@@ -74,6 +74,7 @@ private:
 	std::wstring GetMultiTextFromImage(cv::Mat& img);
 
 	void AppendCollectedText(std::vector<std::wstring>& text_list);
+	double CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext);
 
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界

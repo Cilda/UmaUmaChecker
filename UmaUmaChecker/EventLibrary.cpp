@@ -523,7 +523,7 @@ std::wstring EventLibrary::GetBestMatchString(const std::vector<std::wstring>& x
 			total++;
 		}
 
-		if (max_rate > (double)equal / total) {
+		if (max_rate < (double)equal / total) {
 			max_rate = (double)equal / total;
 			best_match = str;
 		}

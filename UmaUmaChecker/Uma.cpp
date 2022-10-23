@@ -17,6 +17,8 @@
 #include <wx/utils.h>
 #include <wx/msw/msvcrt.h>
 
+#include "simstring/simstring.h"
+
 #ifdef USE_MS_OCR
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
 #endif
@@ -259,8 +261,8 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 
 		std::vector<std::wstring> text_list;
 		{
-			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
-			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
 			auto a3 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
 		}
 
@@ -347,6 +349,34 @@ void Uma::AppendCollectedText(std::vector<std::wstring>& text_list)
 	}
 
 	text_list.insert(text_list.begin(), vecs.begin(), vecs.end());
+}
+
+double Uma::CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext)
+{
+	simstring::ngram_generator gen(1, false);
+
+	double max_rate = 0.0;
+	std::vector<std::wstring> basengrams;
+
+	gen(stext, std::inserter(basengrams, basengrams.end()));
+
+	
+	std::vector<std::wstring> ngrams;
+	int total = 0, equal = 0;
+
+	gen(dtext, std::inserter(ngrams, ngrams.end()));
+
+	for (auto& word1 : basengrams) {
+		for (auto& word2 : ngrams) {
+			if (word1 == word2) {
+				equal++;
+			}
+		}
+
+		total++;
+	}
+
+	return (double)equal / total;
 }
 
 std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
@@ -452,34 +482,61 @@ EventRoot* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 
 std::shared_ptr<EventSource> Uma::GetCardEvent(const std::vector<std::wstring>& text_list)
 {
+	double best_rate = 0.0;
+	std::shared_ptr<EventSource> rvalue;
+
 	for (auto& text : text_list) {
 		auto ret = SkillLib.RetrieveEvent(text);
-		if (ret) return ret;
+		if (ret) {
+			double rate = CalcTextMatchRate(text, ret->Name);
+			if (rate > best_rate) {
+				best_rate = rate;
+				rvalue = ret;
+			}
+		}
 	}
 
-	return nullptr;
+	return best_rate > 0.0 ? rvalue : nullptr;
 }
 
 std::shared_ptr<EventSource> Uma::GetCharaEvent(const std::vector<std::wstring>& text_list)
 {
 	if (!CurrentCharacter) return nullptr;
 
+	double best_rate = 0.0;
+	std::shared_ptr<EventSource> rvalue;
+
 	for (auto& text : text_list) {
 		auto ret = SkillLib.RetrieveCharaEvent(text, CurrentCharacter->Name);
-		if (ret) return ret;
+		if (ret) {
+			double rate = CalcTextMatchRate(text, ret->Name);
+			if (rate > best_rate) {
+				best_rate = rate;
+				rvalue = ret;
+			}
+		}
 	}
 
-	return nullptr;
+	return best_rate > 0.0 ? rvalue : nullptr;
 }
 
 std::shared_ptr<EventSource> Uma::GetScenarioEvent(const std::vector<std::wstring>& text_list)
 {
+	double best_rate = 0.0;
+	std::shared_ptr<EventSource> rvalue;
+
 	for (auto& text : text_list) {
 		auto ret = SkillLib.RetrieveScenarioEvent(text);
-		if (ret) return ret;
+		if (ret) {
+			double rate = CalcTextMatchRate(text, ret->Name);
+			if (rate > best_rate) {
+				best_rate = rate;
+				rvalue = ret;
+			}
+		}
 	}
 
-	return nullptr;
+	return best_rate > 0.0 ? rvalue : nullptr;
 }
 
 bool Uma::Reload()
@@ -514,8 +571,8 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 
 		std::vector<std::wstring> text_list;
 		{
-			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
-			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
 			auto a3 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
 		}
 
@@ -550,8 +607,9 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
 
 		std::vector<std::wstring> text_list;
 		{
-			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
-			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
+			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
+			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
+			auto a3 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
 		}
 
 		AppendCollectedText(text_list);
