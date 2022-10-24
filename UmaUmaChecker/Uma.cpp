@@ -192,11 +192,14 @@ void Uma::MonitorThread()
 		Gdiplus::Bitmap* image = ScreenShot();
 		if (image) {
 			cv::Mat srcImage = BitmapToCvMat(image);
-			
-			CurrentEvent = DetectEvent(srcImage);
-			if (CurrentEvent) {
-				if (EventName != CurrentEvent->Name) {
-					EventName = CurrentEvent->Name;
+			bool bScaned = false;
+
+			auto start1 = std::chrono::system_clock::now();
+
+			EventSource* event = DetectEvent(srcImage, &bScaned);
+			if (event) {
+				if (event != CurrentEvent) {
+					CurrentEvent = event;
 
 					HBITMAP hBmp;
 
@@ -208,7 +211,15 @@ void Uma::MonitorThread()
 					wxQueueEvent(frame, event.Clone());
 				}
 			}
-			else {
+
+			auto end1 = std::chrono::system_clock::now();
+			auto msec1 = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - start1).count();
+
+			wxLogDebug(wxT("DetectEvent(): %lld msec"), msec1);
+
+			if (!bScaned) {
+				auto start2 = std::chrono::system_clock::now();
+
 				EventRoot* root = DetectTrainingCharaName(srcImage);
 				if (root) {
 					wxThreadEvent event(wxEVT_THREAD);
@@ -216,6 +227,11 @@ void Uma::MonitorThread()
 					event.SetString(root->Name);
 					wxQueueEvent(frame, event.Clone());
 				}
+
+				auto end2 = std::chrono::system_clock::now();
+				auto msec2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2).count();
+
+				wxLogDebug(wxT("DetectTrainingCharaName(): %lld msec"), msec2);
 			}
 
 			delete image;
@@ -224,9 +240,9 @@ void Uma::MonitorThread()
 		auto end = std::chrono::system_clock::now();
 		auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-		//wxLogDebug(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
+		wxLogDebug(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
 
-		Sleep(100);
+		if (msec < 1000) Sleep(1000 - msec);
 	}
 }
 
@@ -310,7 +326,7 @@ std::wstring Uma::GetTextFromImage(cv::Mat& img)
 	auto end = std::chrono::system_clock::now();
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-	wxLogDebug(wxT("GetTextFromImage(): %lld"), msec);
+	//wxLogDebug(wxT("GetTextFromImage(): %lld"), msec);
 
 	return text;
 }
@@ -333,7 +349,7 @@ std::wstring Uma::GetMultiTextFromImage(cv::Mat& img)
 	auto end = std::chrono::system_clock::now();
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-	wxLogDebug(wxT("GetMultiTextFromImage(): %lld"), msec);
+	//wxLogDebug(wxT("GetMultiTextFromImage(): %lld"), msec);
 
 	return text;
 }
@@ -415,11 +431,14 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 	return SkillLib.RetrieveCharaEventFromOptionTitle(text);
 }
 
-EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
+EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 {
+	if (bScaned) *bScaned = false;
+
 	// サポートカードイベント
 	std::vector<std::wstring> events = RecognizeCardEventText(srcImg);
 	if (!events.empty()) {
+		if (bScaned) *bScaned = true;
 		auto event = GetCardEvent(events);
 		if (!event) event = GetEventByBottomOption(srcImg);
 		if (event) {
@@ -430,6 +449,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 	if (CurrentCharacter) {
 		events = RecognizeCharaEventText(srcImg);
 		if (!events.empty()) {
+			if (bScaned) *bScaned = true;
 			auto event = GetCharaEvent(events);
 			if (!event) event = GetCharaEventByBottomOption(srcImg);
 			if (event) {
@@ -440,6 +460,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg)
 
 	events = RecognizeScenarioEventText(srcImg);
 	if (!events.empty()) {
+		if (bScaned) *bScaned = true;
 		auto event = GetScenarioEvent(events);
 		if (event) {
 			return event.get();

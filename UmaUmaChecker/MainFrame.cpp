@@ -295,6 +295,9 @@ void MainFrame::OnEnterControl(wxMouseEvent& event)
 	wxSize clientSize = ctrl->GetClientSize();
 	wxSize windowSize = ctrl->GetSize();
 	wxString text = ctrl->GetValue();
+
+	if (text.empty()) return;
+
 	wxTextAttr attr = ctrl->GetDefaultStyle();
 	wxClientDC dc(ctrl);
 	dc.SetFont(attr.GetFont());

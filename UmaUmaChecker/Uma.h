@@ -40,7 +40,7 @@ public:
 		return SkillLib.GetCharacters();
 	}
 
-	EventSource* DetectEvent(const cv::Mat& srcImg);
+	EventSource* DetectEvent(const cv::Mat& srcImg, bool* bScaned = nullptr);
 	EventRoot* DetectTrainingCharaName(const cv::Mat& srcImg);
 
 	bool Reload();
@@ -85,7 +85,6 @@ public:
 	static const cv::Rect2d TrainingCharaMultiLineBound;
 
 public:
-	std::wstring EventName;
 	EventSource* CurrentEvent;
 
 private:
