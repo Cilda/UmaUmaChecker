@@ -23,10 +23,10 @@
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
 #endif
 
-const cv::Rect2d Uma::CharaEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
-const cv::Rect2d Uma::CardEventBound = { 0.1532, 0.1876, 0.6118, 0.03230 };
+const cv::Rect2d Uma::CharaEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.60894941634241245136186770428016, 0.02898550724637681159420289855072 };
+const cv::Rect2d Uma::CardEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.60894941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
-const cv::Rect2d Uma::ScenarioChoiseBound = { 0.1636, 0.1929, 0.6051, 0.02485 };
+const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.60894941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::TrainingCharaSingleLineBound = { 0.3186, 0.1358, 0.66839, 0.02769 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
 const cv::Rect2d Uma::TrainingCharaMultiLineBound = { 0.3186, 0.1107, 0.66839, 0.05410 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
 const double Uma::ResizeRatio = 2.0;
@@ -107,9 +107,15 @@ Gdiplus::Bitmap *Uma::ScreenShot()
 	HDC hdc = GetDC(NULL);
 	HDC hdc_mem = CreateCompatibleDC(hdc);
 	HBITMAP hBmp = CreateDIBSection(hdc, &bmpinfo, DIB_RGB_COLORS, (void**)&lpPixel, NULL, 0);
+	if (!hBmp) {
+		DeleteDC(hdc_mem);
+		ReleaseDC(hWnd, hdc);
+		return nullptr;
+	}
 
-	SelectObject(hdc_mem, hBmp);	
+	HBITMAP hOldBmp = (HBITMAP)SelectObject(hdc_mem, hBmp);	
 	BitBlt(hdc_mem, 0, 0, rc.right, rc.bottom, hdc, pt.x, pt.y, SRCCOPY);
+	SelectObject(hdc_mem, hOldBmp);
 
 	Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromHBITMAP(hBmp, NULL);
 
