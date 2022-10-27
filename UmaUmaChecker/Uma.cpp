@@ -23,13 +23,13 @@
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
 #endif
 
-const cv::Rect2d Uma::CharaEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.60894941634241245136186770428016, 0.02898550724637681159420289855072 };
-const cv::Rect2d Uma::CardEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.60894941634241245136186770428016, 0.02898550724637681159420289855072 };
+const cv::Rect2d Uma::CharaEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
+const cv::Rect2d Uma::CardEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
-const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.60894941634241245136186770428016, 0.02898550724637681159420289855072 };
+const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::TrainingCharaSingleLineBound = { 0.3186, 0.1358, 0.66839, 0.02769 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
 const cv::Rect2d Uma::TrainingCharaMultiLineBound = { 0.3186, 0.1107, 0.66839, 0.05410 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
-const double Uma::ResizeRatio = 2.0;
+const double Uma::ResizeRatio = 8.0;
 
 Uma::Uma(wxFrame* frame)
 {
@@ -177,17 +177,23 @@ cv::Mat Uma::BitmapToCvMat(Gdiplus::Bitmap* image)
 
 cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 {
-	cv::Mat gray;
-	cv::Mat bin;
+	cv::Mat gray, gray_not;
+	cv::Mat bin, bin3;
 
 	/*
 	cv::inRange(gray, cv::Scalar(242, 242, 242), cv::Scalar(255, 255, 255), bin);
 	cv::bitwise_not(bin, bin);
 	*/
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 225, 255, cv::THRESH_BINARY_INV);
+	cv::threshold(gray, bin, 245, 255, cv::THRESH_BINARY_INV);
 
-	return bin.clone();
+	cv::Mat bin2;
+	cv::erode(bin, bin2, cv::Mat(2, 2, CV_8U, cv::Scalar(1)));
+
+	cv::bitwise_not(gray, gray_not);
+	cv::threshold(gray_not, bin3, 0, 255, cv::THRESH_OTSU);
+
+	return bin2.clone();
 }
 
 void Uma::MonitorThread()
@@ -588,11 +594,11 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCardEvent(cut)) {
-		cv::Mat gray;
+		cv::Mat gray, blur;
+
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		std::wstring text = GetTextFromImage(bin);
-		cv::Mat blur;
 
 		cv::medianBlur(bin, blur, 5);
 
