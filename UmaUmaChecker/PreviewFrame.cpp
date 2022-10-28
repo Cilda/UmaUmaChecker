@@ -1,5 +1,6 @@
 #include "PreviewFrame.h"
 
+#include <Windows.h>
 #include <wx/sizer.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
@@ -33,6 +34,10 @@ PreviewFrame::~PreviewFrame()
 
 void PreviewFrame::SetImage(WXHBITMAP hBmp, int width, int height)
 {
+	WXHBITMAP hOldBmp = image.GetHBITMAP();
+	if (hOldBmp) {
+		DeleteObject(hOldBmp);
+	}
 	image.InitFromHBITMAP(hBmp, width, height, 32);
 	this->Refresh();
 }
