@@ -190,9 +190,6 @@ cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 	cv::Mat bin2;
 	cv::erode(bin, bin2, cv::Mat(2, 2, CV_8U, cv::Scalar(1)));
 
-	cv::bitwise_not(gray, gray_not);
-	cv::threshold(gray_not, bin3, 0, 255, cv::THRESH_OTSU);
-
 	return bin2.clone();
 }
 
