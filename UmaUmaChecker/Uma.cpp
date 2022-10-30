@@ -79,7 +79,7 @@ HWND Uma::GetUmaWindow()
 	return FindWindow(TEXT("UnityWndClass"), TEXT("umamusume"));
 }
 
-Gdiplus::Bitmap *Uma::ScreenShot()
+Gdiplus::Bitmap* Uma::ScreenShot()
 {
 	HWND hWnd = GetUmaWindow();
 	if (!hWnd) return nullptr;
@@ -113,7 +113,7 @@ Gdiplus::Bitmap *Uma::ScreenShot()
 		return nullptr;
 	}
 
-	HBITMAP hOldBmp = (HBITMAP)SelectObject(hdc_mem, hBmp);	
+	HBITMAP hOldBmp = (HBITMAP)SelectObject(hdc_mem, hBmp);
 	BitBlt(hdc_mem, 0, 0, rc.right, rc.bottom, hdc, pt.x, pt.y, SRCCOPY);
 	SelectObject(hdc_mem, hOldBmp);
 
@@ -177,20 +177,20 @@ cv::Mat Uma::BitmapToCvMat(Gdiplus::Bitmap* image)
 
 cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 {
-	cv::Mat gray, gray_not;
-	cv::Mat bin, bin3;
+	cv::Mat gray;
+	cv::Mat bin;
 
 	/*
 	cv::inRange(gray, cv::Scalar(242, 242, 242), cv::Scalar(255, 255, 255), bin);
 	cv::bitwise_not(bin, bin);
 	*/
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 245, 255, cv::THRESH_BINARY_INV);
+	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
 
-	cv::Mat bin2;
-	cv::erode(bin, bin2, cv::Mat(2, 2, CV_8U, cv::Scalar(1)));
+	//cv::Mat bin2;
+	//cv::erode(bin, bin2, cv::Mat(2, 2, CV_8U, cv::Scalar(1)));
 
-	return bin2.clone();
+	return bin.clone();
 }
 
 void Uma::MonitorThread()
@@ -385,7 +385,7 @@ double Uma::CalcTextMatchRate(const std::wstring& stext, const std::wstring& dte
 
 	gen(stext, std::inserter(basengrams, basengrams.end()));
 
-	
+
 	std::vector<std::wstring> ngrams;
 	int total = 0, equal = 0;
 
