@@ -10,13 +10,14 @@
 #include <wx/log.h>
 #include <wx/msw/msvcrt.h>
 
+#include "SystemUsage.h"
 #include "utility.h"
 
 #include "SettingDialog.h"
 #include "AboutDialog.h"
 
 
-MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL)
+MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL), timer(this)
 {
 	Config* config = Config::GetInstance();
 
@@ -100,6 +101,16 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	bSizerTop->Add(sbSizerOptions, 1, wxEXPAND | wxALL, 5);
 
+
+	m_statusBar = new wxStatusBar(this, wxID_ANY);
+	m_statusBar->SetFieldsCount(2);
+	m_statusBar->PushStatusText(wxT("CPU: 0%"), 0);
+	m_statusBar->PushStatusText(wxT("MEM: 0 MB"), 1);
+	this->SetStatusBar(m_statusBar);
+
+	if (!config->IsShowStatusBar) m_statusBar->Hide();
+	else timer.Start(1000);
+
 	this->SetSizer(bSizerTop);
 	this->Fit();
 	this->Layout();
@@ -117,6 +128,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	}
 	this->Bind(wxEVT_THREAD, &MainFrame::OnUmaThreadEvent, this);
 	m_buttonAbout->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickAbout, this);
+	this->Bind(wxEVT_TIMER, &MainFrame::OnTimer, this);
 
 	if (config->WindowX != 0 || config->WindowY != 0) {
 		this->Move(config->WindowX, config->WindowY);
@@ -234,10 +246,19 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 	Config* config = Config::GetInstance();
 	SettingDialog* frame = new SettingDialog(this, config);
 	if (frame->ShowModal() == 1) {
+		if (!config->IsShowStatusBar) {
+			timer.Stop();
+			m_statusBar->Hide();
+		}
+		else if (!timer.IsRunning()) {
+			m_statusBar->Show();
+			timer.Start(1000);
+		}
 		SetFontAllChildren(this, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 		Layout();
 		Fit();
 	}
+
 	if (frame->IsUpdated()) {
 		m_comboBoxUma->Clear();
 		umaMgr->Reload();
@@ -348,6 +369,17 @@ void MainFrame::OnPreviewDragFile(wxCommandEvent& event)
 
 		delete gimage;
 	}
+}
+
+void MainFrame::OnTimer(wxTimerEvent& event)
+{
+	auto& usage = SystemUsage::Get();
+
+	double cpu_usage = usage.GetCpuUsage();
+	size_t memory_usage = usage.MemoryUsage();
+
+	m_statusBar->SetStatusText(wxString::Format(wxT("CPU: %.1lf%%"), cpu_usage));
+	m_statusBar->SetStatusText(wxString::Format(wxT("MEM: %0.1f MB"), memory_usage / 1024.0 / 1024.0), 1);
 }
 
 void MainFrame::ChangeEventOptions(EventSource* event)

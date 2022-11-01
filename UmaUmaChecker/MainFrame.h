@@ -48,6 +48,7 @@ private:
 	void OnLeaveControl(wxMouseEvent& event);
 	void OnClickAbout(wxCommandEvent& event);
 	void OnPreviewDragFile(wxCommandEvent& event);
+	void OnTimer(wxTimerEvent& event);
 
 	void ChangeEventOptions(EventSource* event);
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
@@ -67,11 +68,11 @@ private:
 	wxComboBox* m_comboBoxUma;
 	wxStaticText* m_staticTextEventName;
 	wxTextCtrl* m_textCtrlEventSource;
-
 	std::vector<wxTextCtrl*> m_textCtrlEventTitles;
 	std::vector<wxTextCtrl*> m_textCtrlEventOptions;
-
 	PreviewFrame* m_PreviewWindow;
+	wxTimer timer;
+	wxStatusBar* m_statusBar;
 
 	Uma* umaMgr;
 };

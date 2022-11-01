@@ -104,7 +104,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -136,7 +136,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -163,7 +163,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -194,7 +194,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -216,6 +216,7 @@
     <ClCompile Include="EventRoot.cpp" />
     <ClCompile Include="PreviewFrame.cpp" />
     <ClCompile Include="SettingDialog.cpp" />
+    <ClCompile Include="SystemUsage.cpp" />
     <ClCompile Include="TextCollector.cpp" />
     <ClCompile Include="Uma.cpp" />
     <ClCompile Include="EventLibrary.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="EventRoot.h" />
     <ClInclude Include="SettingDialog.h" />
+    <ClInclude Include="SystemUsage.h" />
     <ClInclude Include="TextCollector.h" />
     <ClInclude Include="Uma.h" />
     <ClInclude Include="EventLibrary.h" />

@@ -24,5 +24,6 @@ public:
 	std::wstring FontName;
 	int FontSize;
 	bool IsHideNoneChoise;
+	bool IsShowStatusBar;
 };
 

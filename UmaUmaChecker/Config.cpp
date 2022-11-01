@@ -36,6 +36,7 @@ bool Config::Load()
 			FontName = utility::ConvertUtf8ToUtf16(config.value("FontName", "Yu Gothic UI").c_str());
 			FontSize = config.value("FontSize", 9);
 			IsHideNoneChoise = config.value("IsHideNoneChoise", false);
+			IsShowStatusBar = config.value("IsShowStatusBar", false);
 		}
 		catch (json::exception& ex) {
 			return false;
@@ -58,6 +59,7 @@ void Config::Create()
 	FontName = L"Yu Gothic UI";
 	FontSize = 9;
 	IsHideNoneChoise = false;
+	IsShowStatusBar = false;
 
 	Save();
 }
@@ -74,6 +76,7 @@ void Config::Save()
 	config["FontName"] = std::filesystem::path(FontName.begin(), FontName.end()).u8string();
 	config["FontSize"] = FontSize;
 	config["IsHideNoneChoise"] = IsHideNoneChoise;
+	config["IsShowStatusBar"] = IsShowStatusBar;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

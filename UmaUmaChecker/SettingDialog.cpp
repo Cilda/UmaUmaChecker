@@ -45,6 +45,9 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	m_checkBoxHideOption = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("「選択肢なし」のイベントを表示しない"));
 	sizeS1->Add(m_checkBoxHideOption, 0, wxLEFT | wxBOTTOM, 5);
 
+	m_checkBoxShowStatusBar = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("ステータスバーを表示する"));
+	sizeS1->Add(m_checkBoxShowStatusBar, 0, wxLEFT | wxBOTTOM, 5);
+
 	sizeParent->Add(sizeS1, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 
 	// スクリーンショット
@@ -106,6 +109,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 {
 	m_textCtrlScreenShotPath->SetLabelText(config->ScreenshotSavePath.c_str());
 	m_checkBoxHideOption->Set3StateValue(config->IsHideNoneChoise ? wxCHK_CHECKED : wxCHK_UNCHECKED);
+	m_checkBoxShowStatusBar->Set3StateValue(config->IsShowStatusBar ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -131,6 +135,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->FontName = m_fontPickerCtrl->GetSelectedFont().GetFaceName();
 	config->FontSize = m_fontPickerCtrl->GetSelectedFont().GetPointSize();
 	config->IsHideNoneChoise = m_checkBoxHideOption->IsChecked();
+	config->IsShowStatusBar = m_checkBoxShowStatusBar->IsChecked();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);
