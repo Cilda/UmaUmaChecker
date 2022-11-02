@@ -267,17 +267,20 @@ void EventLibrary::InitCharaDB()
 	simstring::ngram_generator gen(3, false);
 	simstring::writer_base<std::wstring> dbw(gen, DBPath + "chara\\chara.db");
 
+	for (auto& source : CharaEventMap) {
+		dbw.insert(source.first);
+	}
+	dbw.close();
+
 	simstring::ngram_generator gen2(3, false);
 	simstring::writer_base<std::wstring> dbw2(gen2, DBPath + "chara\\choises.db");
 
-	for (auto& source : CharaEventMap) {
-		dbw.insert(source.first);
-
-		for (auto& event : source.second->Options) {
-			dbw2.insert(event->Title);
+	for (auto& source : Charas) {
+		for (auto& event : source->Events) {
+			for (auto option : event.second->Options) dbw2.insert(option->Title);
 		}
 	}
-	dbw.close();
+
 	dbw2.close();
 }
 
