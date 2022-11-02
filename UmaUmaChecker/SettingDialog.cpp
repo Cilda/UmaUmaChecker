@@ -72,7 +72,6 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	m_checkDebugEnable = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("デバッグを有効にする"));
 	m_checkDebugEnable->Enable(false);
 	m_checkSaveScreenShot = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("イベントを識別できなかった場合にキャプチャする"));
-	m_checkSaveScreenShot->Enable(false);
 
 	sizeS3->Add(m_checkDebugEnable, 0, wxALL, 5);
 	sizeS3->Add(m_checkSaveScreenShot, 0, wxALL, 5);

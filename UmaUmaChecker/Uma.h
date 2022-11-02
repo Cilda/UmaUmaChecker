@@ -6,11 +6,12 @@
 #include <wx/frame.h>
 
 #include <objbase.h>
-//#include <minmax.h>
 #include <gdiplus.h>
 #include <thread>
-#include <opencv2/opencv.hpp>
 #include <mutex>
+
+#include <opencv2/opencv.hpp>
+
 
 #ifndef USE_MS_OCR
 #include <tesseract/baseapi.h>
@@ -33,7 +34,6 @@ public:
 	bool Start();
 	void Stop();
 
-	void SetNotifyTarget(HWND hWnd);
 	void SetTrainingCharacter(const std::wstring& CharaName);
 
 	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const {
@@ -77,6 +77,8 @@ private:
 	double CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext);
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 
+	// 文字配列からハッシュ取得
+	size_t CreateHash(const std::vector<std::wstring>& strs);
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界
 	static const cv::Rect2d CardEventBound;
@@ -92,7 +94,6 @@ private:
 	bool bDetected;
 	bool bStop;
 	std::thread* thread;
-	HWND hTargetWnd;
 	EventLibrary SkillLib;
 	TextCollector Collector;
 	EventRoot* CurrentCharacter;
@@ -100,6 +101,9 @@ private:
 	tesseract::TessBaseAPI* apiMulti;
 	std::wstring DetectedEventName;
 	std::mutex mutex;
+
+	size_t EventHash = 0;
+	size_t PrevEventHash = 0;
 
 	// for event
 	wxFrame* frame;

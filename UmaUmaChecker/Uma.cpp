@@ -19,6 +19,8 @@
 
 #include "simstring/simstring.h"
 
+#include "utility.h"
+
 #ifdef USE_MS_OCR
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
 #endif
@@ -36,7 +38,6 @@ Uma::Uma(wxFrame* frame)
 	bDetected = false;
 	bStop = false;
 	thread = nullptr;
-	hTargetWnd = NULL;
 	CurrentCharacter = nullptr;
 	CurrentEvent = nullptr;
 	api = new tesseract::TessBaseAPI();
@@ -151,11 +152,6 @@ void Uma::Stop()
 	wxLogDebug(wxT("ストップ====================="));
 }
 
-void Uma::SetNotifyTarget(HWND hWnd)
-{
-	hTargetWnd = hWnd;
-}
-
 void Uma::SetTrainingCharacter(const std::wstring& CharaName)
 {
 	CurrentCharacter = SkillLib.GetCharacter(CharaName);
@@ -218,6 +214,29 @@ void Uma::MonitorThread()
 					event.SetId(1);
 					event.SetPayload(hBmp);
 					wxQueueEvent(frame, event.Clone());
+				}
+			}
+
+			if (PrevEventHash != EventHash) {
+				EventHash = PrevEventHash;
+				Config* config = Config::GetInstance();
+				if (config->SaveMissingEvent) {
+					std::wstring directory = config->ScreenshotSavePath + L"\\";
+					if (config->ScreenshotSavePath.empty()) {
+						directory = utility::GetExeDirectory() + L"\\screenshots\\";
+						CreateDirectoryW(directory.c_str(), NULL);
+						directory += L"AutoSave\\";
+						CreateDirectoryW(directory.c_str(), NULL);
+					}
+
+					std::wstring savename = directory
+						+ std::wstring(L"screenshot_")
+						+ std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
+						+ L".png";
+
+					CLSID clsid;
+					utility::GetEncoderClsid(L"image/png", &clsid);
+					image->Save(savename.c_str(), &clsid);
 				}
 			}
 
@@ -424,6 +443,19 @@ void Uma::RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output)
 	else output = cv::Mat(mat, cv::Rect(0, 0, ret.x + 10, mat.size().height));
 }
 
+size_t Uma::CreateHash(const std::vector<std::wstring>& strs)
+{
+	size_t hash = 0;
+
+	for (auto& str : strs) {
+		for (wchar_t c : str) {
+			hash |= std::hash<wchar_t>()(c);
+		}
+	}
+
+	return hash;
+}
+
 std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 {
 	cv::Mat rsImg, gray, bin;
@@ -469,6 +501,8 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 
 EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 {
+	size_t hash = 0;
+
 	if (bScaned) *bScaned = false;
 
 	// サポートカードイベント
@@ -480,6 +514,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 		if (event) {
 			return event.get();
 		}
+		hash = CreateHash(events);
+		return nullptr;
 	}
 
 	if (CurrentCharacter) {
@@ -491,6 +527,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 			if (event) {
 				return event.get();
 			}
+			hash = CreateHash(events);
+			return nullptr;
 		}
 	}
 
@@ -501,7 +539,11 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 		if (event) {
 			return event.get();
 		}
+		hash = CreateHash(events);
+		return nullptr;
 	}
+
+	PrevEventHash = hash;
 
 	return nullptr;
 }

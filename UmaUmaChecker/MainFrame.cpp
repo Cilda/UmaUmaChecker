@@ -215,7 +215,7 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 			+ std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
 			+ L".png";
 
-		GetEncoderClsid(L"image/png", &clsid);
+		utility::GetEncoderClsid(L"image/png", &clsid);
 		image->Save(savename.c_str(), &clsid);
 		delete image;
 	}
@@ -411,35 +411,4 @@ void MainFrame::ChangeEventOptions(EventSource* event)
 			}
 		}
 	}
-}
-
-int MainFrame::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
-{
-	UINT  num = 0;
-	UINT  size = 0;
-
-	Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
-
-	Gdiplus::GetImageEncodersSize(&num, &size);
-	if (size == 0)
-		return -1;
-
-	pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
-	if (pImageCodecInfo == NULL)
-		return -1;
-
-	GetImageEncoders(num, size, pImageCodecInfo);
-
-	for (UINT j = 0; j < num; ++j)
-	{
-		if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
-		{
-			*pClsid = pImageCodecInfo[j].Clsid;
-			free(pImageCodecInfo);
-			return j;
-		}
-	}
-
-	free(pImageCodecInfo);
-	return -1;
 }

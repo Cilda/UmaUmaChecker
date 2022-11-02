@@ -36,6 +36,7 @@ public:
 
 public:
 	static void SetFontAllChildren(wxWindow* parent, const wxFont& font);
+	
 
 private:
 	void OnClickStart(wxCommandEvent& event);
@@ -51,7 +52,6 @@ private:
 	void OnTimer(wxTimerEvent& event);
 
 	void ChangeEventOptions(EventSource* event);
-	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
 	void Init();
 
