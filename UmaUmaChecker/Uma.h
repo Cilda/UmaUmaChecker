@@ -75,6 +75,7 @@ private:
 
 	void AppendCollectedText(std::vector<std::wstring>& text_list);
 	double CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext);
+	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界

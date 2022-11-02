@@ -29,7 +29,7 @@ const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
 const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::TrainingCharaSingleLineBound = { 0.3186, 0.1358, 0.66839, 0.02769 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
 const cv::Rect2d Uma::TrainingCharaMultiLineBound = { 0.3186, 0.1107, 0.66839, 0.05410 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
-const double Uma::ResizeRatio = 8.0;
+const double Uma::ResizeRatio = 2.0;
 
 Uma::Uma(wxFrame* frame)
 {
@@ -282,6 +282,7 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		cv::Mat blur;
 
+		RemoveWhiteSpace(bin, bin);
 		cv::medianBlur(bin, blur, 5);
 
 		std::vector<std::wstring> text_list;
@@ -404,6 +405,25 @@ double Uma::CalcTextMatchRate(const std::wstring& stext, const std::wstring& dte
 	return (double)equal / total;
 }
 
+void Uma::RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output)
+{
+	std::vector<std::vector<cv::Point>> contours;
+	std::vector<cv::Vec4i> hierarchy;
+	cv::Point ret;
+
+	cv::findContours(mat, contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
+
+	for (int i = 0; i < contours.size() - 1; i++) {
+		for (auto& pt : contours[i]) {
+			if (pt.x > ret.x) ret.x = pt.x;
+			if (pt.y > ret.y) ret.y = pt.y;
+		}
+	}
+
+	if (ret.x + 10 > mat.size().width) output = mat;
+	else output = cv::Mat(mat, cv::Rect(0, 0, ret.x + 10, mat.size().height));
+}
+
 std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 {
 	cv::Mat rsImg, gray, bin;
@@ -437,7 +457,14 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
 
 	std::wstring text = GetTextFromImage(bin);
-	return SkillLib.RetrieveCharaEventFromOptionTitle(text);
+	auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+	if (event) return event;
+
+	text = GetTextFromImage(gray);
+	event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+	if (event) return event;
+
+	return nullptr;
 }
 
 EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
@@ -597,6 +624,7 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		std::wstring text = GetTextFromImage(bin);
 
+		RemoveWhiteSpace(bin, bin);
 		cv::medianBlur(bin, blur, 5);
 
 		std::vector<std::wstring> text_list;
