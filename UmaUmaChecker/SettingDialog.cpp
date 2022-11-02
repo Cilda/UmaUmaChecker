@@ -109,6 +109,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_textCtrlScreenShotPath->SetLabelText(config->ScreenshotSavePath.c_str());
 	m_checkBoxHideOption->Set3StateValue(config->IsHideNoneChoise ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_checkBoxShowStatusBar->Set3StateValue(config->IsShowStatusBar ? wxCHK_CHECKED : wxCHK_UNCHECKED);
+	m_checkSaveScreenShot->Set3StateValue(config->SaveMissingEvent ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -135,6 +136,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->FontSize = m_fontPickerCtrl->GetSelectedFont().GetPointSize();
 	config->IsHideNoneChoise = m_checkBoxHideOption->IsChecked();
 	config->IsShowStatusBar = m_checkBoxShowStatusBar->IsChecked();
+	config->SaveMissingEvent = m_checkSaveScreenShot->IsChecked();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);

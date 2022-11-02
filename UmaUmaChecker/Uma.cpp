@@ -217,7 +217,7 @@ void Uma::MonitorThread()
 				}
 			}
 
-			if (PrevEventHash != EventHash) {
+			if (PrevEventHash != 0 && PrevEventHash != EventHash) {
 				EventHash = PrevEventHash;
 				Config* config = Config::GetInstance();
 				if (config->SaveMissingEvent) {
@@ -448,8 +448,10 @@ size_t Uma::CreateHash(const std::vector<std::wstring>& strs)
 	size_t hash = 0;
 
 	for (auto& str : strs) {
+		int index = 0;
 		for (wchar_t c : str) {
-			hash |= std::hash<wchar_t>()(c);
+			hash |= c << (index % (sizeof(hash) * 8 - 8));
+			index++;
 		}
 	}
 
@@ -501,8 +503,6 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 
 EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 {
-	size_t hash = 0;
-
 	if (bScaned) *bScaned = false;
 
 	// サポートカードイベント
@@ -514,7 +514,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 		if (event) {
 			return event.get();
 		}
-		hash = CreateHash(events);
+		PrevEventHash = CreateHash(events);
 		return nullptr;
 	}
 
@@ -527,7 +527,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 			if (event) {
 				return event.get();
 			}
-			hash = CreateHash(events);
+			PrevEventHash = CreateHash(events);
 			return nullptr;
 		}
 	}
@@ -539,11 +539,9 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 		if (event) {
 			return event.get();
 		}
-		hash = CreateHash(events);
+		PrevEventHash = CreateHash(events);
 		return nullptr;
 	}
-
-	PrevEventHash = hash;
 
 	return nullptr;
 }
