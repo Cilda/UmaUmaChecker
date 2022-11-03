@@ -473,7 +473,14 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
 
 	std::wstring text = GetTextFromImage(bin);
-	return SkillLib.RetrieveEventFromOptionTitle(text);
+	auto event = SkillLib.RetrieveEventFromOptionTitle(text);
+	if (event) return event;
+
+	text = GetTextFromImage(gray);
+	event = SkillLib.RetrieveEventFromOptionTitle(text);
+	if (event) return event;
+
+	return nullptr;
 }
 
 std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& srcImg)
