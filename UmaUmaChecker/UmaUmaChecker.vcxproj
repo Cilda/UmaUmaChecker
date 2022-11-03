@@ -210,6 +210,7 @@
   <ItemGroup>
     <ClCompile Include="AboutDialog.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="DebugFrame.cpp" />
     <ClCompile Include="EventOption.cpp" />
     <ClCompile Include="EventSource.cpp" />
     <ClCompile Include="main.cpp" />
@@ -228,6 +229,7 @@
   <ItemGroup>
     <ClInclude Include="AboutDialog.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="DebugFrame.h" />
     <ClInclude Include="EventOption.h" />
     <ClInclude Include="EventSource.h" />
     <ClInclude Include="PreviewFrame.h" />

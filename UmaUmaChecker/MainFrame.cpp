@@ -180,6 +180,13 @@ void MainFrame::Init()
 		r--;
 	}
 
+	/*
+	if (Config::GetInstance()->EnableDebug) {
+		m_DebugFrame = new DebugFrame(this);
+		m_DebugFrame->Show();
+	}
+	*/
+
 #ifdef _DEBUG
 	new wxLogWindow(this, wxT("ログ"));
 #endif
@@ -220,7 +227,7 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 		delete image;
 	}
 	else {
-		wxMessageBox(wxT("ウマ娘のウィンドウが見つかりません。"), wxT("ウマウマチェッカー"));
+		wxMessageBox(wxT("ウマ娘のウィンドウが見つかりません。"), wxT("ウマウマチェッカー"), wxICON_ERROR);
 
 	}
 }
@@ -254,6 +261,22 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 			m_statusBar->Show();
 			timer.Start(1000);
 		}
+
+		/*
+		if (config->EnableDebug) {
+			if (!m_DebugFrame) {
+				m_DebugFrame = new DebugFrame(this);
+				m_DebugFrame->Show();
+			}
+		}
+		else {
+			if (m_DebugFrame) {
+				delete m_DebugFrame;
+				m_DebugFrame = NULL;
+			}
+		}
+		*/
+
 		SetFontAllChildren(this, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 		Layout();
 		Fit();

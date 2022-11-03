@@ -65,7 +65,6 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 	sizerTop->Add(bSizerButtons, 0, wxALL | wxCENTER, 5);
 
 	this->SetSizer(sizerTop);
-	this->Layout();
 	sizerTop->Fit(this);
 
 	this->Centre(wxBOTH);

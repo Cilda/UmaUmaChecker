@@ -68,7 +68,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	sizeParent->Add(sizeS2, 1, wxEXPAND | wxLEFT | wxRIGHT, 5);
 
 	// 高度な機能
-	wxStaticBoxSizer* sizeS3 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("高度な機能")), wxVERTICAL);
+	wxStaticBoxSizer* sizeS3 = new wxStaticBoxSizer(wxVERTICAL, this, wxT("デバッグモード"));
 	m_checkDebugEnable = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("デバッグを有効にする"));
 	m_checkDebugEnable->Enable(false);
 	m_checkSaveScreenShot = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("イベントを識別できなかった場合にキャプチャする"));
@@ -89,7 +89,6 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	sizeParent->Add(m_dialogButtonSizer, 0, wxEXPAND | wxALL, 5);
 
 	this->SetSizer(sizeParent);
-	this->Layout();
 	sizeParent->Fit(this);
 
 	this->Centre(wxBOTH);
@@ -110,6 +109,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_checkBoxHideOption->Set3StateValue(config->IsHideNoneChoise ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_checkBoxShowStatusBar->Set3StateValue(config->IsShowStatusBar ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_checkSaveScreenShot->Set3StateValue(config->SaveMissingEvent ? wxCHK_CHECKED : wxCHK_UNCHECKED);
+	m_checkDebugEnable->Set3StateValue(config->EnableDebug ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -136,6 +136,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->FontSize = m_fontPickerCtrl->GetSelectedFont().GetPointSize();
 	config->IsHideNoneChoise = m_checkBoxHideOption->IsChecked();
 	config->IsShowStatusBar = m_checkBoxShowStatusBar->IsChecked();
+	config->EnableDebug = m_checkDebugEnable->IsChecked();
 	config->SaveMissingEvent = m_checkSaveScreenShot->IsChecked();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));

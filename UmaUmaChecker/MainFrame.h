@@ -24,6 +24,7 @@
 #include "wxUmaTextCtrl.h"
 
 #include "PreviewFrame.h"
+#include "DebugFrame.h"
 
 #include "Uma.h"
 #include "version.h"
@@ -73,6 +74,7 @@ private:
 	PreviewFrame* m_PreviewWindow;
 	wxTimer timer;
 	wxStatusBar* m_statusBar;
+	DebugFrame* m_DebugFrame = NULL;
 
 	Uma* umaMgr;
 };
