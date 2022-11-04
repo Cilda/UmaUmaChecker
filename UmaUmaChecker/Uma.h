@@ -70,8 +70,10 @@ private:
 	bool IsCardEvent(const cv::Mat& srcImg);
 	bool IsScenarioEvent(const cv::Mat& srcImg);
 
-	std::wstring GetTextFromImage(cv::Mat& img);
+	std::wstring GetTextFromImage(const cv::Mat& img);
 	std::wstring GetMultiTextFromImage(cv::Mat& img);
+
+	void AsyncFunction(std::vector<std::wstring>& strs, const cv::Mat& img);
 
 	void AppendCollectedText(std::vector<std::wstring>& text_list);
 	double CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext);

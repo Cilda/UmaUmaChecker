@@ -313,6 +313,8 @@ void EventLibrary::InitScenarioEventDB()
 
 std::shared_ptr<EventSource> EventLibrary::RetrieveEvent(const std::wstring& name)
 {
+	if (name.empty()) return nullptr;
+
 	simstring::reader dbr;
 	
 	dbr.open(DBPath + "event\\events.db");
@@ -371,6 +373,10 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveEventFromOptionTitle(const st
 
 std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring& name, const std::wstring& CharaName)
 {
+	if (name.empty()) return nullptr;
+	const auto& chara = CharaMap.find(CharaName);
+	if (chara == CharaMap.end()) return nullptr;
+
 	simstring::reader dbr;
 
 	dbr.open(DBPath + "chara\\chara.db");
@@ -386,9 +392,6 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring
 	dbr.close();
 
 	if (xstrs.empty()) return nullptr;
-
-	const auto& chara = CharaMap.find(CharaName);
-	if (chara == CharaMap.end()) return nullptr;
 
 	std::wstring match = xstrs.front();
 	if (xstrs.size() >= 2) {

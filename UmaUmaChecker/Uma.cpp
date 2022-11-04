@@ -302,13 +302,13 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 		cv::Mat blur;
 
 		RemoveWhiteSpace(bin, bin);
-		cv::medianBlur(bin, blur, 5);
+		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
 		std::vector<std::wstring> text_list;
 		{
-			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
-			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
-			auto a3 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
+			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
+			auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
+			auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
 		}
 
 		AppendCollectedText(text_list);
@@ -337,7 +337,7 @@ bool Uma::IsScenarioEvent(const cv::Mat& srcImg)
 	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
 }
 
-std::wstring Uma::GetTextFromImage(cv::Mat& img)
+std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 {
 	auto start = std::chrono::system_clock::now();
 
@@ -381,6 +381,14 @@ std::wstring Uma::GetMultiTextFromImage(cv::Mat& img)
 	//wxLogDebug(wxT("GetMultiTextFromImage(): %lld"), msec);
 
 	return text;
+}
+
+void Uma::AsyncFunction(std::vector<std::wstring>& strs, const cv::Mat& img)
+{
+	std::wstring str = GetTextFromImage(img);
+	if (str.empty()) return;
+
+	strs.push_back(str);
 }
 
 void Uma::AppendCollectedText(std::vector<std::wstring>& text_list)
@@ -672,13 +680,13 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		std::wstring text = GetTextFromImage(bin);
 
 		RemoveWhiteSpace(bin, bin);
-		cv::medianBlur(bin, blur, 5);
+		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
 		std::vector<std::wstring> text_list;
 		{
-			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
-			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
-			auto a3 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
+			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
+			auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
+			auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
 		}
 
 		AppendCollectedText(text_list);
@@ -708,13 +716,13 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
 		std::wstring text = GetTextFromImage(bin);
 		cv::Mat blur;
 
-		cv::medianBlur(bin, blur, 5);
+		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
 		std::vector<std::wstring> text_list;
 		{
-			auto a1 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(bin)); });
-			auto a2 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(gray)); });
-			auto a3 = std::async(std::launch::async, [&] { text_list.push_back(GetTextFromImage(blur)); });
+			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
+			auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
+			auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
 		}
 
 		AppendCollectedText(text_list);
