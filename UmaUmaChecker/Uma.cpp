@@ -291,15 +291,17 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 		Uma::CharaEventBound.width * srcImg.size().width,
 		Uma::CharaEventBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg;
+	cv::Mat rsImg = cut;
 
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCharaEvent(rsImg)) {
 		cv::Mat gray;
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		cv::Mat blur;
+
+		cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 		RemoveWhiteSpace(bin, bin);
 		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
@@ -668,9 +670,9 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		Uma::CardEventBound.width * srcImg.size().width,
 		Uma::CardEventBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg;
+	cv::Mat rsImg = cut;
 
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 	if (IsCardEvent(cut)) {
 		cv::Mat gray, blur;
@@ -678,6 +680,8 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		std::wstring text = GetTextFromImage(bin);
+
+		cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 		RemoveWhiteSpace(bin, bin);
 		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
