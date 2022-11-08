@@ -1,12 +1,8 @@
 {
   "replaces": [
     {
-      "search": "^初語$",
+      "search": "^(初語|初議|初詳|初話)$",
       "replace": "初詣"
-    },
-    {
-      "search": "^初話$",
-      "replace":  "初詣"
     },
     {
       "search": ":",

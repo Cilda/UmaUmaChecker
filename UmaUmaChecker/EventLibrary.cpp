@@ -277,7 +277,9 @@ void EventLibrary::InitCharaDB()
 
 	for (auto& source : Charas) {
 		for (auto& event : source->Events) {
-			for (auto option : event.second->Options) dbw2.insert(option->Title);
+			for (auto option : event.second->Options) {
+				if (!option->Title.empty()) dbw2.insert(option->Title);
+			}
 		}
 	}
 

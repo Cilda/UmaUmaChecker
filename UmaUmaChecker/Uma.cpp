@@ -181,6 +181,8 @@ cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 	cv::bitwise_not(bin, bin);
 	*/
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
+	//cv::bitwise_not(gray, gray);
+	//cv::threshold(gray, bin, 0, 255, cv::THRESH_OTSU);
 	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
 
 	//cv::Mat bin2;
@@ -294,14 +296,16 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 	cv::Mat rsImg = cut;
 
 	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
 
 	if (IsCharaEvent(rsImg)) {
 		cv::Mat gray;
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+		cv::bitwise_not(gray, gray);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		cv::Mat blur;
 
-		cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+		//cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 		RemoveWhiteSpace(bin, bin);
 		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
@@ -483,12 +487,16 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
 
 	std::wstring text = GetTextFromImage(bin);
-	auto event = SkillLib.RetrieveEventFromOptionTitle(text);
-	if (event) return event;
+	if (!text.empty()) {
+		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		if (event) return event;
+	}
 
 	text = GetTextFromImage(gray);
-	event = SkillLib.RetrieveEventFromOptionTitle(text);
-	if (event) return event;
+	if (!text.empty()) {
+		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		if (event) return event;
+	}
 
 	return nullptr;
 }
@@ -508,12 +516,16 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
 
 	std::wstring text = GetTextFromImage(bin);
-	auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
-	if (event) return event;
+	if (!text.empty()) {
+		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		if (event) return event;
+	}
 
 	text = GetTextFromImage(gray);
-	event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
-	if (event) return event;
+	if (!text.empty()) {
+		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		if (event) return event;
+	}
 
 	return nullptr;
 }
@@ -670,18 +682,21 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		Uma::CardEventBound.width * srcImg.size().width,
 		Uma::CardEventBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg = cut;
+	cv::Mat rsImg;
+	cv::Mat rsImg2;
 
 	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
 
 	if (IsCardEvent(cut)) {
 		cv::Mat gray, blur;
 
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+		cv::bitwise_not(gray, gray);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		std::wstring text = GetTextFromImage(bin);
 
-		cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+		//cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 		RemoveWhiteSpace(bin, bin);
 		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
@@ -711,15 +726,20 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
 	));
 	cv::Mat rsImg;
 
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
 
 	if (IsScenarioEvent(cut)) {
 		cv::Mat gray;
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+		cv::bitwise_not(gray, gray);
 		cv::Mat bin = Uma::ImageBinarization(rsImg);
 		std::wstring text = GetTextFromImage(bin);
 		cv::Mat blur;
 
+		//cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+
+		RemoveWhiteSpace(bin, bin);
 		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
 		std::vector<std::wstring> text_list;
