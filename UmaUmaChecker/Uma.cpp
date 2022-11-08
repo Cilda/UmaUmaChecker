@@ -293,7 +293,7 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 		Uma::CharaEventBound.width * srcImg.size().width,
 		Uma::CharaEventBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg = cut;
+	cv::Mat rsImg;
 
 	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 	cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
@@ -683,7 +683,6 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		Uma::CardEventBound.height * srcImg.size().height
 	));
 	cv::Mat rsImg;
-	cv::Mat rsImg2;
 
 	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 	cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
