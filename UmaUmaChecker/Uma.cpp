@@ -32,6 +32,7 @@ const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918
 const cv::Rect2d Uma::TrainingCharaSingleLineBound = { 0.3186, 0.1358, 0.66839, 0.02769 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
 const cv::Rect2d Uma::TrainingCharaMultiLineBound = { 0.3186, 0.1107, 0.66839, 0.05410 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
 const double Uma::ResizeRatio = 2.0;
+const float Uma::UnsharpRatio = 2.0f;
 
 Uma::Uma(wxFrame* frame)
 {
@@ -295,8 +296,9 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 	));
 	cv::Mat rsImg;
 
-	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	//cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
+	UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
 	if (IsCharaEvent(rsImg)) {
 		cv::Mat gray;
@@ -308,7 +310,7 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 		//cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 		RemoveWhiteSpace(bin, bin);
-		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
+		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
 		std::vector<std::wstring> text_list;
 		{
@@ -455,6 +457,18 @@ void Uma::RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output)
 
 	if (ret.x + 10 > mat.size().width) output = mat;
 	else output = cv::Mat(mat, cv::Rect(0, 0, ret.x + 10, mat.size().height));
+}
+
+void Uma::UnsharpMask(const cv::Mat& mat, const cv::Mat& dst, float k)
+{
+	float kernelData[] = {
+		-k / 9.0f, -k / 9.0f, -k / 9.0f,
+		-k / 9.0f, 1 + (8 * k) / 9.0f, -k / 9.0f,
+		-k / 9.0f, -k / 9.0f, -k / 9.0f
+	};
+
+	cv::Mat kernel(3, 3, CV_32F, kernelData);
+	cv::filter2D(mat, dst, -1, kernel);
 }
 
 size_t Uma::CreateHash(const std::vector<std::wstring>& strs)
@@ -684,8 +698,9 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 	));
 	cv::Mat rsImg;
 
-	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	//cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
+	UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
 	if (IsCardEvent(cut)) {
 		cv::Mat gray, blur;
@@ -698,7 +713,7 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		//cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 		RemoveWhiteSpace(bin, bin);
-		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
+		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
 		std::vector<std::wstring> text_list;
 		{
@@ -725,8 +740,9 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
 	));
 	cv::Mat rsImg;
 
-	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	//cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
+	UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
 	if (IsScenarioEvent(cut)) {
 		cv::Mat gray;
@@ -739,7 +755,7 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
 		//cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 
 		RemoveWhiteSpace(bin, bin);
-		cv::erode(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
+		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
 		std::vector<std::wstring> text_list;
 		{

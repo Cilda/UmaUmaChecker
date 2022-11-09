@@ -78,6 +78,7 @@ private:
 	void AppendCollectedText(std::vector<std::wstring>& text_list);
 	double CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext);
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
+	void UnsharpMask(const cv::Mat& mat, const cv::Mat& dst, float k);
 
 	// 文字配列からハッシュ取得
 	size_t CreateHash(const std::vector<std::wstring>& strs);
@@ -112,4 +113,5 @@ private:
 
 private:
 	static const double ResizeRatio;
+	static const float UnsharpRatio;
 };
