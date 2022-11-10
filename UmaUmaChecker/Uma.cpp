@@ -65,7 +65,7 @@ void Uma::Init()
 	}
 
 	api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
-	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
+	api->SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
 
 	apiMulti->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
 

@@ -101,7 +101,6 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	bSizerTop->Add(sbSizerOptions, 1, wxEXPAND | wxALL, 5);
 
-
 	m_statusBar = new wxStatusBar(this, wxID_ANY);
 	m_statusBar->SetFieldsCount(2);
 	m_statusBar->PushStatusText(wxT("CPU: 0%"), 0);
@@ -110,6 +109,8 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	if (!config->IsShowStatusBar) m_statusBar->Hide();
 	else timer.Start(1000);
+
+	m_comboPopup = new wxComboBoxPopup(this);
 
 	this->SetSizer(bSizerTop);
 	this->Fit();
@@ -129,6 +130,10 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->Bind(wxEVT_THREAD, &MainFrame::OnUmaThreadEvent, this);
 	m_buttonAbout->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickAbout, this);
 	this->Bind(wxEVT_TIMER, &MainFrame::OnTimer, this);
+
+	// コンボボックスポップアップ用
+	this->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainFrame::OnComboTextUpdate, this);
+	m_comboPopup->Bind(wxEVT_HIDE, &MainFrame::OnSelectedListBoxItem, this);
 
 	if (config->WindowX != 0 || config->WindowY != 0) {
 		this->Move(config->WindowX, config->WindowY);
@@ -190,6 +195,41 @@ void MainFrame::Init()
 #ifdef _DEBUG
 	new wxLogWindow(this, wxT("ログ"));
 #endif
+}
+
+void MainFrame::OnComboTextUpdate(wxCommandEvent& event)
+{
+	if (m_comboBoxUma->GetCurrentSelection() != wxNOT_FOUND) return;
+
+	if (!event.GetString().empty()) {
+		wxString value = event.GetString();
+
+		if (!m_comboPopup->IsShown()) {
+			wxPoint pos = m_comboBoxUma->ClientToScreen(wxPoint(0, m_comboBoxUma->GetSize().y));
+			m_comboPopup->Position(pos, wxSize(0, 0));
+			m_comboPopup->SetSize(wxSize(m_comboBoxUma->GetSize().x, this->FromDIP(100)));
+			m_comboPopup->Popup(m_comboPopup);
+		}
+
+		m_comboPopup->ClearList();
+		for (auto& rank : umaMgr->GetCharacters()) {
+			for (auto& chara : rank) {
+				if (chara->Name.find(value) != std::wstring::npos) {
+					m_comboPopup->AddString(chara->Name);
+				}
+			}
+		}
+	}
+	else if (m_comboPopup->IsShown()) {
+		m_comboPopup->Hide();
+	}
+}
+
+void MainFrame::OnSelectedListBoxItem(wxCommandEvent& event)
+{
+	wxString name = event.GetString();
+	m_comboBoxUma->SetStringSelection(name);
+	umaMgr->SetTrainingCharacter(m_comboBoxUma->GetValue().wc_str());
 }
 
 void MainFrame::OnClickStart(wxCommandEvent& event)
@@ -349,9 +389,6 @@ void MainFrame::OnEnterControl(wxMouseEvent& event)
 
 	int marginWidth = windowSize.x - clientSize.x;
 	int marginHeight = windowSize.y - clientSize.y;
-
-	wxLogDebug(wxT("ClientSize: %d, %d"), clientSize.x, clientSize.y);
-	wxLogDebug(wxT("TextSize: %d, %d"), size.x, size.y);
 
 	if (size.x > clientSize.x || size.y > clientSize.y) {
 		int width = size.x > clientSize.x ? size.x : clientSize.x;
