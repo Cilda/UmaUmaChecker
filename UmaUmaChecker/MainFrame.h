@@ -22,6 +22,7 @@
 
 #include "wxTextPopupCtrl.h"
 #include "wxUmaTextCtrl.h"
+#include "wxComboBoxPopup.h"
 
 #include "PreviewFrame.h"
 #include "DebugFrame.h"
@@ -51,6 +52,9 @@ private:
 	void OnClickAbout(wxCommandEvent& event);
 	void OnPreviewDragFile(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
+	//
+	void OnComboTextUpdate(wxCommandEvent& event);
+	void OnSelectedListBoxItem(wxCommandEvent& event);
 
 	void ChangeEventOptions(EventSource* event);
 
@@ -75,6 +79,7 @@ private:
 	wxTimer timer;
 	wxStatusBar* m_statusBar;
 	DebugFrame* m_DebugFrame = NULL;
+	wxComboBoxPopup* m_comboPopup = NULL;
 
 	Uma* umaMgr;
 };

@@ -209,6 +209,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AboutDialog.cpp" />
+    <ClCompile Include="wxComboBoxPopup.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DebugFrame.cpp" />
     <ClCompile Include="EventOption.cpp" />
@@ -228,6 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDialog.h" />
+    <ClInclude Include="wxComboBoxPopup.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DebugFrame.h" />
     <ClInclude Include="EventOption.h" />
