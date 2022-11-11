@@ -411,7 +411,7 @@ void MainFrame::OnUmaThreadEvent(wxThreadEvent& event)
 	else if (event.GetId() == 2) {
 		wxLogDebug(wxT("育成イベント取得:%s"), event.GetString());
 
-		m_comboBoxUma->SetValue(event.GetString());
+		m_comboBoxUma->SetStringSelection(event.GetString());
 		umaMgr->SetTrainingCharacter(event.GetString().ToStdWstring());
 	}
 }
