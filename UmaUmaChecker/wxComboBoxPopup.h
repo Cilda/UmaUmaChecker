@@ -15,10 +15,10 @@ public:
 	void ClearList();
 
 private:
-	void OnSelectedItem(wxMouseEvent& event);
+	void OnComboClick(wxMouseEvent& event);
 	void OnMouseMove(wxMouseEvent& event);
 
-private:
+public:
 	wxListBox* m_listBox;
 };
 
