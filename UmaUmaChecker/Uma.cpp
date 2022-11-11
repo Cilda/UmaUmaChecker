@@ -233,7 +233,7 @@ void Uma::MonitorThread()
 					}
 
 					std::wstring savename = directory
-						+ std::wstring(L"screenshot_")
+						+ std::wstring(L"debug_")
 						+ std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
 						+ L".png";
 
