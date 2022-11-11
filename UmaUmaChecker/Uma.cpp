@@ -502,13 +502,13 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
-		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		auto event = SkillLib.RetrieveEventFromOptionTitle(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
-		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		auto event = SkillLib.RetrieveEventFromOptionTitle(text);
 		if (event) return event;
 	}
 
