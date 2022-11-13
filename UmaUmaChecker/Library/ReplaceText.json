@@ -27,6 +27,10 @@
     {
       "search": "/",
       "replace": "！"
+    },
+    {
+      "search": "…～！$",
+      "replace": "……！"
     }
   ]
 }
