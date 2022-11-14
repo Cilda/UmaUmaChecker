@@ -32,8 +32,8 @@ bool Config::Load()
 			WindowY = config.value("WindowY", 0);
 			EnableDebug = config.value("Debug", false);
 			SaveMissingEvent = config.value("SaveMissingEventName", false);
-			ScreenshotSavePath = utility::ConvertUtf8ToUtf16(config.value("ScreenshotSavePath", "").c_str());
-			FontName = utility::ConvertUtf8ToUtf16(config.value("FontName", "Yu Gothic UI").c_str());
+			ScreenshotSavePath = utility::from_u8string(config.value("ScreenshotSavePath", ""));
+			FontName = utility::from_u8string(config.value("FontName", "Yu Gothic UI"));
 			FontSize = config.value("FontSize", 9);
 			IsHideNoneChoise = config.value("IsHideNoneChoise", false);
 			IsShowStatusBar = config.value("IsShowStatusBar", false);

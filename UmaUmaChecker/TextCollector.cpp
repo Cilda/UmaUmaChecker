@@ -32,8 +32,8 @@ void TextCollector::Load()
 
 			for (auto& arr : replaces["replaces"]) {
 				collections.emplace_back(
-					utility::ConvertUtf8ToUtf16(arr["search"].get<std::string>().c_str()),
-					utility::ConvertUtf8ToUtf16(arr["replace"].get<std::string>().c_str())
+					utility::from_u8string(arr["search"].get<std::string>()),
+					utility::from_u8string(arr["replace"].get<std::string>())
 				);
 			}
 		}

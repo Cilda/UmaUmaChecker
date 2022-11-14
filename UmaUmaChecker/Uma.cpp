@@ -355,7 +355,7 @@ std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 	api->Recognize(NULL);
 
 	const std::unique_ptr<const char[]> utf8_text(api->GetUTF8Text());
-	std::wstring text = utility::ConvertUtf8ToUtf16(utf8_text.get());
+	std::wstring text = utility::from_u8string(utf8_text.get());
 	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
 	//Collector.Collect(text);
@@ -378,7 +378,7 @@ std::wstring Uma::GetMultiTextFromImage(cv::Mat& img)
 	apiMulti->Recognize(NULL);
 
 	const std::unique_ptr<const char[]> utf8_text(apiMulti->GetUTF8Text());
-	std::wstring text = utility::ConvertUtf8ToUtf16(utf8_text.get());
+	std::wstring text = utility::from_u8string(utf8_text.get());
 	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
 	//Collector.Collect(text);

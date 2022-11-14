@@ -68,7 +68,7 @@ bool EventLibrary::LoadEvent()
 					auto events = card.value()["Events"];
 					std::shared_ptr<EventRoot> skill(new EventRoot());
 
-					skill->Name = utility::ConvertUtf8ToUtf16(name.c_str());
+					skill->Name = utility::from_u8string(name);
 
 					for (auto &e : events) {
 						for (auto& choise : e.items()) {
@@ -77,8 +77,8 @@ bool EventLibrary::LoadEvent()
 							for (auto& option : choise.value()) {
 								std::shared_ptr<EventOption> choise(new EventOption());
 
-								choise->Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
-								choise->Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
+								choise->Title = utility::from_u8string(option["Title"].get<std::string>());
+								choise->Effect = utility::from_u8string(option["Effect"].get<std::string>());
 								event->Options.push_back(choise);
 
 								if (OptionMap.find(choise->Title) == OptionMap.end()) {
@@ -86,7 +86,7 @@ bool EventLibrary::LoadEvent()
 								}
 							}
 							
-							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
+							std::wstring EventName = utility::from_u8string(choise.key());
 							event->Name = EventName;
 							skill->Events[EventName] = event;
 
@@ -131,7 +131,7 @@ bool EventLibrary::LoadChara()
 					auto events = card.value()["Events"];
 					std::shared_ptr<EventRoot> skill(new EventRoot());
 
-					skill->Name = utility::ConvertUtf8ToUtf16(name.c_str());
+					skill->Name = utility::from_u8string(name);
 
 					for (auto& e : events) {
 						for (auto& choise : e.items()) {
@@ -140,8 +140,8 @@ bool EventLibrary::LoadChara()
 							for (auto& option : choise.value()) {
 								std::shared_ptr<EventOption> choise(new EventOption());
 
-								choise->Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
-								choise->Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
+								choise->Title = utility::from_u8string(option["Title"].get<std::string>());
+								choise->Effect = utility::from_u8string(option["Effect"].get<std::string>());
 								event->Options.push_back(choise);
 
 								if (OptionMap.find(choise->Title) == OptionMap.end()) {
@@ -149,7 +149,7 @@ bool EventLibrary::LoadChara()
 								}
 							}
 
-							std::wstring EventName = utility::ConvertUtf8ToUtf16(choise.key().c_str());
+							std::wstring EventName = utility::from_u8string(choise.key());
 							event->Name = EventName;
 							skill->Events[EventName] = event;
 
@@ -211,13 +211,13 @@ bool EventLibrary::LoadScenarioEvent()
 					for (auto& option : event.value()) {
 						std::shared_ptr<EventOption> event_option(new EventOption());
 
-						event_option->Title = utility::ConvertUtf8ToUtf16(option["Title"].get<std::string>().c_str());
-						event_option->Effect = utility::ConvertUtf8ToUtf16(option["Effect"].get<std::string>().c_str());
+						event_option->Title = utility::from_u8string(option["Title"].get<std::string>());
+						event_option->Effect = utility::from_u8string(option["Effect"].get<std::string>());
 						
 						source->Options.push_back(event_option);
 					}
 
-					std::wstring EventName = utility::ConvertUtf8ToUtf16(event.key().c_str());
+					std::wstring EventName = utility::from_u8string(event.key());
 					source->Name = EventName;
 					root->Events[EventName] = source;
 					ScenarioEventMap[EventName] = source;
