@@ -82,8 +82,6 @@ void PreviewFrame::OnPaint(wxPaintEvent& event)
 		wxSize cSize = this->GetClientSize();
 		wxSize iSize = image.GetSize();
 
-		dc.Clear();
-
 		float xscale = (float)cSize.x / (float)iSize.x;
 		float yscale = (float)cSize.y / (float)iSize.y;
 		float scale = fmin(xscale, yscale);
@@ -99,6 +97,7 @@ void PreviewFrame::OnEraseBackground(wxEraseEvent& event)
 
 void PreviewFrame::OnRightButtonDown(wxMouseEvent& event)
 {
+	m_popupMenu->Enable(100, image.IsOk());
 	PopupMenu(m_popupMenu);
 }
 
