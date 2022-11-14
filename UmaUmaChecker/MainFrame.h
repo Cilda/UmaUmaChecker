@@ -55,6 +55,7 @@ private:
 	//
 	void OnComboTextUpdate(wxCommandEvent& event);
 	void OnSelectedListBoxItem(wxCommandEvent& event);
+	void OnComboKeyDown(wxKeyEvent& event);
 
 	void ChangeEventOptions(EventSource* event);
 

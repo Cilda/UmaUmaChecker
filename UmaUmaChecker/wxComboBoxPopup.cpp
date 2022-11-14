@@ -14,7 +14,7 @@ wxComboBoxPopup::wxComboBoxPopup(wxWindow* parent) : wxPopupTransientWindow(pare
 
 	this->Fit();
 
-	m_listBox->Bind(wxEVT_LEFT_DOWN, &wxComboBoxPopup::OnSelectedItem, this);
+	m_listBox->Bind(wxEVT_LEFT_DOWN, &wxComboBoxPopup::OnComboClick, this);
 	m_listBox->Bind(wxEVT_MOTION, &wxComboBoxPopup::OnMouseMove, this);
 }
 
@@ -32,9 +32,9 @@ void wxComboBoxPopup::ClearList()
 	m_listBox->Clear();
 }
 
-void wxComboBoxPopup::OnSelectedItem(wxMouseEvent& event)
+void wxComboBoxPopup::OnComboClick(wxMouseEvent& event)
 {
-	int index = m_listBox->GetSelection();
+	int index = m_listBox->HitTest(event.GetPosition());
 	if (index != wxNOT_FOUND) {
 		wxCommandEvent event(wxEVT_HIDE);
 		m_listBox->SetSelection(index);

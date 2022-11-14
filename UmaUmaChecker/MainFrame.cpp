@@ -134,6 +134,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	// コンボボックスポップアップ用
 	this->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainFrame::OnComboTextUpdate, this);
 	m_comboPopup->Bind(wxEVT_HIDE, &MainFrame::OnSelectedListBoxItem, this);
+	m_comboBoxUma->Bind(wxEVT_KEY_DOWN, &MainFrame::OnComboKeyDown, this);
 
 	if (config->WindowX != 0 || config->WindowY != 0) {
 		this->Move(config->WindowX, config->WindowY);
@@ -230,6 +231,48 @@ void MainFrame::OnSelectedListBoxItem(wxCommandEvent& event)
 	wxString name = event.GetString();
 	m_comboBoxUma->SetStringSelection(name);
 	umaMgr->SetTrainingCharacter(m_comboBoxUma->GetValue().wc_str());
+}
+
+void MainFrame::OnComboKeyDown(wxKeyEvent& event)
+{
+	if (m_comboPopup->IsShown()) {
+		if (event.m_keyCode == WXK_UP) {
+			int index = m_comboPopup->m_listBox->GetSelection();
+			if (index != wxNOT_FOUND) {
+				if (index >= 1) {
+					m_comboPopup->m_listBox->SetSelection(index - 1);
+				}
+			}
+			else {
+				if (m_comboPopup->m_listBox->GetCount() > 0) m_comboPopup->m_listBox->SetSelection(0);
+			}
+			return;
+		}
+		else if (event.m_keyCode == WXK_DOWN) {
+			int index = m_comboPopup->m_listBox->GetSelection();
+			if (index != wxNOT_FOUND) {
+				if (index + 1 < m_comboPopup->m_listBox->GetCount()) {
+					m_comboPopup->m_listBox->SetSelection(index + 1);
+				}
+			}
+			else {
+				if (m_comboPopup->m_listBox->GetCount() > 0) m_comboPopup->m_listBox->SetSelection(0);
+			}
+			return;
+		}
+		else if (event.m_keyCode == WXK_RETURN) {
+			int index = m_comboPopup->m_listBox->GetSelection();
+			if (index != wxNOT_FOUND) {
+				wxString value = m_comboPopup->m_listBox->GetStringSelection();
+				m_comboBoxUma->SetStringSelection(value.ToStdWstring());
+				umaMgr->SetTrainingCharacter(value.ToStdWstring());
+				m_comboPopup->Dismiss();
+				return;
+			}
+		}
+	}
+
+	event.Skip();
 }
 
 void MainFrame::OnClickStart(wxCommandEvent& event)
@@ -368,7 +411,7 @@ void MainFrame::OnUmaThreadEvent(wxThreadEvent& event)
 	else if (event.GetId() == 2) {
 		wxLogDebug(wxT("育成イベント取得:%s"), event.GetString());
 
-		m_comboBoxUma->SetValue(event.GetString());
+		m_comboBoxUma->SetStringSelection(event.GetString());
 		umaMgr->SetTrainingCharacter(event.GetString().ToStdWstring());
 	}
 }

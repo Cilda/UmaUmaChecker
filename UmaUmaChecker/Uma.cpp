@@ -233,7 +233,7 @@ void Uma::MonitorThread()
 					}
 
 					std::wstring savename = directory
-						+ std::wstring(L"screenshot_")
+						+ std::wstring(L"debug_")
 						+ std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
 						+ L".png";
 
@@ -502,13 +502,13 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
-		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		auto event = SkillLib.RetrieveEventFromOptionTitle(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
-		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		auto event = SkillLib.RetrieveEventFromOptionTitle(text);
 		if (event) return event;
 	}
 
