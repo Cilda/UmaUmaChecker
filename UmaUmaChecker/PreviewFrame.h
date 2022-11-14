@@ -2,6 +2,7 @@
 
 #include <wx/frame.h>
 #include <wx/statbmp.h>
+#include <wx/menu.h>
 
 wxDECLARE_EVENT(DROP_IMAGE, wxCommandEvent);
 
@@ -20,8 +21,12 @@ private:
 	void OnDropFiles(wxDropFilesEvent& event);
 	void OnPaint(wxPaintEvent& event);
 	void OnEraseBackground(wxEraseEvent& event);
+	void OnRightButtonDown(wxMouseEvent& event);
+	void OnMenuSaveAs(wxCommandEvent& event);
+	void OnMenuClear(wxCommandEvent& event);
 
 private:
 	wxBitmap image;
+	wxMenu* m_popupMenu;
 };
 

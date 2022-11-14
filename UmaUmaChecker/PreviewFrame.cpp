@@ -1,9 +1,10 @@
 #include "PreviewFrame.h"
 
-#include <Windows.h>
 #include <wx/sizer.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
+#include <wx/filedlg.h>
+#include <wx/wfstream.h>
 
 #include "Config.h"
 
@@ -22,10 +23,19 @@ PreviewFrame::PreviewFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("�
 
 	this->DragAcceptFiles(true);
 
+	m_popupMenu = new wxMenu();
+	m_popupMenu->Append(wxID_CLEAR);
+	m_popupMenu->AppendSeparator();
+	m_popupMenu->Append(100, wxT("画像を保存"));
+
 	this->Bind(wxEVT_CLOSE_WINDOW, &PreviewFrame::OnClose, this);
 	this->Bind(wxEVT_DROP_FILES, &PreviewFrame::OnDropFiles, this);
 	this->Bind(wxEVT_PAINT, &PreviewFrame::OnPaint, this);
 	this->Bind(wxEVT_ERASE_BACKGROUND, &PreviewFrame::OnEraseBackground, this);
+	this->Bind(wxEVT_RIGHT_DOWN, &PreviewFrame::OnRightButtonDown, this);
+
+	this->Bind(wxEVT_MENU, &PreviewFrame::OnMenuSaveAs, this, 100);
+	this->Bind(wxEVT_MENU, &PreviewFrame::OnMenuClear, this, wxID_CLEAR);
 }
 
 PreviewFrame::~PreviewFrame()
@@ -85,4 +95,27 @@ void PreviewFrame::OnPaint(wxPaintEvent& event)
 
 void PreviewFrame::OnEraseBackground(wxEraseEvent& event)
 {
+}
+
+void PreviewFrame::OnRightButtonDown(wxMouseEvent& event)
+{
+	PopupMenu(m_popupMenu);
+}
+
+void PreviewFrame::OnMenuSaveAs(wxCommandEvent& event)
+{
+	if (!image.IsOk()) return;
+
+	wxFileDialog SaveDlg(this, wxT("画像を保存"), wxEmptyString, wxEmptyString, wxT("PNG (*.png)|*.png"), wxFD_SAVE| wxFD_OVERWRITE_PROMPT);
+	if (SaveDlg.ShowModal() == wxID_CANCEL) return;
+
+	image.SaveFile(SaveDlg.GetPath(), wxBITMAP_TYPE_PNG);
+}
+
+void PreviewFrame::OnMenuClear(wxCommandEvent& event)
+{
+	if (image.IsOk()) {
+		image = wxBitmap();
+		this->Refresh();
+	}
 }

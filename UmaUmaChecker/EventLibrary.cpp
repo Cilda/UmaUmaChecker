@@ -252,7 +252,7 @@ void EventLibrary::InitEventDB()
 		dbw.insert(source.first);
 
 		for (auto& event : source.second->Options) {
-			dbw2.insert(event->Title);
+			if (!event->Title.empty()) dbw2.insert(event->Title);
 		}
 	}
 	dbw.close();
