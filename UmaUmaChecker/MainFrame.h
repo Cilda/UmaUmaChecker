@@ -75,7 +75,7 @@ private:
 	wxStaticText* m_staticTextEventName;
 	wxTextCtrl* m_textCtrlEventSource;
 	std::vector<wxTextCtrl*> m_textCtrlEventTitles;
-	std::vector<wxTextCtrl*> m_textCtrlEventOptions;
+	std::vector<wxUmaTextCtrl*> m_textCtrlEventOptions;
 	PreviewFrame* m_PreviewWindow;
 	wxTimer timer;
 	wxStatusBar* m_statusBar;

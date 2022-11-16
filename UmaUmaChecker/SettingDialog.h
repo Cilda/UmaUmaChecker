@@ -9,6 +9,7 @@
 #include <wx/checkbox.h>
 #include <wx/webrequest.h>
 #include <wx/fontpicker.h>
+#include <wx/spinctrl.h>
 
 class Config;
 
@@ -43,6 +44,9 @@ private:
 	wxFontPickerCtrl* m_fontPickerCtrl;
 	wxCheckBox* m_checkBoxHideOption;
 	wxCheckBox* m_checkBoxShowStatusBar;
+	wxStaticText* m_staticTextMaxLine;
+	wxSpinCtrl* m_spinCtrlMaxLine;
+
 
 	Config* config;
 	std::vector<wxWebRequest> requests;

@@ -115,3 +115,8 @@ bool wxUmaTextCtrl::SetFont(const wxFont& font)
 	this->SetValue(text);
 	return ret;
 }
+
+void wxUmaTextCtrl::SetHeightByLine(int line)
+{
+	this->SetMinClientSize(wxSize(wxDefaultCoord, this->GetCharHeight() * line));
+}

@@ -25,5 +25,6 @@ public:
 	int FontSize;
 	bool IsHideNoneChoise;
 	bool IsShowStatusBar;
+	int OptionMaxLine;
 };
 

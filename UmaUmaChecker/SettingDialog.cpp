@@ -45,10 +45,20 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	m_checkBoxHideOption = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("「選択肢なし」のイベントを表示しない"));
 	sizeS1->Add(m_checkBoxHideOption, 0, wxLEFT | wxBOTTOM, 5);
 
+	// ステータス表示
 	m_checkBoxShowStatusBar = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("ステータスバーを表示する"));
 	sizeS1->Add(m_checkBoxShowStatusBar, 0, wxLEFT | wxBOTTOM, 5);
 
-	sizeParent->Add(sizeS1, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
+	// 表示行数
+	wxBoxSizer* sizeSB2 = new wxBoxSizer(wxHORIZONTAL);
+	m_staticTextMaxLine = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("効果テキスト最大行数"));
+	m_spinCtrlMaxLine = new wxSpinCtrl(sizeS1->GetStaticBox(), wxID_ANY);
+	m_spinCtrlMaxLine->SetRange(2, 10);
+	sizeSB2->Add(m_staticTextMaxLine, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+	sizeSB2->Add(m_spinCtrlMaxLine, 0);
+	sizeS1->Add(sizeSB2, 0, wxLEFT | wxBOTTOM, 5);
+
+	sizeParent->Add(sizeS1, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 
 	// スクリーンショット
 	wxStaticBoxSizer* sizeS2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("スクリーンショット")), wxVERTICAL);
@@ -65,7 +75,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	fgSize->Add(m_buttonBrowse, 0, wxALL, 5);
 
 	sizeS2->Add(fgSize, 1, wxEXPAND, 5);
-	sizeParent->Add(sizeS2, 1, wxEXPAND | wxLEFT | wxRIGHT, 5);
+	sizeParent->Add(sizeS2, 0, wxEXPAND | wxLEFT | wxRIGHT, 5);
 
 	// 高度な機能
 	wxStaticBoxSizer* sizeS3 = new wxStaticBoxSizer(wxVERTICAL, this, wxT("デバッグモード"));
@@ -76,7 +86,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	sizeS3->Add(m_checkDebugEnable, 0, wxALL, 5);
 	sizeS3->Add(m_checkSaveScreenShot, 0, wxALL, 5);
 
-	sizeParent->Add(sizeS3, 1, wxEXPAND | wxLEFT | wxRIGHT, 5);
+	sizeParent->Add(sizeS3, 0, wxEXPAND | wxLEFT | wxRIGHT, 5);
 
 	// ダイアログボタン
 	m_dialogButtonSizer = new wxStdDialogButtonSizer();
@@ -110,6 +120,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_checkBoxShowStatusBar->Set3StateValue(config->IsShowStatusBar ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_checkSaveScreenShot->Set3StateValue(config->SaveMissingEvent ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_checkDebugEnable->Set3StateValue(config->EnableDebug ? wxCHK_CHECKED : wxCHK_UNCHECKED);
+	m_spinCtrlMaxLine->SetValue(config->OptionMaxLine);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -138,6 +149,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->IsShowStatusBar = m_checkBoxShowStatusBar->IsChecked();
 	config->EnableDebug = m_checkDebugEnable->IsChecked();
 	config->SaveMissingEvent = m_checkSaveScreenShot->IsChecked();
+	config->OptionMaxLine = m_spinCtrlMaxLine->GetValue();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);

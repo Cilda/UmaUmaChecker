@@ -86,11 +86,10 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		if (i < bgColors.size()) TitleCtrl->SetBackgroundColour(bgColors[i]);
 		else TitleCtrl->SetBackgroundColour(*wxWHITE);
 
-		TitleCtrl->SetSize(FromDIP(wxSize(180, -1)));
 		bSizerOption1->Add(TitleCtrl, 2, wxALL, 5);
 
 		wxUmaTextCtrl* OptionCtrl = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
-		OptionCtrl->SetMinSize(FromDIP(wxSize(-1, 64)));
+		OptionCtrl->SetHeightByLine(config->OptionMaxLine);
 		bSizerOption1->Add(OptionCtrl, 3, wxALL | wxEXPAND, 5);
 
 		sbSizerOptions->Add(bSizerOption1, 1, wxEXPAND, 5);
@@ -361,6 +360,9 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 		*/
 
 		SetFontAllChildren(this, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
+		for (auto ctrl : m_textCtrlEventOptions) {
+			ctrl->SetHeightByLine(config->OptionMaxLine);
+		}
 		Layout();
 		Fit();
 	}

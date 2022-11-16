@@ -37,6 +37,7 @@ bool Config::Load()
 			FontSize = config.value("FontSize", 9);
 			IsHideNoneChoise = config.value("IsHideNoneChoise", false);
 			IsShowStatusBar = config.value("IsShowStatusBar", false);
+			OptionMaxLine = config.value("OptionMaxLine", 4);
 		}
 		catch (json::exception& ex) {
 			return false;
@@ -60,6 +61,7 @@ void Config::Create()
 	FontSize = 9;
 	IsHideNoneChoise = false;
 	IsShowStatusBar = false;
+	OptionMaxLine = 4;
 
 	Save();
 }
@@ -77,6 +79,7 @@ void Config::Save()
 	config["FontSize"] = FontSize;
 	config["IsHideNoneChoise"] = IsHideNoneChoise;
 	config["IsShowStatusBar"] = IsShowStatusBar;
+	config["OptionMaxLine"] = OptionMaxLine;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

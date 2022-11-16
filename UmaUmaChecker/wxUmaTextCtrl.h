@@ -12,5 +12,6 @@ public:
 	virtual void AppendText(const wxString& text);
 
 	virtual bool SetFont(const wxFont& font);
+	void SetHeightByLine(int line);
 };
 
