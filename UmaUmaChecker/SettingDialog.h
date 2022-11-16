@@ -51,5 +51,6 @@ private:
 	Config* config;
 	std::vector<wxWebRequest> requests;
 	bool bUpdated;
+	int UpdatedCount;
 };
 

@@ -3,6 +3,7 @@
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>
 #include <wx/wfstream.h>
+#include <wx/file.h>
 
 #include "utility.h"
 
@@ -127,8 +128,12 @@ void SettingDialog::OnClickUpdate(wxCommandEvent& event)
 {
 	if (UpdateLibrary()) {
 		bUpdated = true;
-		wxMessageBox(wxT("更新が完了しました。"), wxT("ウマウマチェッカー"));
+		wxMessageBox(wxT("更新が完了しました。"), wxT("ウマウマチェッカー"), wxICON_INFORMATION);
+		return;
 	}
+
+	bUpdated = false;
+	wxMessageBox(wxT("更新はありません。"), wxT("ウマウマチェッカー"), wxICON_INFORMATION);
 }
 
 void SettingDialog::OnClickBrowse(wxCommandEvent& event)
@@ -162,6 +167,7 @@ void SettingDialog::OnClickFontSelect(wxCommandEvent& event)
 bool SettingDialog::UpdateLibrary()
 {
 	wxWindowDisabler disabler;
+	UpdatedCount = 0;
 
 	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Chara.json");
 	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Events.json");
@@ -174,7 +180,7 @@ bool SettingDialog::UpdateLibrary()
 
 	requests.clear();
 
-	return true;
+	return UpdatedCount > 0;
 }
 
 void SettingDialog::UpdateFile(const wxString& url)
@@ -192,11 +198,21 @@ void SettingDialog::UpdateFile(const wxString& url)
 				if (response.GetStatus() == 200) {
 					auto stream = response.GetStream();
 					wxString path = utility::GetExeDirectory() + L"\\Library\\" + response.GetSuggestedFileName();
-					wxFileOutputStream output(path);
+					wxFile file(path);
+					int size = 0;
+					if (file.IsOpened()) {
+						size = file.SeekEnd();
+						file.Close();
+					}
 
-					if (output.IsOk()) {
-						output.Write(*stream);
-						output.Close();
+					if (size != stream->GetSize()) {
+						wxFileOutputStream output(path);
+
+						if (output.IsOk()) {
+							output.Write(*stream);
+							UpdatedCount++;
+							output.Close();
+						}
 					}
 				}
 				break;
