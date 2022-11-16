@@ -7,7 +7,10 @@
 #include <fstream>
 #include <regex>
 #include <nlohmann/json.hpp>
+#include <wx/msgdlg.h>
 #include "simstring/simstring.h"
+
+#include "version.h"
 
 using json = nlohmann::json;
 
@@ -36,9 +39,9 @@ void EventLibrary::Clear()
 
 bool EventLibrary::Load()
 {
-	LoadEvent();
-	LoadChara();
-	LoadScenarioEvent();
+	if (!LoadEvent()) wxMessageBox(wxT("Events.json の読み込みに失敗しました。"), app_name, wxICON_WARNING);
+	if (!LoadChara()) wxMessageBox(wxT("Chara.json の読み込みに失敗しました。"), app_name, wxICON_WARNING);
+	if (!LoadScenarioEvent()) wxMessageBox(wxT("ScenarioEvents.json の読み込みに失敗しました。"), app_name, wxICON_WARNING);
 	DeleteDBFiles();
 
 	InitEventDB();

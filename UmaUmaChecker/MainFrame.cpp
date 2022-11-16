@@ -102,8 +102,8 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	m_statusBar = new wxStatusBar(this, wxID_ANY);
 	m_statusBar->SetFieldsCount(2);
-	m_statusBar->PushStatusText(wxT("CPU: 0%"), 0);
-	m_statusBar->PushStatusText(wxT("MEM: 0 MB"), 1);
+	m_statusBar->PushStatusText(wxT("CPU: 0.0%"), 0);
+	m_statusBar->PushStatusText(wxT("MEM: 0.0 MB"), 1);
 	this->SetStatusBar(m_statusBar);
 
 	if (!config->IsShowStatusBar) m_statusBar->Hide();

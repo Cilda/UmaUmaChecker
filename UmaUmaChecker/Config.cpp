@@ -38,6 +38,8 @@ bool Config::Load()
 			IsHideNoneChoise = config.value("IsHideNoneChoise", false);
 			IsShowStatusBar = config.value("IsShowStatusBar", false);
 			OptionMaxLine = config.value("OptionMaxLine", 4);
+			if (OptionMaxLine < 2) OptionMaxLine = 2;
+			else if (OptionMaxLine > 10) OptionMaxLine = 10;
 		}
 		catch (json::exception& ex) {
 			return false;
