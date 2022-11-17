@@ -1,0 +1,336 @@
+{
+    "BonusType": [
+        "トレーニングのスピード上昇量",
+        "トレーニングのスタミナ上昇量",
+        "トレーニングのパワー上昇量",
+        "トレーニングの根性上昇量",
+        "トレーニングの賢さ上昇量",
+        "トレーニングのスキルPt上昇量",
+        "スピード",
+        "スタミナ",
+        "パワー",
+        "根性",
+        "賢さ",
+        "スキルPt",
+        "得意率アップ",
+        "友情トレーニング獲得量アップ",
+        "サポート連続イベント率アップLv"
+    ],
+    "MusicList": [
+        {
+            "Name": "奇跡を信じて！",
+            "BonusType": 4,
+            "MasterBonusType": 12,
+            "BonusValue": 1,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                0,
+                21,
+                0,
+                0,
+                21
+            ],
+            "Year": "ジュニア"
+        },
+        {
+            "Name": "青春が待ってる",
+            "BonusType": 8,
+            "MasterBonusType": 13,
+            "BonusValue": 22,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                0,
+                0,
+                32,
+                0,
+                12
+            ],
+            "Year": "ジュニア"
+        },
+        {
+            "Name": "RUN✕RUN！",
+            "BonusType": 11,
+            "MasterBonusType": 13,
+            "BonusValue": 22,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                14,
+                0,
+                0,
+                16,
+                14
+            ],
+            "Year": "ジュニア"
+        },
+        {
+            "Name": "全速！前進！ウマドルパワー☆",
+            "BonusType": 6,
+            "MasterBonusType": 13,
+            "BonusValue": 22,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                32,
+                0,
+                0,
+                12,
+                0
+            ],
+            "Year": "ジュニア"
+        },
+        {
+            "Name": "立ち位置ゼロ番！順位は一番！",
+            "BonusType": 0,
+            "MasterBonusType": 14,
+            "BonusValue": 1,
+            "MasterBonusValue": 1,
+            "ReqPerf": [
+                21,
+                0,
+                0,
+                21,
+                0
+            ],
+            "Year": "ジュニア"
+        },
+        {
+            "Name": "Go This Way",
+            "BonusType": 2,
+            "MasterBonusType": 14,
+            "BonusValue": 1,
+            "MasterBonusValue": 1,
+            "ReqPerf": [
+                0,
+                0,
+                21,
+                0,
+                21
+            ],
+            "Year": "ジュニア"
+        },
+        {
+            "Name": "逃げ切りっ！Fallin' Love",
+            "BonusType": 3,
+            "MasterBonusType": 14,
+            "BonusValue": 1,
+            "MasterBonusValue": 1,
+            "ReqPerf": [
+                21,
+                0,
+                0,
+                21,
+                0
+            ],
+            "Year": "ジュニア"
+        },
+        {
+            "Name": "Ring Ring ダイアリー",
+            "BonusType": 1,
+            "MasterBonusType": 14,
+            "BonusValue": 1,
+            "MasterBonusValue": 1,
+            "ReqPerf": [
+                0,
+                21,
+                0,
+                21,
+                0
+            ],
+            "Year": "ジュニア"
+        },
+        {
+            "Name": "ぼくらのブルーバードデイズ",
+            "BonusType": 0,
+            "MasterBonusType": 12,
+            "BonusValue": 2,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                21,
+                0,
+                0,
+                42,
+                0
+            ],
+            "Year": "クラシック前半"
+        },
+        {
+            "Name": "ユメヲカケル！",
+            "BonusType": 5,
+            "MasterBonusType": 12,
+            "BonusValue": 2,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                0,
+                21,
+                0,
+                21,
+                0
+            ],
+            "Year": "クラシック前半"
+        },
+        {
+            "Name": "A・NO・NE",
+            "BonusType": 3,
+            "MasterBonusType": 12,
+            "BonusValue": 2,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                42,
+                0,
+                0,
+                21,
+                0
+            ],
+            "Year": "クラシック前半"
+        },
+        {
+            "Name": "グロウアップ・シャイン！",
+            "BonusType": 5,
+            "MasterBonusType": 14,
+            "BonusValue": 3,
+            "MasterBonusValue": 1,
+            "ReqPerf": [
+                21,
+                0,
+                21,
+                0,
+                21
+            ],
+            "Year": "クラシック後半"
+        },
+        {
+            "Name": "木漏れ日のエール",
+            "BonusType": 4,
+            "MasterBonusType": 14,
+            "BonusValue": 2,
+            "MasterBonusValue": 1,
+            "ReqPerf": [
+                0,
+                42,
+                0,
+                0,
+                21
+            ],
+            "Year": "クラシック後半"
+        },
+        {
+            "Name": "七色の景色",
+            "BonusType": 2,
+            "MasterBonusType": 12,
+            "BonusValue": 2,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                0,
+                0,
+                21,
+                0,
+                42
+            ],
+            "Year": "クラシック後半"
+        },
+        {
+            "Name": "ぴょいっと♪はれるや！",
+            "BonusType": 1,
+            "MasterBonusType": 12,
+            "BonusValue": 2,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                0,
+                42,
+                21,
+                0,
+                0
+            ],
+            "Year": "クラシック後半"
+        },
+        {
+            "Name": "大好きのタカラバコ",
+            "BonusType": 6,
+            "MasterBonusType": 13,
+            "BonusValue": 26,
+            "MasterBonusValue": 10,
+            "ReqPerf": [
+                42,
+                0,
+                0,
+                26,
+                0
+            ],
+            "Year": "シニア"
+        },
+        {
+            "Name": "Fanfare for Future！",
+            "BonusType": 9,
+            "MasterBonusType": 13,
+            "BonusValue": 26,
+            "MasterBonusValue": 10,
+            "ReqPerf": [
+                26,
+                0,
+                0,
+                42,
+                0
+            ],
+            "Year": "シニア"
+        },
+        {
+            "Name": "PRESENT MARCH♪",
+            "BonusType": 8,
+            "MasterBonusType": 13,
+            "BonusValue": 22,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                0,
+                0,
+                22,
+                0,
+                22
+            ],
+            "Year": "シニア"
+        },
+        {
+            "Name": "世界は僕らの言いなりさ",
+            "BonusType": 7,
+            "MasterBonusType": 13,
+            "BonusValue": 22,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                0,
+                32,
+                12,
+                0,
+                0
+            ],
+            "Year": "シニア"
+        },
+        {
+            "Name": "春空BLUE",
+            "BonusType": 9,
+            "MasterBonusType": 13,
+            "BonusValue": 22,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                12,
+                0,
+                0,
+                32,
+                0
+            ],
+            "Year": "シニア"
+        },
+        {
+            "Name": "ユメゾラ",
+            "BonusType": 10,
+            "MasterBonusType": 13,
+            "BonusValue": 22,
+            "MasterBonusValue": 5,
+            "ReqPerf": [
+                0,
+                22,
+                0,
+                0,
+                22
+            ],
+            "Year": "シニア"
+        }
+    ]
+}
