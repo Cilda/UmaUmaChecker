@@ -13,6 +13,7 @@
 SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent, wxID_ANY, wxT("設定"), wxDefaultPosition, wxSize(500, -1), wxDEFAULT_DIALOG_STYLE)
 {
 	this->bUpdated = false;
+	this->UpdatedCount = 0;
 	this->config = config;
 
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
@@ -23,24 +24,30 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	wxBoxSizer* sizeParent = new wxBoxSizer(wxVERTICAL);
 	
 	wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("一般")), wxVERTICAL);
+	wxGridSizer* gridSizer = new wxGridSizer(3, 2, 3, 0);
 
 	// 更新
-	wxBoxSizer* sizeSB = new wxBoxSizer(wxHORIZONTAL);
 	m_staticTextUpdate = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("イベント情報を最新に更新する"));
 	m_buttonUpdate = new wxButton(sizeS1->GetStaticBox(), wxID_ANY, wxT("更新"));
 
-	sizeSB->Add(m_staticTextUpdate, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
-	sizeSB->Add(m_buttonUpdate, 0);
-	sizeS1->Add(sizeSB, 1, wxLEFT | wxBOTTOM, 5);
+	gridSizer->Add(m_staticTextUpdate, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+	gridSizer->Add(m_buttonUpdate, 0);
 
 	// フォント選択
-	wxBoxSizer* sizeFont = new wxBoxSizer(wxHORIZONTAL);
 	m_staticTextFontSelect = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ウィンドウのフォント"));
 	m_fontPickerCtrl = new wxFontPickerCtrl(sizeS1->GetStaticBox(), wxID_ANY, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
-	sizeFont->Add(m_staticTextFontSelect, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
-	sizeFont->Add(m_fontPickerCtrl);
-	sizeS1->Add(sizeFont, 1, wxLEFT | wxBOTTOM, 5);
+	gridSizer->Add(m_staticTextFontSelect, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+	gridSizer->Add(m_fontPickerCtrl);
+
+	// 表示行数
+	m_staticTextMaxLine = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("効果テキスト最大行数"));
+	m_spinCtrlMaxLine = new wxSpinCtrl(sizeS1->GetStaticBox(), wxID_ANY);
+	m_spinCtrlMaxLine->SetRange(2, 10);
+	gridSizer->Add(m_staticTextMaxLine, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+	gridSizer->Add(m_spinCtrlMaxLine, 0);
+
+	sizeS1->Add(gridSizer, 1, wxLEFT | wxBOTTOM, 5);
 
 	// 選択肢表示チェック
 	m_checkBoxHideOption = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("「選択肢なし」のイベントを表示しない"));
@@ -49,15 +56,6 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	// ステータス表示
 	m_checkBoxShowStatusBar = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("ステータスバーを表示する"));
 	sizeS1->Add(m_checkBoxShowStatusBar, 0, wxLEFT | wxBOTTOM, 5);
-
-	// 表示行数
-	wxBoxSizer* sizeSB2 = new wxBoxSizer(wxHORIZONTAL);
-	m_staticTextMaxLine = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("効果テキスト最大行数"));
-	m_spinCtrlMaxLine = new wxSpinCtrl(sizeS1->GetStaticBox(), wxID_ANY);
-	m_spinCtrlMaxLine->SetRange(2, 10);
-	sizeSB2->Add(m_staticTextMaxLine, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
-	sizeSB2->Add(m_spinCtrlMaxLine, 0);
-	sizeS1->Add(sizeSB2, 0, wxLEFT | wxBOTTOM, 5);
 
 	sizeParent->Add(sizeS1, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 
