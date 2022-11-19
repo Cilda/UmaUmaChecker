@@ -83,11 +83,14 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);
 		wxTextCtrl* TitleCtrl = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 
+		// 選択肢名
+		wxTextCtrl* TitleCtrl = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 		if (i < bgColors.size()) TitleCtrl->SetBackgroundColour(bgColors[i]);
 		else TitleCtrl->SetBackgroundColour(*wxWHITE);
 
 		bSizerOption1->Add(TitleCtrl, 2, wxALL, 5);
 
+		// 効果
 		wxUmaTextCtrl* OptionCtrl = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
 		OptionCtrl->SetHeightByLine(config->OptionMaxLine);
 		bSizerOption1->Add(OptionCtrl, 3, wxALL | wxEXPAND, 5);
@@ -129,6 +132,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->Bind(wxEVT_THREAD, &MainFrame::OnUmaThreadEvent, this);
 	m_buttonAbout->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickAbout, this);
 	this->Bind(wxEVT_TIMER, &MainFrame::OnTimer, this);
+	this->Bind(wxEVT_DPI_CHANGED, &MainFrame::OnDPIChanged, this);
 
 	// コンボボックスポップアップ用
 	this->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainFrame::OnComboTextUpdate, this);
@@ -271,6 +275,16 @@ void MainFrame::OnComboKeyDown(wxKeyEvent& event)
 		}
 	}
 
+	event.Skip();
+	}
+
+void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
+{
+	for (auto ctrl : m_textCtrlEventOptions) {
+		ctrl->SetHeightByLine(Config::GetInstance()->OptionMaxLine);
+	}
+
+	//this->Layout();
 	event.Skip();
 }
 

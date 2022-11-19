@@ -22,7 +22,7 @@ public:
 	{
 		if (!wxApp::OnInit()) return false;
 
-		InitDPI();
+		//InitDPI();
 		Gdiplus::GdiplusStartup(&token, &input, NULL);
 		wxInitAllImageHandlers();
 

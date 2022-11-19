@@ -107,7 +107,8 @@
       <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <EnableDpiAwareness>false</EnableDpiAwareness>
+      <AdditionalManifestFiles>app.manifest</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
       <Command>
@@ -139,7 +140,8 @@
       <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <EnableDpiAwareness>false</EnableDpiAwareness>
+      <AdditionalManifestFiles>app.manifest</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
       <Command>
@@ -166,7 +168,8 @@
       <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <EnableDpiAwareness>false</EnableDpiAwareness>
+      <AdditionalManifestFiles>app.manifest</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
       <Command>
@@ -197,7 +200,8 @@
       <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <EnableDpiAwareness>false</EnableDpiAwareness>
+      <AdditionalManifestFiles>app.manifest</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
       <Command>
@@ -209,6 +213,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AboutDialog.cpp" />
+    <ClCompile Include="GrandLiveMusicListFrame.cpp" />
     <ClCompile Include="wxComboBoxPopup.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DebugFrame.cpp" />
@@ -229,6 +234,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDialog.h" />
+    <ClInclude Include="GrandLiveMusicListFrame.h" />
     <ClInclude Include="wxComboBoxPopup.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DebugFrame.h" />

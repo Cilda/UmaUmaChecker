@@ -2,6 +2,8 @@
 
 #include <Windows.h>
 #include <Richedit.h>
+#include <wx/dcclient.h>
+#include <wx/richtext/richtextbuffer.h>
 
 wxUmaTextCtrl::wxUmaTextCtrl(wxWindow* parent) : wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_RICH2 | wxTE_MULTILINE | wxTE_NO_VSCROLL | wxTE_DONTWRAP)
 {
@@ -118,5 +120,11 @@ bool wxUmaTextCtrl::SetFont(const wxFont& font)
 
 void wxUmaTextCtrl::SetHeightByLine(int line)
 {
-	this->SetMinClientSize(wxSize(wxDefaultCoord, this->GetCharHeight() * line));
+	wxClientDC dc(this);
+	wxTextAttr attr = this->GetDefaultStyle();
+	wxFontMetrics metrics = dc.GetFontMetrics();
+
+	wxSize size = wxSize(wxDefaultCoord, metrics.height * line);
+	this->SetMinClientSize(size);
+	this->SetMaxClientSize(size);
 }
