@@ -282,10 +282,12 @@ void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
 {
 	for (auto ctrl : m_textCtrlEventOptions) {
 		ctrl->SetHeightByLine(Config::GetInstance()->OptionMaxLine);
+		ctrl->Layout();
 	}
 
-	//this->Layout();
-	event.Skip();
+	this->Fit();
+	this->Layout();
+	//event.Skip();
 }
 
 void MainFrame::OnClickStart(wxCommandEvent& event)
