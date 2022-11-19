@@ -15,6 +15,7 @@
 
 #include "SettingDialog.h"
 #include "AboutDialog.h"
+#include "GrandLiveMusicListFrame.h"
 
 
 MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL), timer(this)
@@ -81,13 +82,11 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	};
 	for (int i = 0; i < EventOptionCount; i++) {
 		wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);
-		wxTextCtrl* TitleCtrl = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 
 		// 選択肢名
 		wxTextCtrl* TitleCtrl = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 		if (i < bgColors.size()) TitleCtrl->SetBackgroundColour(bgColors[i]);
 		else TitleCtrl->SetBackgroundColour(*wxWHITE);
-
 		bSizerOption1->Add(TitleCtrl, 2, wxALL, 5);
 
 		// 効果
@@ -198,6 +197,8 @@ void MainFrame::Init()
 
 #ifdef _DEBUG
 	new wxLogWindow(this, wxT("ログ"));
+	GrandLiveMusicListFrame* frame = new GrandLiveMusicListFrame(this);
+	frame->Show();
 #endif
 }
 
@@ -276,7 +277,7 @@ void MainFrame::OnComboKeyDown(wxKeyEvent& event)
 	}
 
 	event.Skip();
-	}
+}
 
 void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
 {
