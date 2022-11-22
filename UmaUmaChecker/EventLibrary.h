@@ -27,6 +27,7 @@ private:
 	bool LoadEvent();
 	bool LoadChara();
 	bool LoadScenarioEvent();
+	bool LoadSkills();
 
 	void InitEventDB();
 	void InitCharaDB();
@@ -37,18 +38,21 @@ private:
 	std::wstring GetBestMatchString(const std::vector<std::wstring>& xstrs, const std::wstring& text);
 
 private:
+	// サポートカード
 	std::vector<std::shared_ptr<EventRoot>> Events; // サポートカードイベント保持用
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> EventMap; // キー: イベント名, 値: 選択肢
-
+	// キャライベント
 	std::vector<std::shared_ptr<EventRoot>> Charas;
 	std::vector<std::vector<std::shared_ptr<EventRoot>>> CharasByRank;
 	std::unordered_map<std::wstring, std::shared_ptr<EventRoot>> CharaMap; // キャライベント保持用
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> CharaEventMap; // キー: イベント名, 値: 選択肢
+	// シナリオイベント
+	std::vector<std::shared_ptr<EventRoot>> ScenarioEvents; 
+	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> ScenarioEventMap; // キー: イベント名, 値: 選択肢
 
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> OptionMap; // キー: 選択肢, 値: イベントソース
 
-	std::vector<std::shared_ptr<EventRoot>> ScenarioEvents; // シナリオイベント
-	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> ScenarioEventMap; // キー: イベント名, 値: 選択肢
+	std::unordered_map<std::wstring, std::wstring> SkillMap; // スキル名 -> 説明
 
 	std::string DBPath;
 };

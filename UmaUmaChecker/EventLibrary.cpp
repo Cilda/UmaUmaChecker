@@ -42,6 +42,7 @@ bool EventLibrary::Load()
 	if (!LoadEvent()) wxMessageBox(wxT("Events.json の読み込みに失敗しました。"), app_name, wxICON_WARNING);
 	if (!LoadChara()) wxMessageBox(wxT("Chara.json の読み込みに失敗しました。"), app_name, wxICON_WARNING);
 	if (!LoadScenarioEvent()) wxMessageBox(wxT("ScenarioEvents.json の読み込みに失敗しました。"), app_name, wxICON_WARNING);
+	if (!LoadSkills()) wxMessageBox(wxT("Skills.json の読み込みに失敗しました。"), app_name, wxICON_WARNING);
 	DeleteDBFiles();
 
 	InitEventDB();
@@ -228,6 +229,31 @@ bool EventLibrary::LoadScenarioEvent()
 
 				root->Name = types[i].wstring();
 				ScenarioEvents.push_back(root);
+			}
+		}
+		catch (json::exception& ex) {
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool EventLibrary::LoadSkills()
+{
+	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\Skills.json");
+	if (stream.good()) {
+		std::stringstream text;
+
+		text << stream.rdbuf();
+
+		try {
+			json skills = json::parse(text.str());
+
+			for (auto skill : skills) {
+				SkillMap[utility::from_u8string(skill["Name"].get<std::string>())] = utility::from_u8string(skill["Description"].get<std::string>());
 			}
 		}
 		catch (json::exception& ex) {
