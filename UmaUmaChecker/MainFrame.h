@@ -36,11 +36,9 @@ public:
 	MainFrame(wxWindow* parent, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION | wxCLOSE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU);
 	virtual ~MainFrame();
 
-public:
-	static void SetFontAllChildren(wxWindow* parent, const wxFont& font);
-	
-
 private:
+	void Init();
+
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
 	void OnClickPreview(wxCommandEvent& event);
@@ -60,7 +58,8 @@ private:
 
 	void ChangeEventOptions(EventSource* event);
 
-	void Init();
+public:
+	static void SetFontAllChildren(wxWindow* parent, const wxFont& font);
 
 private:
 	const int EventOptionCount = 5;

@@ -158,20 +158,6 @@ MainFrame::~MainFrame()
 	delete umaMgr;
 }
 
-void MainFrame::SetFontAllChildren(wxWindow* parent, const wxFont& font)
-{
-	if (!parent) return;
-
-	parent->SetFont(font);
-
-	wxWindowList& children = parent->GetChildren();
-
-	for (wxWindowList::Node* node = children.GetFirst(); node; node = node->GetNext()) {
-		wxWindow* current = node->GetData();
-		SetFontAllChildren(current, font);
-	}
-}
-
 void MainFrame::Init()
 {
 	umaMgr->Init();
@@ -200,95 +186,6 @@ void MainFrame::Init()
 	GrandLiveMusicListFrame* frame = new GrandLiveMusicListFrame(this);
 	frame->Show();
 #endif
-}
-
-void MainFrame::OnComboTextUpdate(wxCommandEvent& event)
-{
-	if (m_comboBoxUma->GetCurrentSelection() != wxNOT_FOUND) return;
-
-	if (!event.GetString().empty()) {
-		wxString value = event.GetString();
-
-		if (!m_comboPopup->IsShown()) {
-			wxPoint pos = m_comboBoxUma->ClientToScreen(wxPoint(0, m_comboBoxUma->GetSize().y));
-			m_comboPopup->Position(pos, wxSize(0, 0));
-			m_comboPopup->SetSize(wxSize(m_comboBoxUma->GetSize().x, this->FromDIP(100)));
-			m_comboPopup->Popup(m_comboPopup);
-		}
-
-		m_comboPopup->ClearList();
-		for (auto& rank : umaMgr->GetCharacters()) {
-			for (auto& chara : rank) {
-				if (chara->Name.find(value) != std::wstring::npos) {
-					m_comboPopup->AddString(chara->Name);
-				}
-			}
-		}
-	}
-	else if (m_comboPopup->IsShown()) {
-		m_comboPopup->Hide();
-	}
-}
-
-void MainFrame::OnSelectedListBoxItem(wxCommandEvent& event)
-{
-	wxString name = event.GetString();
-	m_comboBoxUma->SetStringSelection(name);
-	umaMgr->SetTrainingCharacter(m_comboBoxUma->GetValue().wc_str());
-}
-
-void MainFrame::OnComboKeyDown(wxKeyEvent& event)
-{
-	if (m_comboPopup->IsShown()) {
-		if (event.m_keyCode == WXK_UP) {
-			int index = m_comboPopup->m_listBox->GetSelection();
-			if (index != wxNOT_FOUND) {
-				if (index >= 1) {
-					m_comboPopup->m_listBox->SetSelection(index - 1);
-				}
-			}
-			else {
-				if (m_comboPopup->m_listBox->GetCount() > 0) m_comboPopup->m_listBox->SetSelection(0);
-			}
-			return;
-		}
-		else if (event.m_keyCode == WXK_DOWN) {
-			int index = m_comboPopup->m_listBox->GetSelection();
-			if (index != wxNOT_FOUND) {
-				if (index + 1 < m_comboPopup->m_listBox->GetCount()) {
-					m_comboPopup->m_listBox->SetSelection(index + 1);
-				}
-			}
-			else {
-				if (m_comboPopup->m_listBox->GetCount() > 0) m_comboPopup->m_listBox->SetSelection(0);
-			}
-			return;
-		}
-		else if (event.m_keyCode == WXK_RETURN) {
-			int index = m_comboPopup->m_listBox->GetSelection();
-			if (index != wxNOT_FOUND) {
-				wxString value = m_comboPopup->m_listBox->GetStringSelection();
-				m_comboBoxUma->SetStringSelection(value.ToStdWstring());
-				umaMgr->SetTrainingCharacter(value.ToStdWstring());
-				m_comboPopup->Dismiss();
-				return;
-			}
-		}
-	}
-
-	event.Skip();
-}
-
-void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
-{
-	for (auto ctrl : m_textCtrlEventOptions) {
-		ctrl->SetHeightByLine(Config::GetInstance()->OptionMaxLine);
-		ctrl->Layout();
-	}
-
-	this->Fit();
-	this->Layout();
-	//event.Skip();
 }
 
 void MainFrame::OnClickStart(wxCommandEvent& event)
@@ -504,6 +401,95 @@ void MainFrame::OnTimer(wxTimerEvent& event)
 	m_statusBar->SetStatusText(wxString::Format(wxT("MEM: %0.1f MB"), memory_usage / 1024.0 / 1024.0), 1);
 }
 
+void MainFrame::OnComboTextUpdate(wxCommandEvent& event)
+{
+	if (m_comboBoxUma->GetCurrentSelection() != wxNOT_FOUND) return;
+
+	if (!event.GetString().empty()) {
+		wxString value = event.GetString();
+
+		if (!m_comboPopup->IsShown()) {
+			wxPoint pos = m_comboBoxUma->ClientToScreen(wxPoint(0, m_comboBoxUma->GetSize().y));
+			m_comboPopup->Position(pos, wxSize(0, 0));
+			m_comboPopup->SetSize(wxSize(m_comboBoxUma->GetSize().x, this->FromDIP(100)));
+			m_comboPopup->Popup(m_comboPopup);
+		}
+
+		m_comboPopup->ClearList();
+		for (auto& rank : umaMgr->GetCharacters()) {
+			for (auto& chara : rank) {
+				if (chara->Name.find(value) != std::wstring::npos) {
+					m_comboPopup->AddString(chara->Name);
+				}
+			}
+		}
+	}
+	else if (m_comboPopup->IsShown()) {
+		m_comboPopup->Hide();
+	}
+}
+
+void MainFrame::OnSelectedListBoxItem(wxCommandEvent& event)
+{
+	wxString name = event.GetString();
+	m_comboBoxUma->SetStringSelection(name);
+	umaMgr->SetTrainingCharacter(m_comboBoxUma->GetValue().wc_str());
+}
+
+void MainFrame::OnComboKeyDown(wxKeyEvent& event)
+{
+	if (m_comboPopup->IsShown()) {
+		if (event.m_keyCode == WXK_UP) {
+			int index = m_comboPopup->m_listBox->GetSelection();
+			if (index != wxNOT_FOUND) {
+				if (index >= 1) {
+					m_comboPopup->m_listBox->SetSelection(index - 1);
+				}
+			}
+			else {
+				if (m_comboPopup->m_listBox->GetCount() > 0) m_comboPopup->m_listBox->SetSelection(0);
+			}
+			return;
+		}
+		else if (event.m_keyCode == WXK_DOWN) {
+			int index = m_comboPopup->m_listBox->GetSelection();
+			if (index != wxNOT_FOUND) {
+				if (index + 1 < m_comboPopup->m_listBox->GetCount()) {
+					m_comboPopup->m_listBox->SetSelection(index + 1);
+				}
+			}
+			else {
+				if (m_comboPopup->m_listBox->GetCount() > 0) m_comboPopup->m_listBox->SetSelection(0);
+			}
+			return;
+		}
+		else if (event.m_keyCode == WXK_RETURN) {
+			int index = m_comboPopup->m_listBox->GetSelection();
+			if (index != wxNOT_FOUND) {
+				wxString value = m_comboPopup->m_listBox->GetStringSelection();
+				m_comboBoxUma->SetStringSelection(value.ToStdWstring());
+				umaMgr->SetTrainingCharacter(value.ToStdWstring());
+				m_comboPopup->Dismiss();
+				return;
+			}
+		}
+	}
+
+	event.Skip();
+}
+
+void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
+{
+	for (auto ctrl : m_textCtrlEventOptions) {
+		ctrl->SetHeightByLine(Config::GetInstance()->OptionMaxLine);
+		ctrl->Layout();
+	}
+
+	this->Fit();
+	this->Layout();
+	//event.Skip();
+}
+
 void MainFrame::ChangeEventOptions(EventSource* event)
 {
 	if (event) {
@@ -532,5 +518,19 @@ void MainFrame::ChangeEventOptions(EventSource* event)
 				m_textCtrlEventOptions[i]->SetValue(wxT(""));
 			}
 		}
+	}
+}
+
+void MainFrame::SetFontAllChildren(wxWindow* parent, const wxFont& font)
+{
+	if (!parent) return;
+
+	parent->SetFont(font);
+
+	wxWindowList& children = parent->GetChildren();
+
+	for (wxWindowList::Node* node = children.GetFirst(); node; node = node->GetNext()) {
+		wxWindow* current = node->GetData();
+		SetFontAllChildren(current, font);
 	}
 }
