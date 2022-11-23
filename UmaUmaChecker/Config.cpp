@@ -1,5 +1,7 @@
 #include "Config.h"
 
+#include <Windows.h>
+
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <sstream>
@@ -47,6 +49,11 @@ bool Config::Load()
 	}
 	else {
 		Create();
+	}
+
+	if (ScreenshotSavePath.empty()) {
+		std::wstring directory = utility::GetExeDirectory() + L"\\screenshots\\";
+		CreateDirectoryW(directory.c_str(), NULL);
 	}
 
 	return true;

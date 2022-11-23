@@ -224,13 +224,12 @@ void Uma::MonitorThread()
 				EventHash = PrevEventHash;
 				Config* config = Config::GetInstance();
 				if (config->SaveMissingEvent) {
-					std::wstring directory = config->ScreenshotSavePath + L"\\";
+					std::wstring directory = config->ScreenshotSavePath + L"\\AutoSave\\";
 					if (config->ScreenshotSavePath.empty()) {
-						directory = utility::GetExeDirectory() + L"\\screenshots\\";
-						CreateDirectoryW(directory.c_str(), NULL);
-						directory += L"AutoSave\\";
-						CreateDirectoryW(directory.c_str(), NULL);
+						directory = utility::GetExeDirectory() + L"\\screenshots\\AutoSave\\";
 					}
+
+					CreateDirectoryW(directory.c_str(), NULL);
 
 					std::wstring savename = directory
 						+ std::wstring(L"debug_")
