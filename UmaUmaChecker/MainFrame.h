@@ -38,6 +38,7 @@ public:
 
 private:
 	void Init();
+	bool LoadSkills();
 
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
@@ -50,13 +51,16 @@ private:
 	void OnClickAbout(wxCommandEvent& event);
 	void OnPreviewDragFile(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
-	//
+	// コンボボックスのオートコンプリート用
 	void OnComboTextUpdate(wxCommandEvent& event);
 	void OnSelectedListBoxItem(wxCommandEvent& event);
 	void OnComboKeyDown(wxKeyEvent& event);
+	// DPI用
 	void OnDPIChanged(wxDPIChangedEvent& event);
 
 	void ChangeEventOptions(EventSource* event);
+
+	std::wstring GetSkillDescFromOption(const std::wstring& option);
 
 public:
 	static void SetFontAllChildren(wxWindow* parent, const wxFont& font);
@@ -83,4 +87,5 @@ private:
 	wxComboBoxPopup* m_comboPopup = NULL;
 
 	Uma* umaMgr;
+	std::unordered_map<std::wstring, std::wstring> SkillMap; // スキル名 -> 説明
 };

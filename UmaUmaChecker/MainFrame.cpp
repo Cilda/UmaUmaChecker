@@ -1,10 +1,15 @@
 #include <winsock2.h>
+
 #include "MainFrame.h"
 
 #include <Windows.h>
 #include <gdiplus.h>
+#include <sstream>
+#include <fstream>
 #include <chrono>
 #include <regex>
+#include <nlohmann/json.hpp>
+
 #include <wx/msgdlg.h>
 #include <wx/dcclient.h>
 #include <wx/log.h>
@@ -16,6 +21,8 @@
 #include "SettingDialog.h"
 #include "AboutDialog.h"
 #include "GrandLiveMusicListFrame.h"
+
+using json = nlohmann::json;
 
 
 MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL), timer(this)
@@ -134,7 +141,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->Bind(wxEVT_DPI_CHANGED, &MainFrame::OnDPIChanged, this);
 
 	// コンボボックスポップアップ用
-	this->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainFrame::OnComboTextUpdate, this);
+	m_comboBoxUma->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainFrame::OnComboTextUpdate, this);
 	m_comboPopup->Bind(wxEVT_HIDE, &MainFrame::OnSelectedListBoxItem, this);
 	m_comboBoxUma->Bind(wxEVT_KEY_DOWN, &MainFrame::OnComboKeyDown, this);
 
@@ -174,6 +181,8 @@ void MainFrame::Init()
 		r--;
 	}
 
+	if (!LoadSkills()) wxMessageBox(wxT("Skills.json を読み込めませんでした。"), app_name, wxICON_ERROR);
+
 	/*
 	if (Config::GetInstance()->EnableDebug) {
 		m_DebugFrame = new DebugFrame(this);
@@ -186,6 +195,31 @@ void MainFrame::Init()
 	GrandLiveMusicListFrame* frame = new GrandLiveMusicListFrame(this);
 	frame->Show();
 #endif
+}
+
+bool MainFrame::LoadSkills()
+{
+	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\Skills.json");
+	if (stream.good()) {
+		std::stringstream text;
+
+		text << stream.rdbuf();
+
+		try {
+			json skills = json::parse(text.str());
+
+			for (auto skill : skills) {
+				SkillMap[utility::from_u8string(skill["Name"].get<std::string>())] = utility::from_u8string(skill["Description"].get<std::string>());
+			}
+		}
+		catch (json::exception& ex) {
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 void MainFrame::OnClickStart(wxCommandEvent& event)
@@ -510,8 +544,13 @@ void MainFrame::ChangeEventOptions(EventSource* event)
 
 		for (int i = 0; i < EventOptionCount; i++) {
 			if (i < event->Options.size()) {
+				std::wstring skill = GetSkillDescFromOption(event->Options[i]->Effect);
+
 				m_textCtrlEventTitles[i]->SetValue(event->Options[i]->Title);
-				m_textCtrlEventOptions[i]->SetValue(event->Options[i]->Effect);
+				if (skill.empty()) m_textCtrlEventOptions[i]->SetValue(event->Options[i]->Effect);
+				else m_textCtrlEventOptions[i]->SetValue(event->Options[i]->Effect + L"\n==========================\n" + skill);
+
+				
 			}
 			else {
 				m_textCtrlEventTitles[i]->SetValue(wxT(""));
@@ -519,6 +558,27 @@ void MainFrame::ChangeEventOptions(EventSource* event)
 			}
 		}
 	}
+}
+
+std::wstring MainFrame::GetSkillDescFromOption(const std::wstring& option)
+{
+	auto begin = option.begin();
+	auto end = option.end();
+	std::wregex regex(L"『(.+?)』");
+	std::wsmatch match;
+	std::wstring desc;
+
+	while (std::regex_search(begin, end, match, regex)) {
+		begin = match[0].second;
+		auto name = match[1].str();
+
+		if (SkillMap.find(name) != SkillMap.end()) {
+			if (!desc.empty()) desc += L"\n\n";
+			desc += L"《" + match[1].str() + L"》\n" + SkillMap.at(name);
+		}
+	}
+
+	return desc;
 }
 
 void MainFrame::SetFontAllChildren(wxWindow* parent, const wxFont& font)

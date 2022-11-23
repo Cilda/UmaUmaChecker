@@ -27,7 +27,6 @@ private:
 	bool LoadEvent();
 	bool LoadChara();
 	bool LoadScenarioEvent();
-	bool LoadSkills();
 
 	void InitEventDB();
 	void InitCharaDB();
@@ -51,8 +50,6 @@ private:
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> ScenarioEventMap; // キー: イベント名, 値: 選択肢
 
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> OptionMap; // キー: 選択肢, 値: イベントソース
-
-	std::unordered_map<std::wstring, std::wstring> SkillMap; // スキル名 -> 説明
 
 	std::string DBPath;
 };
