@@ -48,6 +48,8 @@ bool Config::Load()
 	else {
 		Create();
 	}
+
+	return true;
 }
 
 void Config::Create()
