@@ -243,8 +243,7 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 
 		std::wstring directory = config->ScreenshotSavePath + L"\\";
 		if (config->ScreenshotSavePath.empty()) {
-			directory = utility::GetExeDirectory() + L"\\screenshots\\";
-			CreateDirectoryW(directory.c_str(), NULL);
+			directory = utility::GetExeDirectory() + L"\\Screenshots\\";
 		}
 
 		std::wstring savename = directory
@@ -567,14 +566,16 @@ std::wstring MainFrame::GetSkillDescFromOption(const std::wstring& option)
 	std::wregex regex(L"『(.+?)』");
 	std::wsmatch match;
 	std::wstring desc;
+	std::set<std::wstring> SkillSet;
 
 	while (std::regex_search(begin, end, match, regex)) {
 		begin = match[0].second;
 		auto name = match[1].str();
 
-		if (SkillMap.find(name) != SkillMap.end()) {
+		if (SkillSet.find(name) == SkillSet.end() && SkillMap.find(name) != SkillMap.end()) {
 			if (!desc.empty()) desc += L"\n\n";
 			desc += L"《" + match[1].str() + L"》\n" + SkillMap.at(name);
+			SkillSet.insert(name);
 		}
 	}
 
