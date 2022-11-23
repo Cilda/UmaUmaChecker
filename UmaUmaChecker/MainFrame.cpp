@@ -354,9 +354,9 @@ void MainFrame::OnEnterControl(wxMouseEvent& event)
 		int height = size.y > clientSize.y ? size.y : clientSize.y;
 
 		wxPoint pos = ctrl->ClientToScreen(wxPoint(-2, -2));
-		wxTextPopupCtrl* m_textPopup = new wxTextPopupCtrl(this, wxSize(width + marginWidth, height + marginHeight));
+		wxTextPopupCtrl* m_textPopup = new wxTextPopupCtrl(this, wxSize(width + marginWidth * 2, height + marginHeight));
 		m_textPopup->Position(pos, wxSize(0, 0));
-		m_textPopup->SetSize(wxSize(width + marginWidth, height + marginHeight));
+		m_textPopup->SetSize(wxSize(width + marginWidth * 2, height + marginHeight));
 		m_textPopup->SetText(text);
 		m_textPopup->Popup();
 	}
