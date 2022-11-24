@@ -13,6 +13,7 @@ public:
 private:
 	void LoadMusicList();
 
+	void OnClickClear(wxCommandEvent& event);
 private:
 	wxButton* m_buttonUncheckAll;
 	wxTreeListCtrl* m_listCtrl;

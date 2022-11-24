@@ -32,6 +32,8 @@ GrandLiveMusicListFrame::GrandLiveMusicListFrame(wxWindow* parent) : wxFrame(par
 	this->Layout();
 	this->Centre(wxBOTH);
 
+	m_buttonUncheckAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GrandLiveMusicListFrame::OnClickClear, this);
+
 	LoadMusicList();
 }
 
@@ -68,6 +70,15 @@ void GrandLiveMusicListFrame::LoadMusicList()
 		}
 		catch (json::exception& ex) {
 			return;
+		}
+	}
+}
+
+void GrandLiveMusicListFrame::OnClickClear(wxCommandEvent& event)
+{
+	for (wxTreeListItem item = m_listCtrl->GetFirstItem(); item.IsOk(); item = m_listCtrl->GetNextItem(item)) {
+		if (m_listCtrl->GetCheckedState(item) == wxCHK_CHECKED) {
+			m_listCtrl->UncheckItem(item);
 		}
 	}
 }
