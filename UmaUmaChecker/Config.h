@@ -12,6 +12,9 @@ public:
 	void Create();
 	void Save();
 
+	std::wstring GetImageExtension();
+	std::wstring GetImageMimeType();
+
 public:
 	static Config* GetInstance();
 
@@ -26,5 +29,6 @@ public:
 	bool IsHideNoneChoise;
 	bool IsShowStatusBar;
 	int OptionMaxLine;
+	int ImageType;
 };
 

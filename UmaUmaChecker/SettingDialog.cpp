@@ -24,7 +24,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	wxBoxSizer* sizeParent = new wxBoxSizer(wxVERTICAL);
 	
 	wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("一般")), wxVERTICAL);
-	wxGridSizer* gridSizer = new wxGridSizer(3, 2, 3, 0);
+	wxFlexGridSizer* gridSizer = new wxFlexGridSizer(3, 2, 3, 0);
 
 	// 更新
 	m_staticTextUpdate = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("イベントを最新に更新する"));
@@ -61,17 +61,25 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 
 	// スクリーンショット
 	wxStaticBoxSizer* sizeS2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("スクリーンショット")), wxVERTICAL);
-	wxFlexGridSizer* fgSize = new wxFlexGridSizer(0, 3, 0, 0);
-	fgSize->SetFlexibleDirection(wxBOTH);
-	fgSize->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_ALL);
+	wxFlexGridSizer* fgSize = new wxFlexGridSizer(2, 2, 3, 0);
+	wxBoxSizer* sspathSizer = new wxBoxSizer(wxHORIZONTAL);
 
 	m_staticTextScreenShotPath = new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("場所:"));
 	m_textCtrlScreenShotPath = new wxTextCtrl(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(280, -1)));
 	m_buttonBrowse = new wxButton(sizeS2->GetStaticBox(), wxID_ANY, wxT("参照"));
 
-	fgSize->Add(m_staticTextScreenShotPath, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-	fgSize->Add(m_textCtrlScreenShotPath, 0, wxALL, 5);
-	fgSize->Add(m_buttonBrowse, 0, wxALL, 5);
+	sspathSizer->Add(m_textCtrlScreenShotPath);
+	sspathSizer->Add(m_buttonBrowse);
+
+	m_comboFileType = new wxComboBox(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+	m_comboFileType->Append(wxT("PNG"));
+	m_comboFileType->Append(wxT("JPEG"));
+	m_comboFileType->SetSelection(0);
+	
+	fgSize->Add(m_staticTextScreenShotPath, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+	fgSize->Add(sspathSizer, 0);
+	fgSize->Add(new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("種類:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+	fgSize->Add(m_comboFileType, 0);
 
 	sizeS2->Add(fgSize, 1, wxEXPAND, 5);
 	sizeParent->Add(sizeS2, 0, wxEXPAND | wxLEFT | wxRIGHT, 5);
@@ -120,6 +128,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_checkSaveScreenShot->Set3StateValue(config->SaveMissingEvent ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_checkDebugEnable->Set3StateValue(config->EnableDebug ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_spinCtrlMaxLine->SetValue(config->OptionMaxLine);
+	m_comboFileType->SetSelection(config->ImageType);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -153,6 +162,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->EnableDebug = m_checkDebugEnable->IsChecked();
 	config->SaveMissingEvent = m_checkSaveScreenShot->IsChecked();
 	config->OptionMaxLine = m_spinCtrlMaxLine->GetValue();
+	config->ImageType = m_comboFileType->GetCurrentSelection();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);

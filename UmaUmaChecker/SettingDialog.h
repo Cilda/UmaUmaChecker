@@ -10,6 +10,7 @@
 #include <wx/webrequest.h>
 #include <wx/fontpicker.h>
 #include <wx/spinctrl.h>
+#include <wx/combobox.h>
 
 class Config;
 
@@ -35,6 +36,7 @@ private:
 	wxStaticText* m_staticTextUpdate;
 	wxStaticText* m_staticTextScreenShotPath;
 	wxButton* m_buttonUpdate;
+	wxComboBox* m_comboFileType;
 	wxTextCtrl* m_textCtrlScreenShotPath;
 	wxButton* m_buttonBrowse;
 	wxStdDialogButtonSizer* m_dialogButtonSizer;
@@ -46,7 +48,6 @@ private:
 	wxCheckBox* m_checkBoxShowStatusBar;
 	wxStaticText* m_staticTextMaxLine;
 	wxSpinCtrl* m_spinCtrlMaxLine;
-
 
 	Config* config;
 	std::vector<wxWebRequest> requests;

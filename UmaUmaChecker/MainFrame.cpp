@@ -249,15 +249,16 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 		std::wstring savename = directory
 			+ std::wstring(L"screenshot_")
 			+ std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
-			+ L".png";
+			+ config->GetImageExtension();
 
-		utility::GetEncoderClsid(L"image/png", &clsid);
-		image->Save(savename.c_str(), &clsid);
+		utility::GetEncoderClsid(config->GetImageMimeType().c_str(), &clsid);
+		if (image->Save(savename.c_str(), &clsid) != Gdiplus::Ok) {
+			wxMessageBox(wxT("保存に失敗しました。"), wxT("ウマウマチェッカー"), wxICON_ERROR);
+		}
 		delete image;
 	}
 	else {
 		wxMessageBox(wxT("ウマ娘のウィンドウが見つかりません。"), wxT("ウマウマチェッカー"), wxICON_ERROR);
-
 	}
 }
 

@@ -42,6 +42,7 @@ bool Config::Load()
 			OptionMaxLine = config.value("OptionMaxLine", 4);
 			if (OptionMaxLine < 2) OptionMaxLine = 2;
 			else if (OptionMaxLine > 10) OptionMaxLine = 10;
+			ImageType = config.value("ImageType", 0);
 		}
 		catch (json::exception& ex) {
 			return false;
@@ -73,6 +74,7 @@ void Config::Create()
 	IsHideNoneChoise = false;
 	IsShowStatusBar = false;
 	OptionMaxLine = 4;
+	ImageType = 0;
 
 	Save();
 }
@@ -91,9 +93,34 @@ void Config::Save()
 	config["IsHideNoneChoise"] = IsHideNoneChoise;
 	config["IsShowStatusBar"] = IsShowStatusBar;
 	config["OptionMaxLine"] = OptionMaxLine;
+	config["ImageType"] = ImageType;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;
+}
+
+std::wstring Config::GetImageExtension()
+{
+	switch (ImageType) {
+		case 0:
+			return L".png";
+		case 1:
+			return L".jpg";
+		default:
+			return L".png";
+	}
+}
+
+std::wstring Config::GetImageMimeType()
+{
+	switch (ImageType) {
+		case 0:
+			return L"image/png";
+		case 1:
+			return L"image/jpeg";
+		default:
+			return L"image/png";
+	}
 }
 
 Config* Config::GetInstance()
