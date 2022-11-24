@@ -20,6 +20,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	this->SetBackgroundColour(wxColour(255, 255, 255));
+	this->SetDoubleBuffered(true);
 
 	wxBoxSizer* sizeParent = new wxBoxSizer(wxVERTICAL);
 	
@@ -56,6 +57,10 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	// ステータス表示
 	m_checkBoxShowStatusBar = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("ステータスバーを表示する"));
 	sizeS1->Add(m_checkBoxShowStatusBar, 0, wxLEFT | wxBOTTOM, 5);
+
+	// 更新確認
+	m_checkBoxCheckUpdate = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("起動時に更新がある場合は通知する"));
+	sizeS1->Add(m_checkBoxCheckUpdate, 0, wxLEFT | wxBOTTOM, 5);
 
 	sizeParent->Add(sizeS1, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 
@@ -106,8 +111,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	sizeParent->Add(m_dialogButtonSizer, 0, wxEXPAND | wxALL, 5);
 
 	this->SetSizer(sizeParent);
-	sizeParent->Fit(this);
-
+	this->Fit();
 	this->Centre(wxBOTH);
 
 	this->Bind(wxEVT_INIT_DIALOG, &SettingDialog::OnInitDialog, this);

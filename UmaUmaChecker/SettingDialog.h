@@ -46,6 +46,7 @@ private:
 	wxFontPickerCtrl* m_fontPickerCtrl;
 	wxCheckBox* m_checkBoxHideOption;
 	wxCheckBox* m_checkBoxShowStatusBar;
+	wxCheckBox* m_checkBoxCheckUpdate;
 	wxStaticText* m_staticTextMaxLine;
 	wxSpinCtrl* m_spinCtrlMaxLine;
 
