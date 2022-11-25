@@ -47,46 +47,6 @@ public:
 		return 0;
 	}
 
-	void InitDPI()
-	{
-		HMODULE hModule = GetModuleHandle(TEXT("user32"));
-		if (hModule) {
-			SetThreadDpiAwarenessContextFunc ThreadAwareFunc = (SetThreadDpiAwarenessContextFunc)GetProcAddress(hModule, "SetThreadDpiAwarenessContext");
-			// Windows10 Anniversary Update以上
-			if (ThreadAwareFunc) {
-				HMODULE hNtModule = GetModuleHandleW(TEXT("ntdll"));
-				if (hNtModule) {
-					RtlGetVersionFunc GetVerFunc = (RtlGetVersionFunc)GetProcAddress(hNtModule, "RtlGetVersion");
-					if (GetVerFunc) {
-						OSVERSIONINFOEXW osw;
-
-						ZeroMemory(&osw, sizeof(osw));
-						osw.dwOSVersionInfoSize = sizeof(osw);
-
-						GetVerFunc(&osw);
-
-						// Windows10(1809)以上 or Windows11
-						if (osw.dwMajorVersion == 10 && osw.dwBuildNumber >= 17763) {
-							ThreadAwareFunc(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2); // DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED
-						}
-						// Windows10 Creators Update以上 or Windows11
-						else if (osw.dwMajorVersion == 10 && osw.dwBuildNumber >= 15063) {
-							ThreadAwareFunc(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-						}
-						// Windows10 Creators Update未満
-						else {
-							ThreadAwareFunc(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
-						}
-					}
-				}
-			}
-			else {
-				SetProcessDPIAwareFunc ProcessAwareFunc = (SetProcessDPIAwareFunc)GetProcAddress(hModule, "SetProcessDPIAware");
-				if (ProcessAwareFunc) ProcessAwareFunc();
-			}
-		}
-	}
-
 private:
 	Gdiplus::GdiplusStartupInput input;
 	ULONG_PTR token;
