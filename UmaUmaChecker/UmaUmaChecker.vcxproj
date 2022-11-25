@@ -213,7 +213,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AboutDialog.cpp" />
+    <ClCompile Include="CheckUpdateDialog.cpp" />
     <ClCompile Include="GrandLiveMusicListFrame.cpp" />
+    <ClCompile Include="UpdateManager.cpp" />
     <ClCompile Include="wxComboBoxPopup.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DebugFrame.cpp" />
@@ -234,7 +236,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDialog.h" />
+    <ClInclude Include="CheckUpdateDialog.h" />
     <ClInclude Include="GrandLiveMusicListFrame.h" />
+    <ClInclude Include="UpdateManager.h" />
     <ClInclude Include="wxComboBoxPopup.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DebugFrame.h" />

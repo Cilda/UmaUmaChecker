@@ -9,6 +9,7 @@
 #include "Uma.h"
 #include "MainFrame.h"
 #include "Config.h"
+#include "UpdateManager.h"
 
 typedef HRESULT(_stdcall* SetThreadDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef BOOL(*SetProcessDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
@@ -22,7 +23,6 @@ public:
 	{
 		if (!wxApp::OnInit()) return false;
 
-		//InitDPI();
 		Gdiplus::GdiplusStartup(&token, &input, NULL);
 		wxInitAllImageHandlers();
 
@@ -32,6 +32,8 @@ public:
 		MainFrame* frame = new MainFrame(NULL);
 		frame->Show(true);
 		SetTopWindow(frame);
+
+		//UpdateManager::Start();
 
 		return true;
 	}
