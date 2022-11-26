@@ -20,7 +20,6 @@ private:
 private:
 	wxStaticBitmap* m_bitmap;
 	wxButton* m_buttonOk;
-	wxButton* m_buttonLicense;
 	wxButton* m_buttonUpdateCheck;
 	wxWebRequest UpdateRequest;
 };
