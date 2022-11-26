@@ -5,10 +5,10 @@
 #include <wx/statline.h>
 #include <wx/stattext.h>
 #include <wx/msgdlg.h>
+#include <wx/listbox.h>
 
 #include "Config.h"
 #include "version.h"
-
 
 AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウマウマチェッカーについて"))
 {
@@ -36,16 +36,23 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 	staticTextVersion->Wrap(-1);
 	sizerInfo->Add(staticTextVersion, 0, wxALL | wxCENTER, 5);
 
-	/*
-	wxStaticText* staticTextCopyright = new wxStaticText(this, wxID_ANY, wxT("Copyright 2022 Cilda"));
-	staticTextCopyright->Wrap(-1);
-	sizerInfo->Add(staticTextCopyright, 0, wxALL | wxCENTER, 5);
-	*/
-
 	wxHyperlinkCtrl* hyperLinkHomepage = new wxHyperlinkCtrl(this, wxID_ANY, wxT("https://github.com/Cilda/UmaUmaChecker"), wxT("https://github.com/Cilda/UmaUmaChecker"));
 	sizerInfo->Add(hyperLinkHomepage, 0, wxALL | wxCENTER, 5);
-
 	sizerTop->Add(sizerInfo, 0, wxALL, 20);
+
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	wxStaticText* text = new wxStaticText(this, wxID_ANY, wxT("以下のライブラリを含んでいます:"));
+	sizer->Add(text, 0);
+
+	wxListBox* listBox = new wxListBox(this, wxID_ANY);
+	listBox->Append(wxT("Tesseract OCR"));
+	listBox->Append(wxT("OpenCV"));
+	listBox->Append(wxT("wxWidgets"));
+	listBox->Append(wxT("nlohmann-json"));
+	listBox->Append(wxT("simstring"));
+	sizer->Add(listBox, 0, wxEXPAND);
+
+	sizerTop->Add(sizer, 0, (wxALL & ~wxTOP) | wxEXPAND, 5);
 
 	// ボタン類
 	wxStaticLine* staticLine = new wxStaticLine(this, wxID_ANY);
@@ -54,10 +61,6 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 	wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
 	m_buttonOk = new wxButton(this, wxID_OK);
 	bSizerButtons->Add(m_buttonOk, 0, wxLEFT | wxRIGHT, 5);
-
-	m_buttonLicense = new wxButton(this, wxID_ANY, wxT("クレジット"));
-	m_buttonLicense->Disable();
-	bSizerButtons->Add(m_buttonLicense, 0, wxLEFT | wxRIGHT, 5);
 
 	m_buttonUpdateCheck = new wxButton(this, wxID_ANY, wxT("更新の確認"));
 	bSizerButtons->Add(m_buttonUpdateCheck, 0, wxLEFT | wxRIGHT, 5);
