@@ -218,6 +218,10 @@ bool EventLibrary::LoadScenarioEvent()
 						event_option->Effect = utility::from_u8string(option["Effect"].get<std::string>());
 						
 						source->Options.push_back(event_option);
+
+						if (OptionMap.find(event_option->Title) == OptionMap.end()) {
+							OptionMap[event_option->Title] = source;
+						}
 					}
 
 					std::wstring EventName = utility::from_u8string(event.key());
@@ -308,12 +312,19 @@ void EventLibrary::InitScenarioEventDB()
 	simstring::ngram_generator gen(3, false);
 	simstring::writer_base<std::wstring> dbw(gen, DBPath + "event\\scenario.db");
 
+	simstring::ngram_generator gen2(3, false);
+	simstring::writer_base<std::wstring> dbw2(gen2, DBPath + "event\\scenario_choises.db");
+
 	for (auto& scenario : ScenarioEvents) {
 		for (auto& event : scenario->Events) {
 			dbw.insert(event.first); // イベント名
+			for (auto& option : event.second->Options) {
+				dbw2.insert(option->Title);
+			}
 		}
 	}
 	dbw.close();
+	dbw2.close();
 }
 
 std::shared_ptr<EventSource> EventLibrary::RetrieveEvent(const std::wstring& name)
@@ -491,6 +502,35 @@ std::shared_ptr<EventRoot> EventLibrary::RetrieveCharaName(const std::wstring& n
 	}
 
 	return nullptr;
+}
+
+std::shared_ptr<EventSource> EventLibrary::RetrieveScenarioEventFromOptionTitle(const std::wstring& name)
+{
+	simstring::reader dbr;
+
+	dbr.open(DBPath + "event\\scenario_choises.db");
+
+	std::vector<std::wstring> xstrs;
+
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
+		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
+	dbr.close();
+
+	if (xstrs.empty()) return nullptr;
+
+	std::wstring match = xstrs.front();
+	if (xstrs.size() >= 2) {
+		match = GetBestMatchString(xstrs, name);
+	}
+
+	const auto& event = OptionMap.find(match);
+	if (event == OptionMap.end()) return nullptr;
+
+	return event->second;
 }
 
 EventRoot* EventLibrary::GetCharacter(const std::wstring& name)

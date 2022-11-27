@@ -34,7 +34,7 @@ public:
 	bool Start();
 	void Stop();
 
-	void SetTrainingCharacter(const std::wstring& CharaName);
+	bool SetTrainingCharacter(const std::wstring& CharaName);
 
 	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const {
 		return SkillLib.GetCharacters();
@@ -64,6 +64,7 @@ private:
 	std::shared_ptr<EventSource> GetScenarioEvent(const std::vector<std::wstring>& text_list);
 	std::shared_ptr<EventSource> GetEventByBottomOption(const cv::Mat& srcImg);
 	std::shared_ptr<EventSource> GetCharaEventByBottomOption(const cv::Mat& srcImg);
+	std::shared_ptr<EventSource> GetScenarioEventByBottomOption(const cv::Mat& srcImg);
 
 	// イベント判定
 	bool IsCharaEvent(const cv::Mat& srcImg);

@@ -153,9 +153,10 @@ void Uma::Stop()
 	wxLogDebug(wxT("ストップ====================="));
 }
 
-void Uma::SetTrainingCharacter(const std::wstring& CharaName)
+bool Uma::SetTrainingCharacter(const std::wstring& CharaName)
 {
 	CurrentCharacter = SkillLib.GetCharacter(CharaName);
+	return CurrentCharacter != nullptr;
 }
 
 cv::Mat Uma::BitmapToCvMat(Gdiplus::Bitmap* image)
@@ -543,6 +544,35 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 	return nullptr;
 }
 
+std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& srcImg)
+{
+	cv::Mat rsImg, gray, bin;
+	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
+		Uma::BottomChoiseBound.x * srcImg.size().width,
+		Uma::BottomChoiseBound.y * srcImg.size().height,
+		Uma::BottomChoiseBound.width * srcImg.size().width,
+		Uma::BottomChoiseBound.height * srcImg.size().height
+	));
+
+	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
+
+	std::wstring text = GetTextFromImage(bin);
+	if (!text.empty()) {
+		auto event = SkillLib.RetrieveScenarioEventFromOptionTitle(text);
+		if (event) return event;
+	}
+
+	text = GetTextFromImage(gray);
+	if (!text.empty()) {
+		auto event = SkillLib.RetrieveScenarioEventFromOptionTitle(text);
+		if (event) return event;
+	}
+
+	return nullptr;
+}
+
 EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 {
 	if (bScaned) *bScaned = false;
@@ -578,6 +608,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 	if (!events.empty()) {
 		if (bScaned) *bScaned = true;
 		auto event = GetScenarioEvent(events);
+		if (!event) event = GetScenarioEventByBottomOption(srcImg);
 		if (event) {
 			return event.get();
 		}
