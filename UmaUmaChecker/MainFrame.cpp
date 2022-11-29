@@ -336,7 +336,9 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 
 void MainFrame::OnSelectedUma(wxCommandEvent& event)
 {
-	umaMgr->SetTrainingCharacter(m_comboBoxUma->GetValue().wc_str());
+	if (!umaMgr->SetTrainingCharacter(m_comboBoxUma->GetValue().wc_str())) {
+		//m_comboBoxUma->SetSelection(-1);
+	}
 }
 
 void MainFrame::OnUmaThreadEvent(wxThreadEvent& event)
@@ -384,13 +386,13 @@ void MainFrame::OnEnterControl(wxMouseEvent& event)
 	int marginHeight = windowSize.y - clientSize.y;
 
 	if (size.x > clientSize.x || size.y > clientSize.y) {
-		int width = size.x > clientSize.x ? size.x : clientSize.x;
+		int width = size.x > clientSize.x ? size.x + marginWidth : clientSize.x;
 		int height = size.y > clientSize.y ? size.y : clientSize.y;
 
 		wxPoint pos = ctrl->ClientToScreen(wxPoint(-2, -2));
-		wxTextPopupCtrl* m_textPopup = new wxTextPopupCtrl(this, wxSize(width + marginWidth * 2, height + marginHeight));
+		wxTextPopupCtrl* m_textPopup = new wxTextPopupCtrl(this, wxSize(width + marginWidth, height + marginHeight));
 		m_textPopup->Position(pos, wxSize(0, 0));
-		m_textPopup->SetSize(wxSize(width + marginWidth * 2, height + marginHeight));
+		m_textPopup->SetSize(wxSize(width + marginWidth, height + marginHeight));
 		m_textPopup->SetText(text);
 		m_textPopup->Popup();
 	}
