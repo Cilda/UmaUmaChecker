@@ -281,8 +281,8 @@ void MainFrame::OnClickPreview(wxCommandEvent& event)
 void MainFrame::OnClickSetting(wxCommandEvent& event)
 {
 	Config* config = Config::GetInstance();
-	SettingDialog* frame = new SettingDialog(this, config);
-	if (frame->ShowModal() == 1) {
+	SettingDialog frame(this, config);
+	if (frame.ShowModal() == 1) {
 		if (!config->IsShowStatusBar) {
 			timer.Stop();
 			m_statusBar->Hide();
@@ -315,7 +315,7 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 		Fit();
 	}
 
-	if (frame->IsUpdated()) {
+	if (frame.IsUpdated()) {
 		m_comboBoxUma->Clear();
 		umaMgr->Reload();
 		int r = 3;
@@ -330,8 +330,6 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 			r--;
 		}
 	}
-
-	frame->Destroy();
 }
 
 void MainFrame::OnSelectedUma(wxCommandEvent& event)
@@ -404,9 +402,8 @@ void MainFrame::OnLeaveControl(wxMouseEvent& event)
 
 void MainFrame::OnClickAbout(wxCommandEvent& event)
 {
-	AboutDialog* dialog = new AboutDialog(this);
-	dialog->ShowModal();
-	dialog->Destroy();
+	AboutDialog dialog(this);
+	dialog.ShowModal();
 }
 
 void MainFrame::OnPreviewDragFile(wxCommandEvent& event)
