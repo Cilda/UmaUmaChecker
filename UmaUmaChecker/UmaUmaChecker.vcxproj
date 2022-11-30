@@ -238,6 +238,7 @@
     <ClInclude Include="AboutDialog.h" />
     <ClInclude Include="CheckUpdateDialog.h" />
     <ClInclude Include="GrandLiveMusicListFrame.h" />
+    <ClInclude Include="object_pool.hpp" />
     <ClInclude Include="UpdateManager.h" />
     <ClInclude Include="wxComboBoxPopup.h" />
     <ClInclude Include="Config.h" />

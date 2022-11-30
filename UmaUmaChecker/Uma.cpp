@@ -41,7 +41,14 @@ Uma::Uma(wxFrame* frame)
 	thread = nullptr;
 	CurrentCharacter = nullptr;
 	CurrentEvent = nullptr;
-	api = new tesseract::TessBaseAPI();
+	for (int i = 0; i < 4; i++) {
+		tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
+		api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
+		api->SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
+
+		tess_pool.join_manage_resource(api);
+	}
+	//api = new tesseract::TessBaseAPI();
 	apiMulti = new tesseract::TessBaseAPI();
 
 	this->frame = frame;
@@ -52,7 +59,6 @@ Uma::~Uma()
 	if (thread) {
 		Stop();
 	}
-	delete api;
 	delete apiMulti;
 }
 
@@ -61,11 +67,7 @@ void Uma::Init()
 	CurrentEvent = nullptr;
 	CurrentCharacter = nullptr;
 
-	if (SkillLib.Load()) {
-	}
-
-	api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
-	api->SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
+	SkillLib.Load();
 
 	apiMulti->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
 
@@ -351,6 +353,8 @@ std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 
 	std::lock_guard<std::mutex> lock(mutex);
 
+	auto api = tess_pool.get();
+
 	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
 	api->Recognize(NULL);
 
@@ -365,6 +369,7 @@ std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 
 	//wxLogDebug(wxT("GetTextFromImage(): %lld"), msec);
 
+	tess_pool.release(api);
 	return text;
 }
 

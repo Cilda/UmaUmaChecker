@@ -18,7 +18,7 @@
 #endif
 
 #include "Config.h"
-
+#include "object_pool.hpp"
 
 class Uma
 {
@@ -101,7 +101,8 @@ private:
 	EventLibrary SkillLib;
 	TextCollector Collector;
 	EventRoot* CurrentCharacter;
-	tesseract::TessBaseAPI* api;
+	object_pool<tesseract::TessBaseAPI> tess_pool;
+	//tesseract::TessBaseAPI* api;
 	tesseract::TessBaseAPI* apiMulti;
 	std::wstring DetectedEventName;
 	std::mutex mutex;
