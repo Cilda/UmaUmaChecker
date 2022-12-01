@@ -1,9 +1,9 @@
 #include <winsock2.h>
+#include <Windows.h>
+#include <gdiplus.h>
 
 #include "MainFrame.h"
 
-#include <Windows.h>
-#include <gdiplus.h>
 #include <sstream>
 #include <fstream>
 #include <chrono>
@@ -21,6 +21,8 @@
 #include "SettingDialog.h"
 #include "AboutDialog.h"
 #include "GrandLiveMusicListFrame.h"
+
+#pragma comment(lib, "gdiplus.lib")
 
 using json = nlohmann::json;
 
@@ -252,7 +254,17 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 			+ config->GetImageExtension();
 
 		utility::GetEncoderClsid(config->GetImageMimeType().c_str(), &clsid);
-		if (image->Save(savename.c_str(), &clsid) != Gdiplus::Ok) {
+
+		Gdiplus::EncoderParameters encoderParameters;
+		ULONG quality = 100;
+
+		encoderParameters.Count = 1;
+		encoderParameters.Parameter[0].Guid = Gdiplus::EncoderQuality;
+		encoderParameters.Parameter[0].Type = Gdiplus::EncoderParameterValueTypeLong;
+		encoderParameters.Parameter[0].NumberOfValues = 1;
+		encoderParameters.Parameter[0].Value = &quality;
+
+		if (image->Save(savename.c_str(), &clsid, &encoderParameters) != Gdiplus::Ok) {
 			wxMessageBox(wxT("保存に失敗しました。"), wxT("ウマウマチェッカー"), wxICON_ERROR);
 		}
 		delete image;
