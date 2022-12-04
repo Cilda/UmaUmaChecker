@@ -133,6 +133,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_checkDebugEnable->Set3StateValue(config->EnableDebug ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_spinCtrlMaxLine->SetValue(config->OptionMaxLine);
 	m_comboFileType->SetSelection(config->ImageType);
+	m_checkBoxCheckUpdate->Set3StateValue(config->EnableCheckUpdate ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -167,6 +168,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->SaveMissingEvent = m_checkSaveScreenShot->IsChecked();
 	config->OptionMaxLine = m_spinCtrlMaxLine->GetValue();
 	config->ImageType = m_comboFileType->GetCurrentSelection();
+	config->EnableCheckUpdate = m_checkBoxCheckUpdate->IsChecked();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);

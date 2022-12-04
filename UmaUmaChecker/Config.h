@@ -30,5 +30,6 @@ public:
 	bool IsShowStatusBar;
 	int OptionMaxLine;
 	int ImageType;
+	bool EnableCheckUpdate;
 };
 

@@ -33,7 +33,7 @@ public:
 		frame->Show(true);
 		SetTopWindow(frame);
 
-		//UpdateManager::Start();
+		UpdateManager::Start();
 
 		return true;
 	}

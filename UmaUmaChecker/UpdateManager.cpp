@@ -2,7 +2,10 @@
 
 #include <wx/app.h>
 #include <wx/webrequest.h>
+#include <wx/xml/xml.h>
 
+#include "version.h"
+#include "Config.h"
 #include "CheckUpdateDialog.h"
 
 UpdateManager::UpdateManager()
@@ -12,14 +15,20 @@ UpdateManager::UpdateManager()
 
 void UpdateManager::GetUpdates()
 {
-	auto request = wxWebSession::GetDefault().CreateRequest(this, wxT(""));
+	auto request = wxWebSession::GetDefault().CreateRequest(this, wxT("https://github.com/Cilda/UmaUmaChecker/releases.atom"));
 	if (!request.IsOk()) return;
 
-	this->Bind(wxEVT_WEBREQUEST_STATE, [request](wxWebRequestEvent& event) {
+	this->Bind(wxEVT_WEBREQUEST_STATE, [this, request](wxWebRequestEvent& event) {
 		switch (event.GetState()) {
 			case wxWebRequest::State_Completed: {
-				CheckUpdateDialog dialog(nullptr);
-				dialog.ShowModal();
+				VersionInfo version = ParseXmlData(event.GetResponse().GetStream());
+#ifndef _DEBUG
+				if (!version.title.empty() && version.title != app_version)
+#endif
+				{
+					CheckUpdateDialog dialog(nullptr, &version);
+					dialog.ShowModal();
+				}
 				break;
 			}
 		}
@@ -30,7 +39,44 @@ void UpdateManager::GetUpdates()
 
 void UpdateManager::OnTimer(wxTimerEvent& event)
 {
-	GetUpdates();
+	auto config = Config::GetInstance();
+
+	if (config->EnableCheckUpdate) GetUpdates();
+}
+
+UpdateManager::VersionInfo UpdateManager::ParseXmlData(wxInputStream* stream)
+{
+	VersionInfo version;
+	wxXmlDocument doc(*stream);
+
+	auto root = doc.GetRoot();
+	auto children = root->GetChildren();
+
+	wxString title;
+	wxString content;
+
+	while (children) {
+		if (children->GetName() == wxT("entry")) {
+			auto node = children->GetChildren();
+			while (node) {
+				if (node->GetName() == wxT("title")) {
+					version.title = node->GetNodeContent();
+				}
+				else if (node->GetName() == wxT("content")) {
+					version.content = node->GetNodeContent();
+				}
+				else if (node->GetName() == wxT("link")) {
+					version.url = node->GetAttribute(wxT("href"));
+				}
+
+				node = node->GetNext();
+			}
+			break;
+		}
+		children = children->GetNext();
+	}
+
+	return version;
 }
 
 UpdateManager& UpdateManager::GetInstance()

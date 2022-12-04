@@ -43,6 +43,7 @@ bool Config::Load()
 			if (OptionMaxLine < 2) OptionMaxLine = 2;
 			else if (OptionMaxLine > 10) OptionMaxLine = 10;
 			ImageType = config.value("ImageType", 0);
+			EnableCheckUpdate = config.value("EnableCheckUpdate", true);
 		}
 		catch (json::exception& ex) {
 			return false;
@@ -75,6 +76,7 @@ void Config::Create()
 	IsShowStatusBar = false;
 	OptionMaxLine = 4;
 	ImageType = 0;
+	EnableCheckUpdate = true;
 
 	Save();
 }
@@ -94,6 +96,7 @@ void Config::Save()
 	config["IsShowStatusBar"] = IsShowStatusBar;
 	config["OptionMaxLine"] = OptionMaxLine;
 	config["ImageType"] = ImageType;
+	config["EnableCheckUpdate"] = EnableCheckUpdate;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;
