@@ -41,7 +41,15 @@ Uma::Uma(wxFrame* frame)
 	thread = nullptr;
 	CurrentCharacter = nullptr;
 	CurrentEvent = nullptr;
-	for (int i = 0; i < 4; i++) {
+
+	SYSTEM_INFO siSysInfo;
+	GetSystemInfo(&siSysInfo);
+
+	int pool_size = std::max((int)siSysInfo.dwNumberOfProcessors - 1, 1);
+
+	wxLogDebug(wxT("プールサイズ:%d"), pool_size);
+
+	for (int i = 0; i < pool_size; i++) {
 		tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
 		api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
 		api->SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
@@ -274,6 +282,7 @@ void Uma::MonitorThread()
 		auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
 		wxLogDebug(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
+		//OutputDebugStringW(wxString::Format(wxT("MonitorThread() ループ処理時間: %lld msec"), msec).wx_str());
 
 		if (msec < 1000) Sleep(1000 - msec);
 	}
