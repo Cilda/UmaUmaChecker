@@ -9,8 +9,8 @@
       "replace": "："
     },
     {
-      "search": "\"",
-      "replace": ""
+      "search": "(\"|“)",
+      "replace": "”"
     },
     {
       "search": "アヤべ",
