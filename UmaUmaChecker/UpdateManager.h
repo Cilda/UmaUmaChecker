@@ -16,7 +16,7 @@ public:
 public:
 	UpdateManager();
 
-	void GetUpdates();
+	void GetUpdates(bool bHideDontShowCheck = false);
 
 private:
 	void OnTimer(wxTimerEvent& event);

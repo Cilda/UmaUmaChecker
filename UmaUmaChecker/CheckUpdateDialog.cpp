@@ -17,7 +17,7 @@ wxBEGIN_EVENT_TABLE(CheckUpdateDialog, wxDialog)
 wxEND_EVENT_TABLE()
 
 
-CheckUpdateDialog::CheckUpdateDialog(wxWindow* parent, UpdateManager::VersionInfo* version) : wxDialog(parent, wxID_ANY, wxT("ウマウマチェッカー を更新"))
+CheckUpdateDialog::CheckUpdateDialog(wxWindow* parent, UpdateManager::VersionInfo* version, bool bHideDontShowCheck) : wxDialog(parent, wxID_ANY, wxT("ウマウマチェッカー を更新"))
 {
 	url = version->url;
 
@@ -35,6 +35,7 @@ CheckUpdateDialog::CheckUpdateDialog(wxWindow* parent, UpdateManager::VersionInf
 		}
 		{
 			wxCheckBox* checkbox = new wxCheckBox(this, DontShow, wxT("起動時に確認をしない"));
+			if (bHideDontShowCheck) checkbox->Hide();
 			sizer->Add(checkbox, 0, wxALL, 5);
 		}
 		{

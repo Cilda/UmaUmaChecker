@@ -6,7 +6,7 @@
 class CheckUpdateDialog : public wxDialog
 {
 public:
-	CheckUpdateDialog(wxWindow* parent, UpdateManager::VersionInfo* version);
+	CheckUpdateDialog(wxWindow* parent, UpdateManager::VersionInfo* version, bool bHideDontShowCheck);
 	virtual ~CheckUpdateDialog();
 
 private:

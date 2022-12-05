@@ -21,6 +21,5 @@ private:
 	wxStaticBitmap* m_bitmap;
 	wxButton* m_buttonOk;
 	wxButton* m_buttonUpdateCheck;
-	wxWebRequest UpdateRequest;
 };
 

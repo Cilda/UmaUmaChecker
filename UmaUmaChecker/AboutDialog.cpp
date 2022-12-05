@@ -9,6 +9,7 @@
 
 #include "Config.h"
 #include "version.h"
+#include "UpdateManager.h"
 
 AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウマウマチェッカーについて"))
 {
@@ -77,13 +78,6 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 
 AboutDialog::~AboutDialog()
 {
-	if (UpdateRequest.IsOk()) {
-		UpdateRequest.Cancel();
-
-		while (UpdateRequest.IsOk()) {
-			wxYield();
-		}
-	}
 }
 
 void AboutDialog::OnClickUpdateCheck(wxCommandEvent& event)
@@ -91,60 +85,11 @@ void AboutDialog::OnClickUpdateCheck(wxCommandEvent& event)
 	wxWindowDisabler disabler;
 
 	CheckUpdate();
-
-	if (UpdateRequest.IsOk()) {
-		while (UpdateRequest.IsOk()) {
-			wxYield();
-		}
-	}
 }
 
 void AboutDialog::CheckUpdate()
 {
-	UpdateRequest = wxWebSession::GetDefault().CreateRequest(this, wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/version.txt"));
+	auto& instance = UpdateManager::GetInstance();
 
-	if (!UpdateRequest.IsOk()) {
-		return;
-	}
-
-	this->Bind(wxEVT_WEBREQUEST_STATE, [this](wxWebRequestEvent& event) {
-		bool IsActive = false;
-
-		switch (event.GetState()) {
-			case wxWebRequest::State_Completed: {
-				const wxWebResponse& response = event.GetResponse();
-				if (response.GetStatus() == 200) {
-					auto stream = response.GetStream();
-					size_t size = stream->GetSize();
-					char* buf = new char[size + 1];
-
-					stream->ReadAll(buf, size);
-
-					buf[size] = '\0';
-					wxString latestVersion(buf);
-					delete[] buf;
-
-					if (latestVersion != app_version) {
-						wxMessageBox(wxT("最新バージョンへ更新できます。"), wxT("ウマウマチェッカー"));
-					}
-					else {
-						wxMessageBox(wxT("最新バージョンです。"), wxT("ウマウマチェッカー"));
-					}
-				}
-				break;
-			}
-			case wxWebRequest::State_Failed:
-			case wxWebRequest::State_Cancelled:
-				break;
-			case wxWebRequest::State_Active:
-				IsActive = true;
-				break;
-		}
-
-		if (!IsActive) {
-			UpdateRequest = wxWebRequest();
-		}
-	});
-
-	UpdateRequest.Start();
+	instance.GetUpdates(true);
 }

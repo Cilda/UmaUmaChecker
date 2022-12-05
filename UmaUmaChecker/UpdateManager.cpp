@@ -3,6 +3,7 @@
 #include <wx/app.h>
 #include <wx/webrequest.h>
 #include <wx/xml/xml.h>
+#include <wx/msgdlg.h>
 
 #include "version.h"
 #include "Config.h"
@@ -13,12 +14,12 @@ UpdateManager::UpdateManager()
 	m_timer.Bind(wxEVT_TIMER, &UpdateManager::OnTimer, this);
 }
 
-void UpdateManager::GetUpdates()
+void UpdateManager::GetUpdates(bool bHideDontShowCheck)
 {
 	auto request = wxWebSession::GetDefault().CreateRequest(this, wxT("https://github.com/Cilda/UmaUmaChecker/releases.atom"));
 	if (!request.IsOk()) return;
 
-	this->Bind(wxEVT_WEBREQUEST_STATE, [this, request](wxWebRequestEvent& event) {
+	this->Bind(wxEVT_WEBREQUEST_STATE, [&](wxWebRequestEvent& event) {
 		switch (event.GetState()) {
 			case wxWebRequest::State_Completed: {
 				VersionInfo version = ParseXmlData(event.GetResponse().GetStream());
@@ -26,15 +27,30 @@ void UpdateManager::GetUpdates()
 				if (!version.title.empty() && version.title != app_version)
 #endif
 				{
-					CheckUpdateDialog dialog(nullptr, &version);
+					CheckUpdateDialog dialog(nullptr, &version, bHideDontShowCheck);
 					dialog.ShowModal();
 				}
+#ifndef _DEBUG
+				else if (bHideDontShowCheck) {
+					wxMessageBox(wxT("最新バージョンです。"), app_name);
+				}
+#endif
+
+
 				break;
 			}
+		}
+
+		if (event.GetState() != wxWebRequest::State_Active) {
+			request = wxWebRequest();
 		}
 	});
 
 	request.Start();
+
+	while (request.IsOk()) {
+		wxYield();
+	}
 }
 
 void UpdateManager::OnTimer(wxTimerEvent& event)
