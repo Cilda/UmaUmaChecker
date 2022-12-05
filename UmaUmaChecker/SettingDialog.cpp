@@ -185,6 +185,9 @@ bool SettingDialog::UpdateLibrary()
 
 	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Chara.json");
 	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Events.json");
+	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/ReplaceText.json");
+	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/ScenarioEvents.json");
+	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Skills.json");
 	
 	for (auto& request : requests) {
 		while (request.IsOk() && request.GetState() == wxWebRequest::State_Active) {
@@ -212,11 +215,14 @@ void SettingDialog::UpdateFile(const wxString& url)
 				if (response.GetStatus() == 200) {
 					auto stream = response.GetStream();
 					wxString path = utility::GetExeDirectory() + L"\\Library\\" + response.GetSuggestedFileName();
-					wxFile file(path);
 					int size = 0;
-					if (file.IsOpened()) {
-						size = file.SeekEnd();
-						file.Close();
+
+					if (wxFile::Exists(path)) {
+						wxFile file(path);
+						if (file.IsOpened()) {
+							size = file.SeekEnd();
+							file.Close();
+						}
 					}
 
 					if (size != stream->GetSize()) {
