@@ -71,15 +71,21 @@ private:
 	bool IsCardEvent(const cv::Mat& srcImg);
 	bool IsScenarioEvent(const cv::Mat& srcImg);
 
+	// OCR関数
 	std::wstring GetTextFromImage(const cv::Mat& img);
 	std::wstring GetMultiTextFromImage(cv::Mat& img);
+	int GetNumericFromImage(const cv::Mat& img);
 
 	void AsyncFunction(std::vector<std::wstring>& strs, const cv::Mat& img);
 
+	// その他
 	void AppendCollectedText(std::vector<std::wstring>& text_list);
 	double CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext);
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 	void UnsharpMask(const cv::Mat& mat, const cv::Mat& dst, float k);
+
+	// ステータス取得用
+	bool DetectCharaStatus(const cv::Mat& src);
 
 	// 文字配列からハッシュ取得
 	size_t CreateHash(const std::vector<std::wstring>& strs);
@@ -90,6 +96,7 @@ public:
 	static const cv::Rect2d ScenarioChoiseBound;
 	static const cv::Rect2d TrainingCharaSingleLineBound;
 	static const cv::Rect2d TrainingCharaMultiLineBound;
+	static const cv::Rect2d StatusBounds[5];
 
 public:
 	EventSource* CurrentEvent;

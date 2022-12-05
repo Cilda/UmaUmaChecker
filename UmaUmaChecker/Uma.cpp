@@ -31,6 +31,13 @@ const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
 const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::TrainingCharaSingleLineBound = { 0.3186, 0.1358, 0.66839, 0.02769 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
 const cv::Rect2d Uma::TrainingCharaMultiLineBound = { 0.3186, 0.1107, 0.66839, 0.05410 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
+const cv::Rect2d Uma::StatusBounds[5] = {
+	{ 0.1010638297872340425531914893617, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
+	{ 0.26063829787234042553191489361702, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
+	{ 0.41755319148936170212765957446809, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
+	{ 0.57180851063829787234042553191489, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
+	{ 0.73138297872340425531914893617021, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
+};
 const double Uma::ResizeRatio = 2.0;
 const float Uma::UnsharpRatio = 2.0f;
 
@@ -405,6 +412,28 @@ std::wstring Uma::GetMultiTextFromImage(cv::Mat& img)
 	return text;
 }
 
+int Uma::GetNumericFromImage(const cv::Mat& img)
+{
+	auto start = std::chrono::system_clock::now();
+
+	std::lock_guard<std::mutex> lock(mutex);
+
+	auto api = tess_pool.get();
+
+	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
+	api->Recognize(NULL);
+
+	const std::unique_ptr<const char[]> utf8_text(api->GetUTF8Text());
+	std::wstring text = utility::from_u8string(utf8_text.get());
+	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
+
+	auto end = std::chrono::system_clock::now();
+	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+	tess_pool.release(api);
+	return std::stoi(text);
+}
+
 void Uma::AsyncFunction(std::vector<std::wstring>& strs, const cv::Mat& img)
 {
 	std::wstring str = GetTextFromImage(img);
@@ -483,6 +512,31 @@ void Uma::UnsharpMask(const cv::Mat& mat, const cv::Mat& dst, float k)
 
 	cv::Mat kernel(3, 3, CV_32F, kernelData);
 	cv::filter2D(mat, dst, -1, kernel);
+}
+
+bool Uma::DetectCharaStatus(const cv::Mat& src)
+{
+	for (int i = 0; i < 5; i++) {
+		cv::Mat cut = cv::Mat(src, cv::Rect(
+			Uma::StatusBounds[i].x * src.size().width,
+			Uma::StatusBounds[i].y * src.size().height,
+			Uma::StatusBounds[i].width * src.size().width,
+			Uma::StatusBounds[i].height * src.size().height
+		));
+
+		cv::Mat rsImg, gray, bin;
+
+		cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+		cv::threshold(gray, bin, 120, 255, cv::THRESH_BINARY);
+
+		double ratio = (double)cv::countNonZero(bin) / bin.size().area();
+
+		//int status = GetNumericFromImage(bin);
+		//int status2 = GetNumericFromImage(gray);
+	}
+
+	return false;
 }
 
 size_t Uma::CreateHash(const std::vector<std::wstring>& strs)
