@@ -49,12 +49,9 @@ Uma::Uma(wxFrame* frame)
 	CurrentCharacter = nullptr;
 	CurrentEvent = nullptr;
 
-	SYSTEM_INFO siSysInfo;
-	GetSystemInfo(&siSysInfo);
+	auto instance = Config::GetInstance();
 
-	int pool_size = std::max((int)siSysInfo.dwNumberOfProcessors - 1, 1);
-
-	wxLogDebug(wxT("プールサイズ:%d"), pool_size);
+	int pool_size = std::max(instance->OcrPoolSize, 1);
 
 	for (int i = 0; i < pool_size; i++) {
 		tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();

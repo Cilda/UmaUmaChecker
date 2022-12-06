@@ -31,5 +31,6 @@ public:
 	int OptionMaxLine;
 	int ImageType;
 	bool EnableCheckUpdate;
+	int OcrPoolSize;
 };
 

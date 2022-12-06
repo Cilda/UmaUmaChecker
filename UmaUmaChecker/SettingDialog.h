@@ -49,6 +49,7 @@ private:
 	wxCheckBox* m_checkBoxCheckUpdate;
 	wxStaticText* m_staticTextMaxLine;
 	wxSpinCtrl* m_spinCtrlMaxLine;
+	wxComboBox* m_comboOcrPoolSize;
 
 	Config* config;
 	std::vector<wxWebRequest> requests;

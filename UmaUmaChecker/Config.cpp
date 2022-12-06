@@ -44,6 +44,7 @@ bool Config::Load()
 			else if (OptionMaxLine > 10) OptionMaxLine = 10;
 			ImageType = config.value("ImageType", 0);
 			EnableCheckUpdate = config.value("EnableCheckUpdate", true);
+			OcrPoolSize = config.value("OcrPoolSize", 2);
 		}
 		catch (json::exception& ex) {
 			return false;
@@ -77,6 +78,7 @@ void Config::Create()
 	OptionMaxLine = 4;
 	ImageType = 0;
 	EnableCheckUpdate = true;
+	OcrPoolSize = 2;
 
 	Save();
 }
@@ -97,6 +99,7 @@ void Config::Save()
 	config["OptionMaxLine"] = OptionMaxLine;
 	config["ImageType"] = ImageType;
 	config["EnableCheckUpdate"] = EnableCheckUpdate;
+	config["OcrPoolSize"] = OcrPoolSize;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;
