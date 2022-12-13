@@ -572,12 +572,14 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
+		ChangeCollectedText(text);
 		auto event = SkillLib.RetrieveEventFromOptionTitle(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
+		ChangeCollectedText(text);
 		auto event = SkillLib.RetrieveEventFromOptionTitle(text);
 		if (event) return event;
 	}
@@ -632,12 +634,14 @@ std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& 
 
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
+		ChangeCollectedText(text);
 		auto event = SkillLib.RetrieveScenarioEventFromOptionTitle(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
+		ChangeCollectedText(text);
 		auto event = SkillLib.RetrieveScenarioEventFromOptionTitle(text);
 		if (event) return event;
 	}
