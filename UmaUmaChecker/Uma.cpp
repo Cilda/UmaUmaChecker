@@ -452,6 +452,11 @@ void Uma::AppendCollectedText(std::vector<std::wstring>& text_list)
 	text_list.insert(text_list.begin(), vecs.begin(), vecs.end());
 }
 
+void Uma::ChangeCollectedText(std::wstring& text)
+{
+	Collector.Collect(text);
+}
+
 double Uma::CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext)
 {
 	simstring::ngram_generator gen(1, false);
@@ -596,12 +601,14 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
+		ChangeCollectedText(text);
 		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
+		ChangeCollectedText(text);
 		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
 		if (event) return event;
 	}

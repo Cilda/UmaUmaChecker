@@ -80,6 +80,7 @@ private:
 
 	// その他
 	void AppendCollectedText(std::vector<std::wstring>& text_list);
+	void ChangeCollectedText(std::wstring& text);
 	double CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext);
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 	void UnsharpMask(const cv::Mat& mat, const cv::Mat& dst, float k);
