@@ -91,22 +91,23 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 		// スクリーンショット
 		wxStaticBoxSizer* sizeS2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("スクリーンショット")), wxVERTICAL);
 		{
-			wxFlexGridSizer* fgSize = new wxFlexGridSizer(2, 2, 3, 0);
+			wxFlexGridSizer* fgSize = new wxFlexGridSizer(2, 2, 3, 5);
+			fgSize->AddGrowableCol(1);
 			{
-				m_staticTextScreenShotPath = new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("場所:"));
+				m_staticTextScreenShotPath = new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("場所"));
 				fgSize->Add(m_staticTextScreenShotPath, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
 				wxBoxSizer* sspathSizer = new wxBoxSizer(wxHORIZONTAL);
 				{
 					m_textCtrlScreenShotPath = new wxTextCtrl(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(280, -1)));
-					sspathSizer->Add(m_textCtrlScreenShotPath);
+					sspathSizer->Add(m_textCtrlScreenShotPath, 1);
 
 					m_buttonBrowse = new wxButton(sizeS2->GetStaticBox(), wxID_ANY, wxT("参照"));
 					sspathSizer->Add(m_buttonBrowse);
 				}
 
-				fgSize->Add(sspathSizer, 0);
-				fgSize->Add(new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("種類:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+				fgSize->Add(sspathSizer, 0, wxEXPAND);
+				fgSize->Add(new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("種類")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
 				m_comboFileType = new wxComboBox(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
 				m_comboFileType->Append(wxT("PNG"));
