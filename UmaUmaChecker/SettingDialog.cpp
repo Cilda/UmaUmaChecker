@@ -26,7 +26,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	{
 		wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("一般")), wxVERTICAL);
 		{
-			wxFlexGridSizer* gridSizer = new wxFlexGridSizer(3, 2, 3, 0);
+			wxFlexGridSizer* gridSizer = new wxFlexGridSizer(4, 2, 3, 0);
 			{
 				// 更新
 				m_staticTextUpdate = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("イベントを最新に更新する"));
@@ -46,6 +46,14 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 				m_spinCtrlMaxLine->SetRange(2, 10);
 				gridSizer->Add(m_staticTextMaxLine, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 				gridSizer->Add(m_spinCtrlMaxLine, 0);
+
+				// テーマ
+				wxStaticText* themeText = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("テーマ"));
+				wxComboBox* comb = new wxComboBox(sizeS1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+				comb->AppendString(wxT("ライト"));
+				comb->AppendString(wxT("ダーク"));
+				gridSizer->Add(themeText, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+				gridSizer->Add(comb, 0);
 
 				sizeS1->Add(gridSizer, 1, wxLEFT | wxBOTTOM, 5);
 			}
