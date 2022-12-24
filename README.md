@@ -127,7 +127,7 @@ __注__: このソフトウェアは異なるライセンスのパッケージ�
 vcpkgのインストールについては、https://github.com/microsoft/vcpkg をご覧ください。  
 Visual Studioでvcpkgを利用するために以下を実行してください。
 <pre>
-vcpkg integrate install
+> vcpkg integrate install
 </pre>
 
 プロジェクトをビルドするために以下でリポジトリをクローンするか、ダウンロードします。
