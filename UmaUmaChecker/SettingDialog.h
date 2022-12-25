@@ -50,6 +50,8 @@ private:
 	wxStaticText* m_staticTextMaxLine;
 	wxSpinCtrl* m_spinCtrlMaxLine;
 	wxComboBox* m_comboOcrPoolSize;
+	wxComboBox* m_comboFontList;
+	wxComboBox* m_comboFontSizeList;
 
 	Config* config;
 	std::vector<wxWebRequest> requests;
