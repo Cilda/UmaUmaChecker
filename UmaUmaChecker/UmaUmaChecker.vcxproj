@@ -214,6 +214,7 @@
   <ItemGroup>
     <ClCompile Include="AboutDialog.cpp" />
     <ClCompile Include="CheckUpdateDialog.cpp" />
+    <ClCompile Include="FontComboBox.cpp" />
     <ClCompile Include="GrandLiveMusicListFrame.cpp" />
     <ClCompile Include="UpdateManager.cpp" />
     <ClCompile Include="wxComboBoxPopup.cpp" />
@@ -237,6 +238,7 @@
   <ItemGroup>
     <ClInclude Include="AboutDialog.h" />
     <ClInclude Include="CheckUpdateDialog.h" />
+    <ClInclude Include="FontComboBox.h" />
     <ClInclude Include="GrandLiveMusicListFrame.h" />
     <ClInclude Include="object_pool.hpp" />
     <ClInclude Include="UpdateManager.h" />

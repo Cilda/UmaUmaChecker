@@ -11,6 +11,7 @@
 #include <wx/fontpicker.h>
 #include <wx/spinctrl.h>
 #include <wx/combobox.h>
+#include "FontComboBox.h"
 
 class Config;
 
@@ -50,7 +51,7 @@ private:
 	wxStaticText* m_staticTextMaxLine;
 	wxSpinCtrl* m_spinCtrlMaxLine;
 	wxComboBox* m_comboOcrPoolSize;
-	wxComboBox* m_comboFontList;
+	FontComboBox* m_comboFontList;
 	wxComboBox* m_comboFontSizeList;
 
 	Config* config;
