@@ -4,6 +4,7 @@
 [![download](https://img.shields.io/badge/download-all%20releases-brightgreen)](https://github.com/Cilda/UmaUmaChecker/releases)
 [![release-version](https://img.shields.io/github/v/release/Cilda/UmaUmaChecker)](https://github.com/Cilda/UmaUmaChecker/releases)
 [![downloads](https://img.shields.io/github/downloads/Cilda/UmaUmaChecker/total)](https://github.com/Cilda/UmaUmaChecker)
+[![CodeFactor](https://www.codefactor.io/repository/github/cilda/umaumachecker/badge)](https://www.codefactor.io/repository/github/cilda/umaumachecker)
 
 ウマウマチェッカーは、ウマ娘プリティーダービーで画像認識によって選択肢のステータスを表示するツールです。  
 Tesseract OCRを使用して画面のスクリーンショットからイベントを認識します。
