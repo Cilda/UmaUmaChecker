@@ -62,7 +62,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	// 育成ウマ娘
 	m_staticTextCharaName = new wxStaticText(this, wxID_ANY, wxT("育成ウマ娘"));
 	m_staticTextCharaName->Wrap(-1);
-	sizerEventInfo->Add(m_staticTextCharaName, wxALIGN_CENTER_VERTICAL);
+	sizerEventInfo->Add(m_staticTextCharaName, 0, wxALIGN_CENTER_VERTICAL);
 
 	m_comboBoxUma = new wxComboBox(this, wxID_ANY);
 	sizerEventInfo->Add(m_comboBoxUma, 1, wxEXPAND);
@@ -70,7 +70,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	// イベント名
 	m_staticTextEventName = new wxStaticText(this, wxID_ANY, wxT("イベント名"));
 	m_staticTextEventName->Wrap(-1);
-	sizerEventInfo->Add(m_staticTextEventName, wxALIGN_CENTER_VERTICAL);
+	sizerEventInfo->Add(m_staticTextEventName, 0, wxALIGN_CENTER_VERTICAL);
 
 	m_textCtrlEventSource = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	m_textCtrlEventSource->SetBackgroundColour(wxColour(255, 255, 255));
