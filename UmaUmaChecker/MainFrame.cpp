@@ -278,7 +278,7 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 void MainFrame::OnRightClickScreenShot(wxMouseEvent& event)
 {
 	auto config = Config::GetInstance();
-	wxString command = wxString::Format(wxT("explorer /root,%s"), config->ScreenshotSavePath.empty() ? utility::GetExeDirectory() + L"\\screenshot" : config->ScreenshotSavePath);
+	wxString command = wxString::Format(wxT("explorer /root,%s"), config->ScreenshotSavePath.empty() ? utility::GetExeDirectory() + L"\\screenshots" : config->ScreenshotSavePath);
 	wxExecute(command, wxEXEC_ASYNC, NULL);
 }
 
