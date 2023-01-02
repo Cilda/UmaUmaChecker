@@ -337,7 +337,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveEvent(const std::wstring& nam
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.1) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -366,7 +366,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveEventFromOptionTitle(const st
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.1) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -399,7 +399,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEvent(const std::wstring
 
 	std::vector<std::wstring> xstrs;
 	
-	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.1) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -428,7 +428,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveCharaEventFromOptionTitle(con
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.1) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -457,7 +457,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveScenarioEvent(const std::wstr
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.1) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -481,7 +481,7 @@ std::shared_ptr<EventRoot> EventLibrary::RetrieveCharaName(const std::wstring& n
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; ratio > 0.2; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.2; ratio -= 0.1) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
@@ -512,7 +512,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveScenarioEventFromOptionTitle(
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.05) {
+	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.1) {
 		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
