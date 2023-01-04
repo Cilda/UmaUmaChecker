@@ -13,5 +13,7 @@ public:
 
 	virtual bool SetFont(const wxFont& font);
 	void SetHeightByLine(int line);
+
+	//virtual bool SetBackgroundColour(const wxColour& colour);
 };
 

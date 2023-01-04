@@ -32,5 +32,6 @@ public:
 	int ImageType;
 	bool EnableCheckUpdate;
 	int OcrPoolSize;
+	int Theme;
 };
 

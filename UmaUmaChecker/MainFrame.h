@@ -23,6 +23,7 @@
 #include "wxTextPopupCtrl.h"
 #include "wxUmaTextCtrl.h"
 #include "wxComboBoxPopup.h"
+#include "ThemeWrapper.h"
 
 #include "PreviewFrame.h"
 #include "DebugFrame.h"
@@ -30,7 +31,7 @@
 #include "Uma.h"
 #include "version.h"
 
-class MainFrame : public wxFrame
+class MainFrame : public ThemedWindowWrapper<wxFrame>
 {
 public:
 	MainFrame(wxWindow* parent, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION | wxCLOSE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU);
@@ -59,8 +60,9 @@ private:
 	void OnDPIChanged(wxDPIChangedEvent& event);
 
 	void ChangeEventOptions(EventSource* event);
-
 	std::wstring GetSkillDescFromOption(const std::wstring& option);
+
+	void ChangeTheme();
 
 public:
 	static void SetFontAllChildren(wxWindow* parent, const wxFont& font);

@@ -6,10 +6,11 @@
 #include <gdiplus.h>
 #include <VersionHelpers.h>
 
+#include "UpdateManager.h"
+
 #include "Uma.h"
 #include "MainFrame.h"
 #include "Config.h"
-#include "UpdateManager.h"
 
 typedef HRESULT(_stdcall* SetThreadDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef BOOL(*SetProcessDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);

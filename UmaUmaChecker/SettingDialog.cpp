@@ -49,11 +49,11 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 
 				// テーマ
 				wxStaticText* themeText = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("テーマ"));
-				wxComboBox* comb = new wxComboBox(sizeS1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
-				comb->AppendString(wxT("ライト"));
-				comb->AppendString(wxT("ダーク"));
+				m_comboTheme = new wxComboBox(sizeS1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+				m_comboTheme->AppendString(wxT("ライト"));
+				m_comboTheme->AppendString(wxT("ダーク"));
 				gridSizer->Add(themeText, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
-				gridSizer->Add(comb, 0);
+				gridSizer->Add(m_comboTheme, 0);
 
 				sizeS1->Add(gridSizer, 1, wxLEFT | wxBOTTOM, 5);
 			}
@@ -160,6 +160,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	this->Bind(wxEVT_INIT_DIALOG, &SettingDialog::OnInitDialog, this);
 	m_buttonUpdate->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SettingDialog::OnClickUpdate, this);
 	m_buttonBrowse->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SettingDialog::OnClickBrowse, this);
+	m_comboTheme->Bind(wxEVT_COMBOBOX, &SettingDialog::OnComboTheme, this);
 }
 
 SettingDialog::~SettingDialog()
@@ -177,6 +178,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_comboFileType->SetSelection(config->ImageType);
 	m_checkBoxCheckUpdate->Set3StateValue(config->EnableCheckUpdate ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_comboOcrPoolSize->SetStringSelection(wxString::Format(wxT("%d"), config->OcrPoolSize));
+	m_comboTheme->SetSelection(config->Theme);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -213,12 +215,17 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->ImageType = m_comboFileType->GetCurrentSelection();
 	config->EnableCheckUpdate = m_checkBoxCheckUpdate->IsChecked();
 	m_comboOcrPoolSize->GetStringSelection().ToInt(&config->OcrPoolSize);
+	config->Theme = m_comboTheme->GetSelection();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);
 }
 
 void SettingDialog::OnClickFontSelect(wxCommandEvent& event)
+{
+}
+
+void SettingDialog::OnComboTheme(wxCommandEvent& event)
 {
 }
 
