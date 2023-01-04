@@ -1,9 +1,14 @@
 #include "SettingDialog.h"
 
+#include <vector>
+
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>
 #include <wx/wfstream.h>
 #include <wx/file.h>
+#include <wx/valgen.h>
+#include <wx/valtext.h>
+#include <wx/valnum.h>
 
 #include "utility.h"
 
@@ -35,10 +40,36 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 				gridSizer->Add(m_buttonUpdate, 0);
 
 				// フォント選択
+				{
+					m_staticTextFontSelect = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ウィンドウのフォント"));
+					gridSizer->Add(m_staticTextFontSelect, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+
+					wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+					{
+						m_comboFontList = new FontComboBox(sizeS1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY | wxCB_SORT);
+						sizer->Add(m_comboFontList, 0, wxRIGHT, 5);
+					}
+					{
+						m_comboFontSizeList = new wxComboBox(sizeS1->GetStaticBox(), wxID_ANY);
+						wxIntegerValidator<int> validator;
+						validator.SetMin(2);
+						validator.SetMax(100);
+						m_comboFontSizeList->SetValidator(validator);
+						std::vector<int> FontSize{ 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 };
+						for (auto size : FontSize) {
+							m_comboFontSizeList->AppendString(wxString::Format(wxT("%d"), size));
+						}
+						sizer->Add(m_comboFontSizeList, 0, wxRIGHT, 5);
+					}
+
+					gridSizer->Add(sizer);
+				}
+				/*
 				m_staticTextFontSelect = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ウィンドウのフォント"));
 				m_fontPickerCtrl = new wxFontPickerCtrl(sizeS1->GetStaticBox(), wxID_ANY, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 				gridSizer->Add(m_staticTextFontSelect, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 				gridSizer->Add(m_fontPickerCtrl);
+				*/
 
 				// 表示行数
 				m_staticTextMaxLine = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("効果テキスト最大行数"));
@@ -154,6 +185,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 		dbSizerOk->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SettingDialog::OnClickOkButton, this);
 	}
 	this->SetSizer(sizeParent);
+	this->Layout();
 	this->Fit();
 	this->Centre(wxBOTH);
 
@@ -179,6 +211,8 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_checkBoxCheckUpdate->Set3StateValue(config->EnableCheckUpdate ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 	m_comboOcrPoolSize->SetStringSelection(wxString::Format(wxT("%d"), config->OcrPoolSize));
 	m_comboTheme->SetSelection(config->Theme);
+	m_comboFontList->SetStringSelection(config->FontName);
+	m_comboFontSizeList->SetValue(wxString::Format(wxT("%d"), config->FontSize));
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -205,8 +239,10 @@ void SettingDialog::OnClickBrowse(wxCommandEvent& event)
 void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 {
 	config->ScreenshotSavePath = m_textCtrlScreenShotPath->GetValue().wc_str();
-	config->FontName = m_fontPickerCtrl->GetSelectedFont().GetFaceName();
-	config->FontSize = m_fontPickerCtrl->GetSelectedFont().GetPointSize();
+	//config->FontName = m_fontPickerCtrl->GetSelectedFont().GetFaceName();
+	//config->FontSize = m_fontPickerCtrl->GetSelectedFont().GetPointSize();
+	config->FontName = m_comboFontList->GetValue();
+	m_comboFontSizeList->GetValue().ToInt(&config->FontSize);
 	config->IsHideNoneChoise = m_checkBoxHideOption->IsChecked();
 	config->IsShowStatusBar = m_checkBoxShowStatusBar->IsChecked();
 	config->EnableDebug = m_checkDebugEnable->IsChecked();

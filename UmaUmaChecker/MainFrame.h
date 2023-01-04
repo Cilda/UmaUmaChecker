@@ -43,6 +43,7 @@ private:
 
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
+	void OnRightClickScreenShot(wxMouseEvent& event);
 	void OnClickPreview(wxCommandEvent& event);
 	void OnClickSetting(wxCommandEvent& event);
 	void OnSelectedUma(wxCommandEvent& event);

@@ -66,7 +66,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	// 育成ウマ娘
 	m_staticTextCharaName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, wxT("育成ウマ娘"));
 	m_staticTextCharaName->Wrap(-1);
-	sizerEventInfo->Add(m_staticTextCharaName, wxALIGN_CENTER_VERTICAL);
+	sizerEventInfo->Add(m_staticTextCharaName, 0, wxALIGN_CENTER_VERTICAL);
 
 	m_comboBoxUma = new ThemedComboBoxWrapper<wxComboBox>(this, wxID_ANY);
 	sizerEventInfo->Add(m_comboBoxUma, 1, wxEXPAND);
@@ -74,7 +74,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	// イベント名
 	m_staticTextEventName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, wxT("イベント名"));
 	m_staticTextEventName->Wrap(-1);
-	sizerEventInfo->Add(m_staticTextEventName, wxALIGN_CENTER_VERTICAL);
+	sizerEventInfo->Add(m_staticTextEventName, 0, wxALIGN_CENTER_VERTICAL);
 
 	m_textCtrlEventSource = new ThemedEditWrapper<wxTextCtrl>(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	sizerEventInfo->Add(m_textCtrlEventSource, 1, wxEXPAND);
@@ -133,6 +133,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	// イベントバインド
 	m_toggleBtnStart->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnClickStart, this);
 	m_buttonScreenshot->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickScreenShot, this);
+	m_buttonScreenshot->Bind(wxEVT_RIGHT_DOWN, &MainFrame::OnRightClickScreenShot, this);
 	m_buttonPreview->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickPreview, this);
 	m_buttonSetting->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickSetting, this);
 	m_comboBoxUma->Bind(wxEVT_COMMAND_COMBOBOX_SELECTED, &MainFrame::OnSelectedUma, this);
@@ -275,6 +276,13 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 	else {
 		wxMessageBox(wxT("ウマ娘のウィンドウが見つかりません。"), wxT("ウマウマチェッカー"), wxICON_ERROR);
 	}
+}
+
+void MainFrame::OnRightClickScreenShot(wxMouseEvent& event)
+{
+	auto config = Config::GetInstance();
+	wxString command = wxString::Format(wxT("explorer /root,%s"), config->ScreenshotSavePath.empty() ? utility::GetExeDirectory() + L"\\screenshots" : config->ScreenshotSavePath);
+	wxExecute(command, wxEXEC_ASYNC, NULL);
 }
 
 void MainFrame::OnClickPreview(wxCommandEvent& event)

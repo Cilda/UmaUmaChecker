@@ -4,6 +4,7 @@
 [![download](https://img.shields.io/badge/download-all%20releases-brightgreen)](https://github.com/Cilda/UmaUmaChecker/releases)
 [![release-version](https://img.shields.io/github/v/release/Cilda/UmaUmaChecker)](https://github.com/Cilda/UmaUmaChecker/releases)
 [![downloads](https://img.shields.io/github/downloads/Cilda/UmaUmaChecker/total)](https://github.com/Cilda/UmaUmaChecker)
+[![CodeFactor](https://www.codefactor.io/repository/github/cilda/umaumachecker/badge)](https://www.codefactor.io/repository/github/cilda/umaumachecker)
 
 ウマウマチェッカーは、ウマ娘プリティーダービーで画像認識によって選択肢のステータスを表示するツールです。  
 Tesseract OCRを使用して画面のスクリーンショットからイベントを認識します。
@@ -60,7 +61,7 @@ Tesseract OCRを使用して画面のスクリーンショットからイベン�
 
 #### イベントデータについて  
    ・イベントデータは [GameWith](https://gamewith.jp/uma-musume/)様のサイトよりデータを抽出し生成しています。   
-   ・イベントデータは毎日10時、15時、22時に更新しています。  
+   ・イベントデータは毎日 __9時__、__15時__、__18時__、__22時__ に更新しています。  
    　※サーバの状態によっては更新が遅れることがあります  
    ・新しいカードが発表された当日はまだデータが揃ってない可能性があります。  
 
