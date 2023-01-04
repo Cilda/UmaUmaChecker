@@ -45,6 +45,7 @@ bool Config::Load()
 			ImageType = config.value("ImageType", 0);
 			EnableCheckUpdate = config.value("EnableCheckUpdate", true);
 			OcrPoolSize = config.value("OcrPoolSize", 2);
+			Theme = config.value("Theme", 0);
 		}
 		catch (json::exception& ex) {
 			return false;
@@ -79,6 +80,7 @@ void Config::Create()
 	ImageType = 0;
 	EnableCheckUpdate = true;
 	OcrPoolSize = 2;
+	Theme = 0;
 
 	Save();
 }
@@ -100,6 +102,7 @@ void Config::Save()
 	config["ImageType"] = ImageType;
 	config["EnableCheckUpdate"] = EnableCheckUpdate;
 	config["OcrPoolSize"] = OcrPoolSize;
+	config["Theme"] = Theme;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

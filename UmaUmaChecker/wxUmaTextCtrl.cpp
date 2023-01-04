@@ -24,17 +24,18 @@ void wxUmaTextCtrl::SetValue(const wxString& value)
 	bool is_num = false;
 	int or_check = 0;
 	wxString text;
-	wxColour color = *wxBLACK;
+	wxColour DefaultColor = this->GetForegroundColour();
+	wxColour color = DefaultColor;
 
 	this->Clear();
-	this->SetDefaultStyle(color);
+	this->SetDefaultStyle(wxTextAttr(color, this->GetBackgroundColour()));
 
 	for (wxString::const_iterator itr = value.begin(); itr != value.end(); itr++) {
 		wchar_t c = *itr;
 
 		if (or_check == 2) {
 			or_check = 0;
-			this->SetDefaultStyle(*wxBLACK);
+			this->SetDefaultStyle(DefaultColor);
 			this->AppendText(text);
 			text = wxEmptyString;
 		}
@@ -60,7 +61,7 @@ void wxUmaTextCtrl::SetValue(const wxString& value)
 			this->AppendText(text);
 			text = wxEmptyString;
 
-			this->SetDefaultStyle(*wxBLACK);
+			this->SetDefaultStyle(DefaultColor);
 			this->AppendText(c);
 			continue;
 		}
@@ -84,7 +85,7 @@ void wxUmaTextCtrl::SetValue(const wxString& value)
 				}
 				else {
 					is_num = false;
-					color = *wxBLACK;
+					color = DefaultColor;
 				}
 			}
 		}
@@ -128,3 +129,4 @@ void wxUmaTextCtrl::SetHeightByLine(int line)
 	this->SetMinClientSize(size);
 	this->SetMaxClientSize(size);
 }
+

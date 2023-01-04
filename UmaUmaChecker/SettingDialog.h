@@ -29,6 +29,7 @@ private:
 	void OnClickBrowse(wxCommandEvent& event);
 	void OnClickOkButton(wxCommandEvent& event);
 	void OnClickFontSelect(wxCommandEvent& event);
+	void OnComboTheme(wxCommandEvent& event);
 
 	bool UpdateLibrary();
 	void UpdateFile(const wxString& url);
@@ -51,6 +52,7 @@ private:
 	wxStaticText* m_staticTextMaxLine;
 	wxSpinCtrl* m_spinCtrlMaxLine;
 	wxComboBox* m_comboOcrPoolSize;
+	wxComboBox* m_comboTheme;
 	FontComboBox* m_comboFontList;
 	wxComboBox* m_comboFontSizeList;
 

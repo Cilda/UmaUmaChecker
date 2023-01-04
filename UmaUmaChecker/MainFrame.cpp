@@ -22,12 +22,15 @@
 #include "AboutDialog.h"
 #include "GrandLiveMusicListFrame.h"
 
+#include "Theme/StdRenderer.h"
+#include "Theme/DarkThemeRenderer.h"
+
 #pragma comment(lib, "gdiplus.lib")
 
 using json = nlohmann::json;
 
 
-MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL), timer(this)
+MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : ThemedWindowWrapper<wxFrame>(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL), timer(this)
 {
 	Config* config = Config::GetInstance();
 
@@ -35,24 +38,25 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
-	this->SetBackgroundColour(wxColour(255, 255, 255));
+
+	ChangeTheme();
 
 	wxBoxSizer* bSizerTop = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
 
-	m_toggleBtnStart = new wxToggleButton(this, wxID_ANY, wxT("スタート"), wxDefaultPosition, wxDefaultSize, 0);
+	m_toggleBtnStart = new ThemedButtonWrapper<wxToggleButton>(this, wxID_ANY, wxT("スタート"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
 
-	m_buttonScreenshot = new wxButton(this, wxID_ANY, wxT("スクリーンショット"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonScreenshot = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("スクリーンショット"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL, 5);
 
-	m_buttonPreview = new wxButton(this, wxID_ANY, wxT("プレビュー表示"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonPreview = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("プレビュー表示"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonPreview, 0, wxALL, 5);
 
-	m_buttonSetting = new wxButton(this, wxID_ANY, wxT("設定"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonSetting = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("設定"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonSetting, 0, wxALL, 5);
 
-	m_buttonAbout = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonAbout = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonAbout, 0, wxALL, 5);
 
 	bSizerTop->Add(bSizerButtons, 0, wxEXPAND | wxFIXED_MINSIZE | wxRIGHT | wxLEFT | wxBOTTOM, 5);
@@ -60,27 +64,26 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	wxFlexGridSizer* sizerEventInfo = new wxFlexGridSizer(2, 2, 9, 9);
 
 	// 育成ウマ娘
-	m_staticTextCharaName = new wxStaticText(this, wxID_ANY, wxT("育成ウマ娘"));
+	m_staticTextCharaName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, wxT("育成ウマ娘"));
 	m_staticTextCharaName->Wrap(-1);
 	sizerEventInfo->Add(m_staticTextCharaName, 0, wxALIGN_CENTER_VERTICAL);
 
-	m_comboBoxUma = new wxComboBox(this, wxID_ANY);
+	m_comboBoxUma = new ThemedComboBoxWrapper<wxComboBox>(this, wxID_ANY);
 	sizerEventInfo->Add(m_comboBoxUma, 1, wxEXPAND);
 
 	// イベント名
-	m_staticTextEventName = new wxStaticText(this, wxID_ANY, wxT("イベント名"));
+	m_staticTextEventName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, wxT("イベント名"));
 	m_staticTextEventName->Wrap(-1);
 	sizerEventInfo->Add(m_staticTextEventName, 0, wxALIGN_CENTER_VERTICAL);
 
-	m_textCtrlEventSource = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-	m_textCtrlEventSource->SetBackgroundColour(wxColour(255, 255, 255));
+	m_textCtrlEventSource = new ThemedEditWrapper<wxTextCtrl>(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	sizerEventInfo->Add(m_textCtrlEventSource, 1, wxEXPAND);
 	sizerEventInfo->AddGrowableCol(1, 1);
 
 	bSizerTop->Add(sizerEventInfo, 0, wxEXPAND | wxRIGHT | wxLEFT, 15);
 
 	// 選択肢
-	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("選択肢")), wxVERTICAL);
+	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, wxT("選択肢")), wxVERTICAL);
 
 	std::vector<wxColour> bgColors = {
 		wxColour(200, 255, 150),
@@ -99,7 +102,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		bSizerOption1->Add(TitleCtrl, 2, wxALL, 5);
 
 		// 効果
-		wxUmaTextCtrl* OptionCtrl = new wxUmaTextCtrl(sbSizerOptions->GetStaticBox());
+		wxUmaTextCtrl* OptionCtrl = new ThemedWrapper<wxUmaTextCtrl>(sbSizerOptions->GetStaticBox());
 		OptionCtrl->SetHeightByLine(config->OptionMaxLine);
 		bSizerOption1->Add(OptionCtrl, 3, wxALL | wxEXPAND, 5);
 
@@ -326,6 +329,8 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 			}
 		}
 		*/
+
+		ChangeTheme();
 
 		SetFontAllChildren(this, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 		for (auto ctrl : m_textCtrlEventOptions) {
@@ -600,6 +605,21 @@ std::wstring MainFrame::GetSkillDescFromOption(const std::wstring& option)
 	}
 
 	return desc;
+}
+
+void MainFrame::ChangeTheme()
+{
+	auto config = Config::GetInstance();
+
+	switch (config->Theme) {
+		case 0:
+		default:
+			ThemeManager::SetTheme(wxCLASSINFO(StdRenderer));
+			break;
+		case 1:
+			ThemeManager::SetTheme(wxCLASSINFO(DarkThemeRenderer));
+			break;
+	}
 }
 
 void MainFrame::SetFontAllChildren(wxWindow* parent, const wxFont& font)
