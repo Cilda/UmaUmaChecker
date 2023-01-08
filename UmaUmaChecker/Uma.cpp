@@ -309,29 +309,32 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 		Uma::CharaEventBound.width * srcImg.size().width,
 		Uma::CharaEventBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg;
+	cv::Mat rsImg, rsImg2;
 
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	//cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
+	rsImg2 = rsImg.clone();
 	UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
 	if (IsCharaEvent(rsImg)) {
-		cv::Mat gray;
+		cv::Mat gray, bin, blur;
+		cv::Mat bin2;
+
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::bitwise_not(gray, gray);
-		cv::Mat bin = Uma::ImageBinarization(rsImg);
-		cv::Mat blur;
-
-		//cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-
+		bin = Uma::ImageBinarization(rsImg);
 		RemoveWhiteSpace(bin, bin);
 		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
+		bin2 = Uma::ImageBinarization(rsImg2);
+		RemoveWhiteSpace(bin2, bin2);
+		
 		std::vector<std::wstring> text_list;
 		{
 			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
 			auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
 			auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
+
+			auto a4 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin2); });
 		}
 
 		AppendCollectedText(text_list);
@@ -504,7 +507,7 @@ void Uma::RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output)
 	else output = cv::Mat(mat, cv::Rect(0, 0, ret.x + 10, mat.size().height));
 }
 
-void Uma::UnsharpMask(const cv::Mat& mat, const cv::Mat& dst, float k)
+void Uma::UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k)
 {
 	float kernelData[] = {
 		-k / 9.0f, -k / 9.0f, -k / 9.0f,
@@ -802,30 +805,32 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		Uma::CardEventBound.width * srcImg.size().width,
 		Uma::CardEventBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg;
+	cv::Mat rsImg, rsImg2;
 
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	//cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
+	rsImg2 = rsImg.clone();
 	UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
 	if (IsCardEvent(cut)) {
-		cv::Mat gray, blur;
+		cv::Mat gray, bin, blur;
+		cv::Mat bin2;
 
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::bitwise_not(gray, gray);
-		cv::Mat bin = Uma::ImageBinarization(rsImg);
-		std::wstring text = GetTextFromImage(bin);
-
-		//cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-
+		bin = Uma::ImageBinarization(rsImg);
 		RemoveWhiteSpace(bin, bin);
 		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
+
+		bin2 = Uma::ImageBinarization(rsImg2);
+		RemoveWhiteSpace(bin2, bin2);
 
 		std::vector<std::wstring> text_list;
 		{
 			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
 			auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
 			auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
+
+			auto a4 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin2); });
 		}
 
 		AppendCollectedText(text_list);
@@ -844,30 +849,32 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
 		Uma::ScenarioChoiseBound.width * srcImg.size().width,
 		Uma::ScenarioChoiseBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg;
+	cv::Mat rsImg, rsImg2;
 
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	//cv::pyrUp(cut, rsImg, cv::Size(rsImg.cols * ResizeRatio, rsImg.rows * ResizeRatio));
+	rsImg2 = rsImg.clone();
 	UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
 	if (IsScenarioEvent(cut)) {
-		cv::Mat gray;
+		cv::Mat gray, bin, blur;
+		cv::Mat bin2;
+
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::bitwise_not(gray, gray);
-		cv::Mat bin = Uma::ImageBinarization(rsImg);
-		std::wstring text = GetTextFromImage(bin);
-		cv::Mat blur;
-
-		//cv::resize(bin, bin, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-
+		bin = Uma::ImageBinarization(rsImg);
 		RemoveWhiteSpace(bin, bin);
 		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
+
+		bin2 = Uma::ImageBinarization(rsImg2);
+		RemoveWhiteSpace(bin2, bin2);
 
 		std::vector<std::wstring> text_list;
 		{
 			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
 			auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
 			auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
+
+			auto a4 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin2); });
 		}
 
 		AppendCollectedText(text_list);
