@@ -247,6 +247,7 @@
     <ClInclude Include="EventData.h" />
     <ClInclude Include="FontComboBox.h" />
     <ClInclude Include="GrandLiveMusicListFrame.h" />
+    <ClInclude Include="Log.h" />
     <ClInclude Include="object_pool.hpp" />
     <ClInclude Include="ThemeWrapper.h" />
     <ClInclude Include="Theme\BaseRenderer.h" />

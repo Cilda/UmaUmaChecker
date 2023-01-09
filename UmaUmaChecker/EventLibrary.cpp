@@ -40,6 +40,7 @@ bool EventLibrary::Load()
 {
 	CardEvent = EventData();
 	CharaEvent = EventData();
+
 	std::wstring path = utility::GetExeDirectory();
 
 	DeleteDBFiles();

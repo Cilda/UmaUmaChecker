@@ -2,10 +2,6 @@
 #include <Windows.h>
 #include <WinInet.h>
 
-//
-
-//#include <gdiplus.h>
-
 #include "Uma.h"
 
 #include <codecvt>
@@ -19,6 +15,7 @@
 
 #include "simstring/simstring.h"
 
+#include "Log.h"
 #include "utility.h"
 
 #ifdef USE_MS_OCR
@@ -79,7 +76,16 @@ void Uma::Init()
 	CurrentEvent = nullptr;
 	CurrentCharacter = nullptr;
 
+	auto log = Log::GetInstance();
+
+	auto start = std::chrono::system_clock::now();
+
 	SkillLib.Load();
+
+	auto end = std::chrono::system_clock::now();
+	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+	log->info("初期化: ", msec, "ミリ秒");
 
 	apiMulti->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
 
@@ -285,7 +291,7 @@ void Uma::MonitorThread()
 		auto end = std::chrono::system_clock::now();
 		auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-		wxLogDebug(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
+		//wxLogDebug(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
 		//OutputDebugStringW(wxString::Format(wxT("MonitorThread() ループ処理時間: %lld msec"), msec).wx_str());
 
 		if (msec < 1000) Sleep(1000 - msec);
