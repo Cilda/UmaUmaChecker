@@ -576,14 +576,14 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.RetrieveEventFromOptionTitle(text);
+		auto event = SkillLib.CardEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.RetrieveEventFromOptionTitle(text);
+		auto event = SkillLib.CardEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
@@ -607,14 +607,14 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		auto event = SkillLib.CharaEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.RetrieveCharaEventFromOptionTitle(text);
+		auto event = SkillLib.CharaEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
@@ -720,7 +720,7 @@ EventRoot* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 
 		std::wstring text = GetMultiTextFromImage(bin);
 
-		auto chara = SkillLib.RetrieveCharaName(text);
+		auto chara = SkillLib.CharaEvent.RetrieveName(text);
 		if (chara.get() == CurrentCharacter) return nullptr;
 
 		return chara ? chara.get() : nullptr;
@@ -735,7 +735,7 @@ std::shared_ptr<EventSource> Uma::GetCardEvent(const std::vector<std::wstring>& 
 	std::shared_ptr<EventSource> rvalue;
 
 	for (auto& text : text_list) {
-		auto ret = SkillLib.RetrieveEvent(text);
+		auto ret = SkillLib.CardEvent.RetrieveTitle(text);
 		if (ret) {
 			double rate = CalcTextMatchRate(text, ret->Name);
 			if (rate > best_rate) {
@@ -756,7 +756,7 @@ std::shared_ptr<EventSource> Uma::GetCharaEvent(const std::vector<std::wstring>&
 	std::shared_ptr<EventSource> rvalue;
 
 	for (auto& text : text_list) {
-		auto ret = SkillLib.RetrieveCharaEvent(text, CurrentCharacter->Name);
+		auto ret = SkillLib.CharaEvent.RetrieveTitle(text, CurrentCharacter);
 		if (ret) {
 			double rate = CalcTextMatchRate(text, ret->Name);
 			if (rate > best_rate) {
