@@ -111,8 +111,8 @@ std::shared_ptr<EventSource> EventData::RetrieveTitle(const std::wstring& title,
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; ratio >= 0.4; ratio -= 0.1) {
-		dbr.retrieve(title, simstring::cosine, ratio, std::back_inserter(xstrs));
+	for (double ratio = 100; ratio > 40; ratio -= 10) {
+		dbr.retrieve(title, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
 	}
@@ -148,8 +148,8 @@ std::shared_ptr<EventSource> EventData::RetrieveOption(const std::wstring& optio
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; ratio > 0.4; ratio -= 0.1) {
-		dbr.retrieve(option, simstring::cosine, ratio, std::back_inserter(xstrs));
+	for (double ratio = 100; ratio > 40; ratio -= 10) {
+		dbr.retrieve(option, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
 	}
@@ -177,8 +177,8 @@ std::shared_ptr<EventRoot> EventData::RetrieveName(const std::wstring& name)
 
 	std::vector<std::wstring> xstrs;
 
-	for (double ratio = 1.0; ratio > 0.2; ratio -= 0.1) {
-		dbr.retrieve(name, simstring::cosine, ratio, std::back_inserter(xstrs));
+	for (double ratio = 100; ratio > 20; ratio -= 10) {
+		dbr.retrieve(name, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
 	}
