@@ -217,6 +217,7 @@
     <ClCompile Include="EventData.cpp" />
     <ClCompile Include="FontComboBox.cpp" />
     <ClCompile Include="GrandLiveMusicListFrame.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="ThemeWrapper.cpp" />
     <ClCompile Include="Theme\BaseRenderer.cpp" />
     <ClCompile Include="Theme\DarkThemeRenderer.cpp" />

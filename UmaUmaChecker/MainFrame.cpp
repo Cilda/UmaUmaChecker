@@ -13,7 +13,6 @@
 #include <wx/msgdlg.h>
 #include <wx/dcclient.h>
 #include <wx/log.h>
-#include <wx/msw/msvcrt.h>
 
 #include "SystemUsage.h"
 #include "utility.h"
@@ -24,6 +23,8 @@
 
 #include "Theme/StdRenderer.h"
 #include "Theme/DarkThemeRenderer.h"
+
+#include "Log.h"
 
 #pragma comment(lib, "gdiplus.lib")
 
@@ -384,7 +385,7 @@ void MainFrame::OnUmaThreadEvent(wxThreadEvent& event)
 		}
 	}
 	else if (event.GetId() == 2) {
-		wxLogDebug(wxT("育成イベント取得:%s"), event.GetString());
+		LOG_INFO << "Recognized Training Character: " << event.GetString();
 
 		m_comboBoxUma->SetStringSelection(event.GetString());
 		umaMgr->SetTrainingCharacter(event.GetString().ToStdWstring());
@@ -538,6 +539,8 @@ void MainFrame::OnComboKeyDown(wxKeyEvent& event)
 
 void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
 {
+	LOG_INFO << "DPI was changed (NEW DPI -> " << event.GetNewDPI().x << ")";
+
 	for (auto ctrl : m_textCtrlEventOptions) {
 		ctrl->SetHeightByLine(Config::GetInstance()->OptionMaxLine);
 		ctrl->Layout();
@@ -545,7 +548,6 @@ void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
 
 	this->Fit();
 	this->Layout();
-	//event.Skip();
 }
 
 void MainFrame::ChangeEventOptions(EventSource* event)

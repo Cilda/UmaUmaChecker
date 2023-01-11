@@ -11,7 +11,6 @@
 
 #include <wx/log.h>
 #include <wx/utils.h>
-#include <wx/msw/msvcrt.h>
 
 #include "simstring/simstring.h"
 
@@ -75,9 +74,7 @@ void Uma::Init()
 {
 	CurrentEvent = nullptr;
 	CurrentCharacter = nullptr;
-
-	auto log = Log::GetInstance();
-
+	
 	auto start = std::chrono::system_clock::now();
 
 	SkillLib.Load();
@@ -85,7 +82,7 @@ void Uma::Init()
 	auto end = std::chrono::system_clock::now();
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-	log->info("初期化: ", msec, "ミリ秒");
+	LOG_INFO << "Loaded EventData at " << msec << " msec!";
 
 	apiMulti->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
 
@@ -155,7 +152,7 @@ bool Uma::Start()
 	bStop = false;
 	thread = new std::thread(&Uma::MonitorThread, this);
 
-	wxLogDebug(wxT("スタート====================="));
+	LOG_INFO << "Started Recognizing";
 
 	return true;
 }
@@ -170,7 +167,7 @@ void Uma::Stop()
 	thread = nullptr;
 	CurrentEvent = nullptr;
 
-	wxLogDebug(wxT("ストップ====================="));
+	LOG_INFO << "Stopped Recognizing";
 }
 
 bool Uma::SetTrainingCharacter(const std::wstring& CharaName)

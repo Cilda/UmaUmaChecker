@@ -12,6 +12,9 @@
 #include "MainFrame.h"
 #include "Config.h"
 
+#include "Log.h"
+#include "version.h"
+
 typedef HRESULT(_stdcall* SetThreadDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef BOOL(*SetProcessDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef void (WINAPI* RtlGetVersionFunc)(OSVERSIONINFOEXW*);
@@ -26,6 +29,9 @@ public:
 
 		Gdiplus::GdiplusStartup(&token, &input, NULL);
 		wxInitAllImageHandlers();
+
+		LOG_INFO << "/------------------------------------------------------------------------------------------/";
+		LOG_INFO << app_name << " " << app_version;
 
 		Config* config = Config::GetInstance();
 		config->Load();
@@ -43,6 +49,8 @@ public:
 	{
 		Config* config = Config::GetInstance();
 		config->Save();
+
+		LOG_INFO << "/------------------------------------------------------------------------------------------/";
 
 		Gdiplus::GdiplusShutdown(token);
 		return 0;

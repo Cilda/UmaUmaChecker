@@ -9,6 +9,7 @@
     },
     "nlohmann-json",
     "tesseract",
-    "wxwidgets"
+    "wxwidgets",
+    "boost-log"
   ]
 }

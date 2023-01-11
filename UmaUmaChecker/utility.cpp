@@ -49,6 +49,7 @@ namespace utility
 
 		return std::wstring(ret.data(), ret.size());
 	}
+
 	std::wstring replace(const std::wstring& str, const std::wstring& src, const std::wstring& replaceStr)
 	{
 		std::wstring ret = str;

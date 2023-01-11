@@ -1,62 +1,52 @@
 #pragma once
 
-#include <fstream>
-#include <chrono>
-#include "utility.h"
+#define BOOST_USE_WINAPI_VERSION BOOST_WINAPI_VERSION_WIN7
 
-class Log final
+#include <string>
+
+#include <boost/log/expressions.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/support/date_time.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup.hpp>
+
+class Log
 {
 public:
-	Log() : writer(utility::GetExeDirectory() + L"\\output.log", std::ios::out | std::ios::app)
-	{
-	}
+	enum SeverityLevel {
+		eDebug,
+		eInfo,
+		eWarning,
+		eError,
+		eCritical,
 
-	~Log()
-	{
-		writer.close();
-	}
+		eLevelMax,
+	};
+	using sink_text_t = boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend>;
 
-	static Log* GetInstance()
+public:
+	Log(const std::string& filename = "output.log");
+	~Log();
+
+	static Log& GetInstance()
 	{
 		static Log log;
-
-		return &log;
+		return log;
 	}
 
-	template<typename... Args>
-	void info(Args&... args)
-	{
-		writer << GetDate();
-		print_log(args...);
-		writer << std::endl;
-		writer.flush();
-	}
+	friend std::ostream& operator<<(std::ostream& stream, Log::SeverityLevel level);
+
+public:
+	boost::log::sources::severity_logger_mt<SeverityLevel> logger;
 
 private:
-	std::string GetDate()
-	{
-		auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-
-		std::tm* time = std::localtime(&now);
-		char buf[100];
-
-		std::strftime(buf, sizeof(buf) / sizeof(wchar_t), "[%Y-%m-%d %H:%M:%S] ", time);
-		return buf;
-	}
-
-	template<typename First, typename... Rest>
-	void print_log(const First& first, const Rest&... rest)
-	{
-		writer << first;
-
-		print_log(rest...);
-	}
-
-	void print_log()
-	{
-	}
-
-private:
-	std::ofstream writer;
+	boost::shared_ptr<boost::log::sinks::text_file_backend> text_backend;
+	boost::shared_ptr<sink_text_t> sink_text;
 };
 
+
+#define LOG_INFO BOOST_LOG_SEV(Log::GetInstance().logger, Log::eInfo)
+#define LOG_DEBUG BOOST_LOG_SEV(Log::GetInstance().logger, Log::eDebug)
+#define LOG_ERROR BOOST_LOG_SEV(Log::GetInstance().logger, Log::eError)
