@@ -64,6 +64,7 @@ private:
 	std::wstring GetSkillDescFromOption(const std::wstring& option);
 
 	void ChangeTheme();
+	void SetTrainingCharaComboBox();
 
 public:
 	static void SetFontAllChildren(wxWindow* parent, const wxFont& font);

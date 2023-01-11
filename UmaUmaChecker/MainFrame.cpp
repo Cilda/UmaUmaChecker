@@ -176,17 +176,9 @@ void MainFrame::Init()
 {
 	umaMgr->Init();
 
-	int r = 3;
+	int r = 1;
 
-	for (auto& rank : umaMgr->GetCharacters()) {
-		m_comboBoxUma->Append(std::wstring(L"☆") + std::to_wstring(r));
-
-		for (auto& chara : rank) {
-			m_comboBoxUma->Append(chara->Name);
-		}
-		
-		r--;
-	}
+	SetTrainingCharaComboBox();
 
 	if (!LoadSkills()) wxMessageBox(wxT("Skills.json を読み込めませんでした。"), app_name, wxICON_ERROR);
 
@@ -345,17 +337,7 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 		wxString Selected = m_comboBoxUma->GetStringSelection();
 		m_comboBoxUma->Clear();
 		umaMgr->Reload();
-		int r = 3;
-
-		for (auto& rank : umaMgr->GetCharacters()) {
-			m_comboBoxUma->Append(std::wstring(L"☆") + std::to_wstring(r));
-
-			for (auto& chara : rank) {
-				m_comboBoxUma->Append(chara->Name);
-			}
-
-			r--;
-		}
+		SetTrainingCharaComboBox();
 
 		if (!Selected.empty()) {
 			if (umaMgr->SetTrainingCharacter(Selected.ToStdWstring()))
@@ -627,6 +609,22 @@ void MainFrame::ChangeTheme()
 		case 1:
 			ThemeManager::SetTheme(wxCLASSINFO(DarkThemeRenderer));
 			break;
+	}
+}
+
+void MainFrame::SetTrainingCharaComboBox()
+{
+	int r = 3;
+
+	auto& characters = umaMgr->GetCharacters();
+	for (auto itr = characters.rbegin(); itr != characters.rend(); itr++) {
+		m_comboBoxUma->Append(std::wstring(L"☆") + std::to_wstring(r));
+
+		for (auto& chara : *itr) {
+			m_comboBoxUma->Append(chara->Name);
+		}
+
+		r--;
 	}
 }
 
