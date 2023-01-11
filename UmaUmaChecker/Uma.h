@@ -35,6 +35,7 @@ public:
 	void Stop();
 
 	bool SetTrainingCharacter(const std::wstring& CharaName);
+	std::wstring GetTrainingCharacter() const { return CurrentCharacter ? CurrentCharacter->Name : L""; }
 
 	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const {
 		return SkillLib.GetCharacters();

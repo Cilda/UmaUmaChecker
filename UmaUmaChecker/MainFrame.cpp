@@ -342,6 +342,7 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 	}
 
 	if (frame.IsUpdated()) {
+		wxString Selected = m_comboBoxUma->GetStringSelection();
 		m_comboBoxUma->Clear();
 		umaMgr->Reload();
 		int r = 3;
@@ -354,6 +355,11 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 			}
 
 			r--;
+		}
+
+		if (!Selected.empty()) {
+			if (umaMgr->SetTrainingCharacter(Selected.ToStdWstring()))
+				m_comboBoxUma->SetStringSelection(Selected);
 		}
 	}
 }

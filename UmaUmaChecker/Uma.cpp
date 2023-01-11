@@ -793,8 +793,10 @@ std::shared_ptr<EventSource> Uma::GetScenarioEvent(const std::vector<std::wstrin
 
 bool Uma::Reload()
 {
-	SkillLib.Clear();
+	CurrentCharacter = nullptr;
+	CurrentEvent = nullptr;
 
+	SkillLib.Clear();
 	SkillLib.Load();
 
 	return true;
