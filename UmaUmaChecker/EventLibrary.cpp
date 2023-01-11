@@ -108,13 +108,13 @@ bool EventLibrary::LoadScenarioEvent()
 void EventLibrary::InitScenarioEventDB()
 {
 	CreateDirectoryA(DBPath.c_str(), NULL);
-	CreateDirectoryA((DBPath + "event\\").c_str(), NULL);
+	CreateDirectoryA((DBPath + "Scenario\\").c_str(), NULL);
 
 	simstring::ngram_generator gen(3, false);
-	simstring::writer_base<std::wstring> dbw(gen, DBPath + "event\\scenario.db");
+	simstring::writer_base<std::wstring> dbw(gen, DBPath + "Scenario\\event.db");
 
 	simstring::ngram_generator gen2(3, false);
-	simstring::writer_base<std::wstring> dbw2(gen2, DBPath + "event\\scenario_choises.db");
+	simstring::writer_base<std::wstring> dbw2(gen2, DBPath + "Scenario\\option.db");
 
 	for (auto& scenario : ScenarioEvents) {
 		for (auto& event : scenario->Events) {
@@ -132,7 +132,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveScenarioEvent(const std::wstr
 {
 	simstring::reader dbr;
 
-	dbr.open(DBPath + "event\\scenario.db");
+	dbr.open(DBPath + "Scenario\\event.db");
 
 	std::vector<std::wstring> xstrs;
 
@@ -152,7 +152,7 @@ std::shared_ptr<EventSource> EventLibrary::RetrieveScenarioEventFromOptionTitle(
 {
 	simstring::reader dbr;
 
-	dbr.open(DBPath + "event\\scenario_choises.db");
+	dbr.open(DBPath + "Scenario\\option.db");
 
 	std::vector<std::wstring> xstrs;
 
