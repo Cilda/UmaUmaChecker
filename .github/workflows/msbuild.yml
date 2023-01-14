@@ -18,9 +18,8 @@ env:
   BUILD_PLATFORM: x64
   
   VCPKG_DEFAULT_TRIPLET: x64-windows-static
-  VCPKG_INSTALLED_DIR: ./vcpkg_installed/x64-windows-static
   
-  cache-version: v1
+  vcpkgCommitId: 'f14984af3738e69f197bf0e647a8dca12de92996'
 
 permissions:
   contents: read
@@ -69,18 +68,23 @@ jobs:
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-      
-    - uses: actions/cache@v3.0.11
-      id: vcpkgcache
+    
+    - name: Restore artifacts, or run vcpkg, build
+      uses: lukka/run-vcpkg@v10.7
+      id: runvcpkg
       with:
-        path: ${{env.SOLUTION_FILE_PATH}}/vcpkg_installed/${{env.VCPKG_DEFAULT_TRIPLET}}
-        key: ${{env.VCPKG_DEFAULT_TRIPLET}}-vcpkg-${{hashFiles('./vcpkg.json')}}-${{env.cache-version}}
-        restore-keys: |
-          ${{env.VCPKG_DEFAULT_TRIPLET}}-vcpkg-${{hashFiles('./vcpkg.json')}}
+        vcpkgGitCommitId: '${{ env.vcpkgCommitId }}'
+        runVcpkgInstall: true
+        vcpkgJsonGlob: '**/UmaUmaChecker/vcpkg.json'
+        appendedCacheKey: vcpkginstall
         
-    - name: vcpkg integratation
+    - name: Prints output of run-vcpkg's action.
+      run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
+    
+    - name: vcpkg integrate
+      working-directory: ${{ steps.runvcpkg.inputs.vcpkgDirectory }}
       run: vcpkg integrate install
-
+    
     - name: Build
       # working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
