@@ -77,6 +77,8 @@ jobs:
         runVcpkgInstall: true
         vcpkgJsonGlob: '**/UmaUmaChecker/vcpkg.json'
         appendedCacheKey: vcpkginstall
+      env:
+        VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
         
     - name: Prints output of run-vcpkg's action.
       run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
