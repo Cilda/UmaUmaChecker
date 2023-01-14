@@ -68,6 +68,9 @@ jobs:
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      
+    - name: Create vcpkg_installed directory
+      run: mkdir ${{ github.workspace }}/vcpkg_installed
     
     - name: Restore artifacts, or run vcpkg, build
       uses: lukka/run-vcpkg@v10.7
