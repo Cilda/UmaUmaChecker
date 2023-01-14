@@ -71,10 +71,9 @@ jobs:
     
     - name: Install vcpkg
       run:
-        mkdir ${{ env.VCPKG_INSTALL_PATH }} &&
-        cd ${{ env.VCPKG_INSTALL_PATH }} &&
-        git clone https://github.com/microsoft/vcpkg . &&
-        bootstrap-vcpkg.bat
+        cd "${{ github.workspace }}" &&
+        git clone https://github.com/microsoft/vcpkg &&
+        .\bootstrap-vcpkg.bat
 
     - name: Check vcpkg
       run: dir "${{ env.VCPKG_INSTALL_PATH }}"
