@@ -18,8 +18,8 @@ env:
   BUILD_PLATFORM: x64
   
   VCPKG_DEFAULT_TRIPLET: x64-windows-static
-  
-  vcpkgCommitId: 'f14984af3738e69f197bf0e647a8dca12de92996'
+
+  VCPKG_INSTALL_PATH: ${{ github.workspace }}\vcpkg
 
 permissions:
   contents: read
@@ -68,27 +68,24 @@ jobs:
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-      
-    - name: Create vcpkg_installed directory
-      run: mkdir ${{ github.workspace }}/vcpkg_installed
     
-    - name: Restore artifacts, or run vcpkg, build
-      uses: lukka/run-vcpkg@v10.7
-      id: runvcpkg
-      with:
-        vcpkgGitCommitId: '${{ env.vcpkgCommitId }}'
-        runVcpkgInstall: true
-        vcpkgJsonGlob: '**/UmaUmaChecker/vcpkg.json'
-        appendedCacheKey: vcpkginstall
-      env:
-        VCPKG_INSTALLED_DIR: ${{ github.workspace }}\vcpkg_installed
-        
-    - name: Prints output of run-vcpkg's action.
-      run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
-    
+    - name: Install vcpkg
+      working-directory: ${{ env.VCPKG_INSTALL_PATH }}
+      run:
+        git clone https://github.com/microsoft/vcpkg .
+        bootstrap-vcpkg.bat
+
     - name: vcpkg integrate
-      working-directory: ${{ steps.runvcpkg.inputs.vcpkgDirectory }}
+      working-directory: ${{ env.VCPKG_INSTALL_PATH }}
       run: vcpkg integrate install
+
+    - name: Restore vcpkg caches
+      uses: actions/cache@v3.2.3
+      with:
+        path: ${{env.SOLUTION_FILE_PATH}}/vcpkg_installed
+        key: vcpkg-${{hashFiles('./vcpkg.json')}}
+        restore-keys: |
+          vcpkg-${{hashFiles('./vcpkg.json')}}
     
     - name: Build
       # working-directory: ${{env.GITHUB_WORKSPACE}}
