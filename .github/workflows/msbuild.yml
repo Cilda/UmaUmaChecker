@@ -70,8 +70,8 @@ jobs:
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
     
     - name: Install vcpkg
-      working-directory: ${{ env.VCPKG_INSTALL_PATH }}
       run:
+        mkdir ${{ env.VCPKG_INSTALL_PATH }} &&
         git clone https://github.com/microsoft/vcpkg . &&
         bootstrap-vcpkg.bat
 
