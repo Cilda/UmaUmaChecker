@@ -69,16 +69,16 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
     
-    - name: Install vcpkg
-      run:
-        mkdir ${{ env.VCPKG_INSTALL_PATH }} &&
-        cd ${{ env.VCPKG_INSTALL_PATH }} &&
-        git clone https://github.com/microsoft/vcpkg . &&
-        bootstrap-vcpkg.bat
+    # - name: Install vcpkg
+    #   run:
+    #     mkdir ${{ env.VCPKG_INSTALL_PATH }} &&
+    #     cd ${{ env.VCPKG_INSTALL_PATH }} &&
+    #     git clone https://github.com/microsoft/vcpkg . &&
+    #     bootstrap-vcpkg.bat
 
     - name: vcpkg integrate
-      working-directory: ${{ env.VCPKG_INSTALL_PATH }}
-      run: vcpkg integrate install
+      #working-directory: ${{ env.VCPKG_INSTALL_PATH }}
+      run: vcpkg integrate install && vcpkg update
 
     - name: Restore vcpkg caches
       uses: actions/cache@v3.2.3
