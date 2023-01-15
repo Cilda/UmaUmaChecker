@@ -264,6 +264,7 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 		if (image->Save(savename.c_str(), &clsid, &encoderParameters) != Gdiplus::Ok) {
 			wxMessageBox(wxT("保存に失敗しました。"), wxT("ウマウマチェッカー"), wxICON_ERROR);
 		}
+
 		delete image;
 	}
 	else {
@@ -373,7 +374,7 @@ void MainFrame::OnUmaThreadEvent(wxThreadEvent& event)
 		}
 	}
 	else if (event.GetId() == 2) {
-		LOG_INFO << "Recognized Training Character: " << event.GetString();
+		LOG_INFO << L"Recognized Training Character: " << event.GetString();
 
 		m_comboBoxUma->SetStringSelection(event.GetString());
 		umaMgr->SetTrainingCharacter(event.GetString().ToStdWstring());

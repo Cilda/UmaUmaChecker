@@ -1,11 +1,17 @@
 #include "Log.h"
 
 #include <filesystem>
+#include <codecvt>
+#include <wx/string.h>
 
 #include "utility.h"
 
 
 BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", Log::SeverityLevel)
+
+
+std::unique_ptr<Log> Log::instance;
+
 
 Log::Log(const std::string& filename)
 {
@@ -28,6 +34,8 @@ Log::Log(const std::string& filename)
 		% boost::log::expressions::attr<SeverityLevel>("Severity")
 		% boost::log::expressions::message
 	);
+
+	sink_text->imbue(std::locale("ja_JP.UTF-8"));
 	core->add_sink(sink_text);
 }
 
@@ -42,10 +50,11 @@ std::ostream& operator<<(std::ostream& stream, Log::SeverityLevel level)
 		"INFO",
 		"WARNING",
 		"ERROR",
+		"EXCEPTION",
 		"CRITICAL"
 	};
 
-	if (level >= 0 && level < Log::SeverityLevel::eLevelMax) stream << levels[level];
+	if (level >= 0 && level < sizeof(levels) / sizeof(levels[0])) stream << levels[level];
 
 	return stream;
 }

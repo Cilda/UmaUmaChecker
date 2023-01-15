@@ -27,20 +27,25 @@ public:
 	{
 		if (!wxApp::OnInit()) return false;
 
-		Gdiplus::GdiplusStartup(&token, &input, NULL);
-		wxInitAllImageHandlers();
-
 		LOG_INFO << "/------------------------------------------------------------------------------------------/";
-		LOG_INFO << app_name << " " << app_version;
+		LOG_INFO << app_name << L" " << app_version;
 
-		Config* config = Config::GetInstance();
-		config->Load();
+		try {
+			Gdiplus::GdiplusStartup(&token, &input, NULL);
+			wxInitAllImageHandlers();
 
-		MainFrame* frame = new MainFrame(NULL);
-		frame->Show(true);
-		SetTopWindow(frame);
+			Config* config = Config::GetInstance();
+			config->Load();
 
-		UpdateManager::Start();
+			MainFrame* frame = new MainFrame(NULL);
+			frame->Show(true);
+			SetTopWindow(frame);
+
+			UpdateManager::Start();
+		}
+		catch (std::exception& ex) {
+			LOG_EXCEPTION << ex.what();
+		}
 
 		return true;
 	}
@@ -49,8 +54,6 @@ public:
 	{
 		Config* config = Config::GetInstance();
 		config->Save();
-
-		LOG_INFO << "/------------------------------------------------------------------------------------------/";
 
 		Gdiplus::GdiplusShutdown(token);
 		return 0;
