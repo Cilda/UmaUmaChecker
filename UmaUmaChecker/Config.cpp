@@ -23,37 +23,33 @@ bool Config::Load()
 {
 	std::ifstream input(utility::GetExeDirectory() + L"\\config.json");
 
-	if (input.good()) {
-		try {
-			std::stringstream stream;
+	try {
+		json config = json::parse(input, nullptr, false);
+		if (config.is_discarded()) config = json(json::value_t::object);
 
-			stream << input.rdbuf();
-			json config = json::parse(stream.str());
+		WindowX = config.value("WindowX", 0);
+		WindowY = config.value("WindowY", 0);
+		EnableDebug = config.value("Debug", false);
+		SaveMissingEvent = config.value("SaveMissingEventName", false);
+		ScreenshotSavePath = utility::from_u8string(config.value("ScreenshotSavePath", ""));
+		FontName = utility::from_u8string(config.value("FontName", "Yu Gothic UI"));
+		FontSize = config.value("FontSize", 9);
+		IsHideNoneChoise = config.value("IsHideNoneChoise", false);
+		IsShowStatusBar = config.value("IsShowStatusBar", false);
+		OptionMaxLine = config.value("OptionMaxLine", 4);
+		if (OptionMaxLine < 2) OptionMaxLine = 2;
+		else if (OptionMaxLine > 10) OptionMaxLine = 10;
+		ImageType = config.value("ImageType", 0);
+		EnableCheckUpdate = config.value("EnableCheckUpdate", true);
+		OcrPoolSize = config.value("OcrPoolSize", 2);
+		Theme = config.value("Theme", 0);
+		CaptureMode = config.value("CaptureMode", 0);
+	}
+	catch (json::exception& ex) {
+		return false;
+	}
 
-			WindowX = config.value("WindowX", 0);
-			WindowY = config.value("WindowY", 0);
-			EnableDebug = config.value("Debug", false);
-			SaveMissingEvent = config.value("SaveMissingEventName", false);
-			ScreenshotSavePath = utility::from_u8string(config.value("ScreenshotSavePath", ""));
-			FontName = utility::from_u8string(config.value("FontName", "Yu Gothic UI"));
-			FontSize = config.value("FontSize", 9);
-			IsHideNoneChoise = config.value("IsHideNoneChoise", false);
-			IsShowStatusBar = config.value("IsShowStatusBar", false);
-			OptionMaxLine = config.value("OptionMaxLine", 4);
-			if (OptionMaxLine < 2) OptionMaxLine = 2;
-			else if (OptionMaxLine > 10) OptionMaxLine = 10;
-			ImageType = config.value("ImageType", 0);
-			EnableCheckUpdate = config.value("EnableCheckUpdate", true);
-			OcrPoolSize = config.value("OcrPoolSize", 2);
-			Theme = config.value("Theme", 0);
-		}
-		catch (json::exception& ex) {
-			return false;
-		}
-	}
-	else {
-		Create();
-	}
+	if (!input.good()) Save();
 
 	if (ScreenshotSavePath.empty()) {
 		std::wstring directory = utility::GetExeDirectory() + L"\\screenshots\\";
@@ -61,28 +57,6 @@ bool Config::Load()
 	}
 
 	return true;
-}
-
-void Config::Create()
-{
-	json config;
-
-	WindowX = 0;
-	WindowY = 0;
-	EnableDebug = false;
-	SaveMissingEvent = false;
-	ScreenshotSavePath = L"";
-	FontName = L"Yu Gothic UI";
-	FontSize = 9;
-	IsHideNoneChoise = false;
-	IsShowStatusBar = false;
-	OptionMaxLine = 4;
-	ImageType = 0;
-	EnableCheckUpdate = true;
-	OcrPoolSize = 2;
-	Theme = 0;
-
-	Save();
 }
 
 void Config::Save()
@@ -103,6 +77,7 @@ void Config::Save()
 	config["EnableCheckUpdate"] = EnableCheckUpdate;
 	config["OcrPoolSize"] = OcrPoolSize;
 	config["Theme"] = Theme;
+	config["CaptureMode"] = CaptureMode;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

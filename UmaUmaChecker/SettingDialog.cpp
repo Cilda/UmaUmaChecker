@@ -104,6 +104,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 			sizeParent->Add(sizeS1, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 		}
 
+		// OCR設定
 		wxStaticBoxSizer* sizeSystem = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("OCR設定")), wxVERTICAL);
 		{
 			wxFlexGridSizer* gridSizer = new wxFlexGridSizer(1, 2, 3, 0);
@@ -122,6 +123,19 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 				gridSizer->Add(s);
 				sizeSystem->Add(gridSizer, 1, wxALL, 5);
 				sizeSystem->Add(new wxStaticText(sizeSystem->GetStaticBox(), wxID_ANY, wxT("数値を大きくするとメモリとCPU使用率が増えますがイベント読み取り速度が向上します。\n数値を小さくするとメモリとCPU使用率は下がりますがイベント読み取りが遅くなります。")), 0, wxLEFT | wxRIGHT | wxBOTTOM, 5);
+			}
+
+			wxBoxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
+			{
+				wxStaticText* Static = new wxStaticText(sizeSystem->GetStaticBox(), wxID_ANY, wxT("キャプチャ方法"));
+				s2->Add(Static, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+
+				m_comboCaptureMode = new wxComboBox(sizeSystem->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+				m_comboCaptureMode->AppendString(wxT("BitBlt"));
+				m_comboCaptureMode->AppendString(wxT("Windows 10 (1903以降)"));
+				s2->Add(m_comboCaptureMode);
+
+				sizeSystem->Add(s2, 1, wxALL, 5);
 			}
 
 			sizeParent->Add(sizeSystem, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
@@ -213,6 +227,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_comboTheme->SetSelection(config->Theme);
 	m_comboFontList->SetStringSelection(config->FontName);
 	m_comboFontSizeList->SetValue(wxString::Format(wxT("%d"), config->FontSize));
+	m_comboCaptureMode->SetSelection(config->CaptureMode);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -239,8 +254,6 @@ void SettingDialog::OnClickBrowse(wxCommandEvent& event)
 void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 {
 	config->ScreenshotSavePath = m_textCtrlScreenShotPath->GetValue().wc_str();
-	//config->FontName = m_fontPickerCtrl->GetSelectedFont().GetFaceName();
-	//config->FontSize = m_fontPickerCtrl->GetSelectedFont().GetPointSize();
 	config->FontName = m_comboFontList->GetValue();
 	m_comboFontSizeList->GetValue().ToInt(&config->FontSize);
 	config->IsHideNoneChoise = m_checkBoxHideOption->IsChecked();
@@ -252,6 +265,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->EnableCheckUpdate = m_checkBoxCheckUpdate->IsChecked();
 	m_comboOcrPoolSize->GetStringSelection().ToInt(&config->OcrPoolSize);
 	config->Theme = m_comboTheme->GetSelection();
+	config->CaptureMode = m_comboCaptureMode->GetSelection();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);

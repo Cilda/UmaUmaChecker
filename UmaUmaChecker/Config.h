@@ -9,7 +9,6 @@ public:
 	virtual ~Config();
 
 	bool Load();
-	void Create();
 	void Save();
 
 	std::wstring GetImageExtension();
@@ -19,10 +18,10 @@ public:
 	static Config* GetInstance();
 
 public:
-	int WindowX = 0;
-	int WindowY = 0;
-	bool EnableDebug = false;
-	bool SaveMissingEvent = false;
+	int WindowX;
+	int WindowY;
+	bool EnableDebug;
+	bool SaveMissingEvent;
 	std::wstring ScreenshotSavePath;
 	std::wstring FontName;
 	int FontSize;
@@ -33,5 +32,6 @@ public:
 	bool EnableCheckUpdate;
 	int OcrPoolSize;
 	int Theme;
+	int CaptureMode;
 };
 

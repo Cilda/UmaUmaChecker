@@ -55,6 +55,7 @@ private:
 	wxComboBox* m_comboTheme;
 	FontComboBox* m_comboFontList;
 	wxComboBox* m_comboFontSizeList;
+	wxComboBox* m_comboCaptureMode;
 
 	Config* config;
 	std::vector<wxWebRequest> requests;

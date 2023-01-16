@@ -17,6 +17,8 @@
 #include "Log.h"
 #include "utility.h"
 
+#include "GraphicsCapture.h"
+
 #ifdef USE_MS_OCR
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
 #endif
@@ -102,6 +104,22 @@ Gdiplus::Bitmap* Uma::ScreenShot()
 {
 	HWND hWnd = GetUmaWindow();
 	if (!hWnd) return nullptr;
+
+	auto config = Config::GetInstance();
+
+	if (config->CaptureMode == 1 && GraphicsCapture::IsSupported()) {
+		static RECT prev_rect;
+		RECT rect;
+
+		GetClientRect(hWnd, &rect);
+
+		if (!capture || capture->GetTarget() != hWnd || prev_rect.right != rect.right || prev_rect.bottom != rect.bottom) {
+			capture.reset(new GraphicsCapture(hWnd));
+			prev_rect = rect;
+		}
+
+		return capture->ScreenShot();
+	}
 
 	RECT rc, rw;
 	POINT pt = { 0, 0 };
@@ -288,7 +306,7 @@ void Uma::MonitorThread()
 		auto end = std::chrono::system_clock::now();
 		auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-		//wxLogDebug(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
+		//LOG_DEBUG << wxString::Format(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
 		//OutputDebugStringW(wxString::Format(wxT("MonitorThread() ループ処理時間: %lld msec"), msec).wx_str());
 
 		if (msec < 1000) Sleep(1000 - msec);

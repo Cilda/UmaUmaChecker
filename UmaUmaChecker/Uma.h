@@ -20,6 +20,8 @@
 #include "Config.h"
 #include "object_pool.hpp"
 
+class GraphicsCapture;
+
 class Uma
 {
 public:
@@ -121,6 +123,9 @@ private:
 
 	// for event
 	wxFrame* frame;
+
+	// windows graphics capture
+	std::unique_ptr<GraphicsCapture> capture;
 
 private:
 	static const double ResizeRatio;
