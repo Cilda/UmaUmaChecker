@@ -29,9 +29,13 @@ public:
 	Log(const std::string& filename = "output.log");
 	~Log();
 
-	static Log* GetInstance()
+	static void Create()
 	{
 		if (!instance) instance = std::unique_ptr<Log>(new Log());
+	}
+
+	static Log* GetInstance()
+	{
 		return instance.get();
 	}
 

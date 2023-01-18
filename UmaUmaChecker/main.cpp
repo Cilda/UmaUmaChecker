@@ -3,6 +3,7 @@
 #include <winsock2.h>
 
 #include <wx/app.h>
+#include <wx/log.h>
 #include <gdiplus.h>
 #include <VersionHelpers.h>
 
@@ -15,8 +16,6 @@
 #include "Log.h"
 #include "version.h"
 
-#include <winrt/base.h>
-
 typedef HRESULT(_stdcall* SetThreadDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef BOOL(*SetProcessDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef void (WINAPI* RtlGetVersionFunc)(OSVERSIONINFOEXW*);
@@ -27,13 +26,13 @@ class MyApp : public wxApp {
 public:
 	virtual bool OnInit()
 	{
-		if (!wxApp::OnInit()) return false;
-
-		LOG_INFO << "/------------------------------------------------------------------------------------------/";
-		LOG_INFO << app_name << L" " << app_version;
-
 		try {
-			winrt::init_apartment(winrt::apartment_type::single_threaded);
+			if (!wxApp::OnInit()) return false;
+
+			Log::Create();
+
+			LOG_INFO << "/------------------------------------------------------------------------------------------/";
+			LOG_INFO << app_name << L" " << app_version;
 
 			Gdiplus::GdiplusStartup(&token, &input, NULL);
 			wxInitAllImageHandlers();

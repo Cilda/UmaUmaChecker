@@ -15,8 +15,6 @@
 #include <gdiplus.h>
 #include <dwmapi.h>
 
-#include "Log.h"
-
 GraphicsCapture::GraphicsCapture(HWND hWnd) : hTargetWnd(hWnd)
 {
 	D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, D3D11_SDK_VERSION, device.put(), nullptr, context.put());
@@ -120,13 +118,18 @@ void GraphicsCapture::OnFrameArrived(const winrt::Windows::Graphics::Capture::Di
 
 winrt::com_ptr<ID3D11Texture2D> GraphicsCapture::GetFrame()
 {
-	std::once_flag once;
+	bool skip = true;
 
 	for (int c = 0; ; c++) {
-		std::call_once(once, [&] { return CaptureFramePool.TryGetNextFrame(); });
+		//std::call_once(once, [&] { return CaptureFramePool.TryGetNextFrame(); });
 		auto frame = CaptureFramePool.TryGetNextFrame();
 		if (!frame) {
 			//Sleep(1);
+			continue;
+		}
+
+		if (skip) {
+			skip = false;
 			continue;
 		}
 
@@ -158,7 +161,6 @@ bool GraphicsCapture::IsBorderRequiredSupported()
 		return winrt::Windows::Foundation::Metadata::ApiInformation::IsPropertyPresent(L"Windows.Graphics.Capture.GraphicsCaptureSession", L"IsBorderRequired");
 	}
 	catch (...) {
-		LOG_ERROR << "IsBorderRequiredSupported (" << std::setw(8) << std::hex <<  winrt::to_hresult().value << ")";
 		return false;
 	}
 }
@@ -169,7 +171,6 @@ bool GraphicsCapture::IsCursorCaptureEnabledSupported()
 		return winrt::Windows::Foundation::Metadata::ApiInformation::IsPropertyPresent(L"Windows.Graphics.Capture.GraphicsCaptureSession", L"IsCursorCaptureEnabled");
 	}
 	catch (...) {
-		LOG_ERROR << "IsCursorCaptureEnabledSupported (" << std::setw(8) << std::hex << winrt::to_hresult().value << ")";
 		return false;
 	}
 }
@@ -181,7 +182,6 @@ bool GraphicsCapture::IsSupported()
 			winrt::Windows::Graphics::Capture::GraphicsCaptureSession::IsSupported();
 	}
 	catch (...) {
-		LOG_ERROR << "IsCursorCaptureEnabledSupported (" << std::setw(8) << std::hex << winrt::to_hresult().value << ")";
 		return false;
 	}
 }

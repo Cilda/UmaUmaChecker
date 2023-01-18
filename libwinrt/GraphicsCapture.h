@@ -10,7 +10,7 @@ namespace Gdiplus {
 	class Bitmap;
 }
 
-class GraphicsCapture
+struct GraphicsCapture
 {
 public:
 	//GraphicsCapture() {}

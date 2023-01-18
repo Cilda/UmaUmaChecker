@@ -17,7 +17,7 @@
 #include "Log.h"
 #include "utility.h"
 
-#include "GraphicsCapture.h"
+#include "../libwinrt/winrt_capture.h"
 
 #ifdef USE_MS_OCR
 #include "../UmaOCRWrapper/UmaOCRWrapper.h"
@@ -70,6 +70,10 @@ Uma::~Uma()
 		Stop();
 	}
 	delete apiMulti;
+	if (capture) {
+		free_winrt_capture(capture);
+		capture = nullptr;
+	}
 }
 
 void Uma::Init()
@@ -107,18 +111,19 @@ Gdiplus::Bitmap* Uma::ScreenShot()
 
 	auto config = Config::GetInstance();
 
-	if (config->CaptureMode == 1 && GraphicsCapture::IsSupported()) {
+	if (config->CaptureMode == 1) {
 		static RECT prev_rect;
 		RECT rect;
 
 		GetClientRect(hWnd, &rect);
 
-		if (!capture || capture->GetTarget() != hWnd || prev_rect.right != rect.right || prev_rect.bottom != rect.bottom) {
-			capture.reset(new GraphicsCapture(hWnd));
+		if (!capture || winrt_capture_get_target(capture) != hWnd || prev_rect.right != rect.right || prev_rect.bottom != rect.bottom) {
+			if (capture) free_winrt_capture(capture);
+			capture = winrt_init_capture(hWnd);
 			prev_rect = rect;
 		}
 
-		return capture->ScreenShot();
+		return winrt_screenshot(capture);
 	}
 
 	RECT rc, rw;

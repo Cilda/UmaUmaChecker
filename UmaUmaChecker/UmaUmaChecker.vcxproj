@@ -104,7 +104,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>WindowsApp.lib;d3d11.lib;Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
@@ -117,6 +117,9 @@
     <PreBuildEvent>
       <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\" &amp;&amp; xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\"</Command>
     </PreBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -137,7 +140,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>WindowsApp.lib;d3d11.lib;Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
@@ -150,6 +153,9 @@
     <PreBuildEvent>
       <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\" &amp;&amp; xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\"</Command>
     </PreBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -165,7 +171,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>WindowsApp.lib;d3d11.lib;Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
@@ -178,6 +184,9 @@
     <PreBuildEvent>
       <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\" &amp;&amp; xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\"</Command>
     </PreBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -197,7 +206,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>WindowsApp.lib;d3d11.lib;Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Pdh.lib;rpcrt4.lib;wininet.lib;crypt32.lib;Comctl32.lib;Dwmapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
@@ -210,6 +219,9 @@
     <PreBuildEvent>
       <Command>xcopy /E /Y "$(ProjectDir)Library\" "$(OutDir)Library\" &amp;&amp; xcopy /E /Y "$(ProjectDir)tessdata\" "$(OutDir)tessdata\"</Command>
     </PreBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AboutDialog.cpp" />
@@ -217,7 +229,6 @@
     <ClCompile Include="EventData.cpp" />
     <ClCompile Include="FontComboBox.cpp" />
     <ClCompile Include="GrandLiveMusicListFrame.cpp" />
-    <ClCompile Include="GraphicsCapture.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="ThemeWrapper.cpp" />
     <ClCompile Include="Theme\BaseRenderer.cpp" />
@@ -249,7 +260,6 @@
     <ClInclude Include="EventData.h" />
     <ClInclude Include="FontComboBox.h" />
     <ClInclude Include="GrandLiveMusicListFrame.h" />
-    <ClInclude Include="GraphicsCapture.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="object_pool.hpp" />
     <ClInclude Include="ThemeWrapper.h" />
@@ -285,6 +295,11 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="version.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libwinrt\libwinrt.vcxproj">
+      <Project>{d256dfe9-7516-487a-9451-7410021edb85}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
