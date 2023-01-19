@@ -31,7 +31,7 @@ GraphicsCapture::GraphicsCapture(HWND hWnd) : hTargetWnd(hWnd)
 
 	this->size = GraphicsCaptureItem.Size();
 
-	CaptureFramePool = winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool::Create(this->d3ddevice, winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, 2, size);
+	CaptureFramePool = winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool::Create(this->d3ddevice, winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, 1, size);
 
 	//FrameArrivedRevoker = CaptureFramePool.FrameArrived(winrt::auto_revoke, { this, &GraphicsCapture::OnFrameArrived });
 	GraphicsCaptureSession = CaptureFramePool.CreateCaptureSession(GraphicsCaptureItem);
@@ -86,6 +86,9 @@ Gdiplus::Bitmap* GraphicsCapture::ScreenShot()
 	ID3D11Texture2D* pCPUTexture;
 	D3D11_MAPPED_SUBRESOURCE subresource;
 
+	winrt::com_ptr<ID3D11DeviceContext> context;
+	device->GetImmediateContext(context.put());
+
 	device->CreateTexture2D(&imgdesc, 0, &pCPUTexture);
 	context->CopyResource(pCPUTexture, texture.get());
 	context->Map(pCPUTexture, 0, D3D11_MAP_READ, 0, &subresource);
@@ -124,7 +127,6 @@ winrt::com_ptr<ID3D11Texture2D> GraphicsCapture::GetFrame()
 		//std::call_once(once, [&] { return CaptureFramePool.TryGetNextFrame(); });
 		auto frame = CaptureFramePool.TryGetNextFrame();
 		if (!frame) {
-			//Sleep(1);
 			continue;
 		}
 
@@ -146,7 +148,7 @@ winrt::com_ptr<ID3D11Texture2D> GraphicsCapture::GetFrame()
 
 		if (size.Width != this->size.Width || size.Height != this->size.Height) {
 			this->size = size;
-			CaptureFramePool.Recreate(d3ddevice, winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, 2, size);
+			CaptureFramePool.Recreate(d3ddevice, winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, 1, size);
 		}
 
 		return texture;
