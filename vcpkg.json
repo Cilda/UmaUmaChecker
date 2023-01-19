@@ -10,6 +10,7 @@
     "nlohmann-json",
     "tesseract",
     "wxwidgets",
-    "boost-log"
+    "boost-log",
+    "boost-locale"
   ]
 }

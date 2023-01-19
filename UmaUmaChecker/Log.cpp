@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <codecvt>
 #include <wx/string.h>
+#include <boost/locale/generator.hpp>
 
 #include "utility.h"
 
@@ -35,7 +36,7 @@ Log::Log(const std::string& filename)
 		% boost::log::expressions::message
 	);
 
-	sink_text->imbue(std::locale("ja_JP.UTF-8"));
+	sink_text->imbue(boost::locale::generator()("ja_JP.UTF-8"));
 	core->add_sink(sink_text);
 }
 
