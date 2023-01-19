@@ -13,6 +13,7 @@
 #include "utility.h"
 
 #include "Config.h"
+#include "../libwinrt/winrt_capture.h"
 
 
 SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent, wxID_ANY, wxT("設定"), wxDefaultPosition, wxSize(500, -1), wxDEFAULT_DIALOG_STYLE)
@@ -132,7 +133,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 
 				m_comboCaptureMode = new wxComboBox(sizeSystem->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
 				m_comboCaptureMode->AppendString(wxT("BitBlt"));
-				m_comboCaptureMode->AppendString(wxT("Windows 10 (1903以降)"));
+				if (winrt_capture_is_supported()) m_comboCaptureMode->AppendString(wxT("Windows 10 (1903以降)"));
 				s2->Add(m_comboCaptureMode);
 
 				sizeSystem->Add(s2, 1, wxALL, 5);

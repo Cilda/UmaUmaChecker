@@ -31,3 +31,8 @@ EXPORT HWND __stdcall winrt_capture_get_target(struct GraphicsCapture* capture)
 
 	return capture->GetTarget();
 }
+
+EXPORT bool winrt_capture_is_supported()
+{
+	return GraphicsCapture::IsSupported();
+}

@@ -17,3 +17,5 @@ EXPORT struct GraphicsCapture* __stdcall winrt_init_capture(HWND hWnd);
 EXPORT void __stdcall free_winrt_capture(struct GraphicsCapture* capture);
 EXPORT Gdiplus::Bitmap* winrt_screenshot(struct GraphicsCapture* capture);
 EXPORT HWND winrt_capture_get_target(struct GraphicsCapture* capture);
+
+EXPORT bool winrt_capture_is_supported();

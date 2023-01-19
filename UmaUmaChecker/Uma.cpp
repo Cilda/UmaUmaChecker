@@ -111,7 +111,7 @@ Gdiplus::Bitmap* Uma::ScreenShot()
 
 	auto config = Config::GetInstance();
 
-	if (config->CaptureMode == 1) {
+	if (winrt_capture_is_supported() && config->CaptureMode == 1) {
 		static RECT prev_rect;
 		RECT rect;
 
