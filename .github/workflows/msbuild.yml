@@ -72,7 +72,7 @@ jobs:
     - name: Install vcpkg
       run:
         cd "${{ github.workspace }}" &&
-        git clone https://github.com/microsoft/vcpkg &&
+        git clone https://github.com/microsoft/vcpkg -b 2022.11.14 &&
         .\vcpkg\bootstrap-vcpkg.bat
 
     - name: Check vcpkg
