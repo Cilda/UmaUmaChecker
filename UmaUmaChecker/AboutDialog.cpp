@@ -52,6 +52,7 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 	listBox->Append(wxT("nlohmann-json"));
 	listBox->Append(wxT("simstring"));
 	listBox->Append(wxT("Boost.Log"));
+	listBox->Append(wxT("Boost.Locale"));
 	sizer->Add(listBox, 0, wxEXPAND);
 
 	sizerTop->Add(sizer, 0, (wxALL & ~wxTOP) | wxEXPAND, 5);
