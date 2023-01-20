@@ -4,6 +4,7 @@
 #include <wx/webrequest.h>
 #include <wx/xml/xml.h>
 #include <wx/msgdlg.h>
+#include <wx/regex.h>
 
 #include "version.h"
 #include "Config.h"
@@ -24,7 +25,7 @@ void UpdateManager::GetUpdates(bool bHideDontShowCheck)
 			case wxWebRequest::State_Completed: {
 				VersionInfo version = ParseXmlData(event.GetResponse().GetStream());
 #ifndef _DEBUG
-				if (!version.title.empty() && version.title != app_version)
+				if (!version.title.empty() && CheckVersion(version.title))
 #endif
 				{
 					CheckUpdateDialog dialog(nullptr, &version, bHideDontShowCheck);
@@ -93,6 +94,27 @@ UpdateManager::VersionInfo UpdateManager::ParseXmlData(wxInputStream* stream)
 	}
 
 	return version;
+}
+
+bool UpdateManager::CheckVersion(wxString version)
+{
+	return ConvertVersion(app_version) < ConvertVersion(version);
+}
+
+int UpdateManager::ConvertVersion(wxString version)
+{
+	wxRegEx ex("v(\\d+)\\.(\\d+)\\.(\\d+)");
+	if (ex.Matches(version)) {
+		int high, mid, low;
+
+		ex.GetMatch(version, 1).ToInt(&high);
+		ex.GetMatch(version, 2).ToInt(&mid);
+		ex.GetMatch(version, 3).ToInt(&low);
+
+		return high * 100 + mid * 10 + low;
+	}
+
+	return 0;
 }
 
 UpdateManager& UpdateManager::GetInstance()

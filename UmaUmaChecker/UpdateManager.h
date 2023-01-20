@@ -22,6 +22,8 @@ private:
 	void OnTimer(wxTimerEvent& event);
 
 	VersionInfo ParseXmlData(wxInputStream* stream);
+	bool CheckVersion(wxString version);
+	int ConvertVersion(wxString version);
 
 public:
 	static UpdateManager& GetInstance();
