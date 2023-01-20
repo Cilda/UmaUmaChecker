@@ -45,14 +45,26 @@ GraphicsCapture::~GraphicsCapture()
 {
 	//FrameArrivedRevoker.revoke();
 
-	GraphicsCaptureSession.Close();
-	GraphicsCaptureSession = nullptr;
+	if (GraphicsCaptureSession) {
+		GraphicsCaptureSession.Close();
+		GraphicsCaptureSession = nullptr;
+	}
 
-	CaptureFramePool.Close();
-	CaptureFramePool = nullptr;
+	if (CaptureFramePool) {
+		CaptureFramePool.Close();
+		CaptureFramePool = nullptr;
+	}
 
-	context = nullptr;
-	d3ddevice = nullptr;
+	if (context) {
+		context->Release();
+		context = nullptr;
+	}
+
+	if (d3ddevice) {
+		d3ddevice.Close();
+		d3ddevice = nullptr;
+	}
+
 	GraphicsCaptureItem = nullptr;
 }
 
@@ -83,15 +95,15 @@ Gdiplus::Bitmap* GraphicsCapture::ScreenShot()
 	imgdesc.SampleDesc.Quality = 0;
 	imgdesc.Usage = D3D11_USAGE_STAGING;
 
-	ID3D11Texture2D* pCPUTexture;
+	winrt::com_ptr<ID3D11Texture2D> pCPUTexture;
 	D3D11_MAPPED_SUBRESOURCE subresource;
 
 	winrt::com_ptr<ID3D11DeviceContext> context;
 	device->GetImmediateContext(context.put());
 
-	device->CreateTexture2D(&imgdesc, 0, &pCPUTexture);
-	context->CopyResource(pCPUTexture, texture.get());
-	context->Map(pCPUTexture, 0, D3D11_MAP_READ, 0, &subresource);
+	device->CreateTexture2D(&imgdesc, 0, pCPUTexture.put());
+	context->CopyResource(pCPUTexture.get(), texture.get());
+	context->Map(pCPUTexture.get(), 0, D3D11_MAP_READ, 0, &subresource);
 
 	Gdiplus::Bitmap* raw = new Gdiplus::Bitmap(desc.Width, desc.Height, subresource.RowPitch, PixelFormat32bppRGB, (byte*)subresource.pData);
 
@@ -108,7 +120,7 @@ Gdiplus::Bitmap* GraphicsCapture::ScreenShot()
 
 	delete raw;
 
-	context->Unmap(pCPUTexture, 0);
+	context->Unmap(pCPUTexture.get(), 0);
 
 	return bitmap;
 }
