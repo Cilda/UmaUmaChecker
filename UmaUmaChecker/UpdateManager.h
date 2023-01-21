@@ -3,6 +3,7 @@
 #include <wx/event.h>
 #include <wx/timer.h>
 #include <wx/stream.h>
+#include <wx/webrequest.h>
 
 class UpdateManager : public wxEvtHandler
 {
@@ -16,7 +17,8 @@ public:
 public:
 	UpdateManager();
 
-	void GetUpdates(bool bHideDontShowCheck = false);
+	void GetUpdates(wxWindow* parent = nullptr, bool bHideDontShowCheck = false);
+	bool UpdateEvents();
 
 private:
 	void OnTimer(wxTimerEvent& event);
@@ -24,6 +26,8 @@ private:
 	VersionInfo ParseXmlData(wxInputStream* stream);
 	bool CheckVersion(wxString version);
 	int ConvertVersion(wxString version);
+
+	bool UpdateFile(const wxString& url);
 
 public:
 	static UpdateManager& GetInstance();

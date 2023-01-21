@@ -1,13 +1,17 @@
 #include "UpdateManager.h"
 
 #include <wx/app.h>
-#include <wx/webrequest.h>
 #include <wx/xml/xml.h>
 #include <wx/msgdlg.h>
 #include <wx/regex.h>
+#include <wx/wfstream.h>
 
 #include "version.h"
 #include "Config.h"
+#include "utility.h"
+
+#include "Log.h"
+
 #include "CheckUpdateDialog.h"
 
 UpdateManager::UpdateManager()
@@ -15,7 +19,7 @@ UpdateManager::UpdateManager()
 	m_timer.Bind(wxEVT_TIMER, &UpdateManager::OnTimer, this);
 }
 
-void UpdateManager::GetUpdates(bool bHideDontShowCheck)
+void UpdateManager::GetUpdates(wxWindow* parent, bool bHideDontShowCheck)
 {
 	auto request = wxWebSession::GetDefault().CreateRequest(this, wxT("https://github.com/Cilda/UmaUmaChecker/releases.atom"));
 	if (!request.IsOk()) return;
@@ -28,7 +32,7 @@ void UpdateManager::GetUpdates(bool bHideDontShowCheck)
 				if (!version.title.empty() && CheckVersion(version.title))
 #endif
 				{
-					CheckUpdateDialog dialog(nullptr, &version, bHideDontShowCheck);
+					CheckUpdateDialog dialog(parent, &version, bHideDontShowCheck);
 					dialog.ShowModal();
 				}
 #ifndef _DEBUG
@@ -52,6 +56,25 @@ void UpdateManager::GetUpdates(bool bHideDontShowCheck)
 	while (request.IsOk()) {
 		wxYield();
 	}
+}
+
+bool UpdateManager::UpdateEvents()
+{
+	std::vector<wxString> urls{
+		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Chara.json"),
+		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Events.json"),
+		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/ReplaceText.json"),
+		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/ScenarioEvents.json"),
+		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Skills.json"),
+	};
+
+	int UpdatedCount = 0;
+
+	for (auto& url : urls) {
+		if (UpdateFile(url)) UpdatedCount++;
+	}
+
+	return UpdatedCount > 0;
 }
 
 void UpdateManager::OnTimer(wxTimerEvent& event)
@@ -115,6 +138,68 @@ int UpdateManager::ConvertVersion(wxString version)
 	}
 
 	return 0;
+}
+
+bool UpdateManager::UpdateFile(const wxString& url)
+{
+	wxWebRequest request = wxWebSession::GetDefault().CreateRequest(this, url);
+
+	if (!request.IsOk()) {
+		return false;
+	}
+
+	bool bUpdated = false;
+
+	this->Bind(wxEVT_WEBREQUEST_STATE, [&](wxWebRequestEvent& event) {
+		bool IsActive = false;
+
+		switch (event.GetState()) {
+			case wxWebRequest::State_Completed: {
+				const wxWebResponse& response = event.GetResponse();
+				if (response.GetStatus() == 200) {
+					auto stream = response.GetStream();
+					wxString path = utility::GetExeDirectory() + L"\\Library\\" + response.GetSuggestedFileName();
+					int size = 0;
+
+					if (wxFile::Exists(path)) {
+						wxFile file(path);
+						if (file.IsOpened()) {
+							size = file.SeekEnd();
+							file.Close();
+						}
+					}
+
+					if (size != stream->GetSize()) {
+						LOG_INFO << L"UpdateFile: " << response.GetSuggestedFileName() << L" 更新あり";
+
+						wxFileOutputStream output(path);
+
+						if (output.IsOk()) {
+							output.Write(*stream);
+							output.Close();
+							bUpdated = true;
+						}
+					}
+				}
+				break;
+			}
+			case wxWebRequest::State_Active:
+				IsActive = true;
+				break;
+		}
+
+		if (!IsActive) {
+			request = wxWebRequest();
+		}
+	});
+
+	request.Start();
+
+	while (request.IsOk()) {
+		wxYield();
+	}
+
+	return bUpdated;
 }
 
 UpdateManager& UpdateManager::GetInstance()

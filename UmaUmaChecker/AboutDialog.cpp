@@ -84,8 +84,6 @@ AboutDialog::~AboutDialog()
 
 void AboutDialog::OnClickUpdateCheck(wxCommandEvent& event)
 {
-	wxWindowDisabler disabler;
-
 	CheckUpdate();
 }
 
@@ -93,5 +91,5 @@ void AboutDialog::CheckUpdate()
 {
 	auto& instance = UpdateManager::GetInstance();
 
-	instance.GetUpdates(true);
+	instance.GetUpdates(this, true);
 }

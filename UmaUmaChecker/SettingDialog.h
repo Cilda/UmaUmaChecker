@@ -29,10 +29,6 @@ private:
 	void OnClickBrowse(wxCommandEvent& event);
 	void OnClickOkButton(wxCommandEvent& event);
 	void OnClickFontSelect(wxCommandEvent& event);
-	void OnComboTheme(wxCommandEvent& event);
-
-	bool UpdateLibrary();
-	void UpdateFile(const wxString& url);
 
 private:
 	wxStaticText* m_staticTextUpdate;

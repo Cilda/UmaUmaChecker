@@ -10,11 +10,11 @@
 #include <wx/valtext.h>
 #include <wx/valnum.h>
 
-#include "utility.h"
+#include "UpdateManager.h"
 
+#include "utility.h"
 #include "Config.h"
 #include "../libwinrt/winrt_capture.h"
-
 
 SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent, wxID_ANY, wxT("設定"), wxDefaultPosition, wxSize(500, -1), wxDEFAULT_DIALOG_STYLE)
 {
@@ -207,7 +207,6 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	this->Bind(wxEVT_INIT_DIALOG, &SettingDialog::OnInitDialog, this);
 	m_buttonUpdate->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SettingDialog::OnClickUpdate, this);
 	m_buttonBrowse->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SettingDialog::OnClickBrowse, this);
-	m_comboTheme->Bind(wxEVT_COMBOBOX, &SettingDialog::OnComboTheme, this);
 }
 
 SettingDialog::~SettingDialog()
@@ -233,7 +232,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
 {
-	if (UpdateLibrary()) {
+	if (UpdateManager::GetInstance().UpdateEvents()) {
 		bUpdated = true;
 		wxMessageBox(wxT("更新が完了しました。"), wxT("ウマウマチェッカー"), wxICON_INFORMATION);
 		return;
@@ -274,78 +273,4 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 
 void SettingDialog::OnClickFontSelect(wxCommandEvent& event)
 {
-}
-
-void SettingDialog::OnComboTheme(wxCommandEvent& event)
-{
-}
-
-bool SettingDialog::UpdateLibrary()
-{
-	wxWindowDisabler disabler;
-	UpdatedCount = 0;
-
-	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Chara.json");
-	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Events.json");
-	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/ReplaceText.json");
-	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/ScenarioEvents.json");
-	UpdateFile(L"https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Skills.json");
-	
-	for (auto& request : requests) {
-		while (request.IsOk() && request.GetState() == wxWebRequest::State_Active) {
-			wxYield();
-		}
-	}
-
-	requests.clear();
-
-	return UpdatedCount > 0;
-}
-
-void SettingDialog::UpdateFile(const wxString& url)
-{
-	wxWebRequest request = wxWebSession::GetDefault().CreateRequest(this, url);
-	
-	if (!request.IsOk()) {
-		return;
-	}
-
-	this->Bind(wxEVT_WEBREQUEST_STATE, [this](wxWebRequestEvent& event) {
-		switch (event.GetState()) {
-			case wxWebRequest::State_Completed: {
-				const wxWebResponse& response = event.GetResponse();
-				if (response.GetStatus() == 200) {
-					auto stream = response.GetStream();
-					wxString path = utility::GetExeDirectory() + L"\\Library\\" + response.GetSuggestedFileName();
-					int size = 0;
-
-					if (wxFile::Exists(path)) {
-						wxFile file(path);
-						if (file.IsOpened()) {
-							size = file.SeekEnd();
-							file.Close();
-						}
-					}
-
-					if (size != stream->GetSize()) {
-						wxFileOutputStream output(path);
-
-						if (output.IsOk()) {
-							output.Write(*stream);
-							UpdatedCount++;
-							output.Close();
-						}
-					}
-				}
-				break;
-			}
-			case wxWebRequest::State_Failed:
-			case wxWebRequest::State_Cancelled:
-				break;
-		}
-	});
-
-	request.Start();
-
-	requests.push_back(std::move(request));
 }

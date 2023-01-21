@@ -40,6 +40,8 @@ public:
 			Config* config = Config::GetInstance();
 			config->Load();
 
+			UpdateManager::GetInstance().UpdateEvents();
+
 			MainFrame* frame = new MainFrame(NULL);
 			frame->Show(true);
 			SetTopWindow(frame);
