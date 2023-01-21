@@ -5,7 +5,7 @@
 #ifdef _DEBUG
 #define DEBUG_STRING wxT(" Debug")
 #else
-#define DEBUG_STRING
+#define DEBUG_STRING wxT("")
 #endif
 
 static const wxString app_name = wxT("ウマウマチェッカー");
