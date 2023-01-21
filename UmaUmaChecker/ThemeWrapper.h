@@ -5,9 +5,10 @@
 #include <wx/button.h>
 #include <wx/dcclient.h>
 #include <vssym32.h>
+#include <dwmapi.h>
 
 #include "Theme/ThemeManager.h"
-//#include "Theme/DarkThemeRenderer.h"
+#include "Theme/DarkThemeRenderer.h"
 
 
 template<class WindowBase>
@@ -19,6 +20,7 @@ public:
 	{
 		ThemeManager::GetInstance()->InitWindow(this);
 		this->SetBackgroundColour(ThemeManager::GetInstance()->GetBackgroundColor());
+		SetDarkTitleBar();
 		observer.Subscribe(&ThemedWindowWrapper::OnThemeChanged, this);
 	}
 
@@ -27,7 +29,14 @@ private:
 	{
 		ThemeManager::GetInstance()->InitWindow(this);
 		this->SetBackgroundColour(ThemeManager::GetInstance()->GetBackgroundColor());
+		SetDarkTitleBar();
 		this->Refresh();
+	}
+
+	void SetDarkTitleBar()
+	{
+		BOOL value = ThemeManager::GetInstance()->IsKindOf(wxCLASSINFO(DarkThemeRenderer));
+		DwmSetWindowAttribute(this->GetHWND(), DWMWA_USE_IMMERSIVE_DARK_MODE, &value, sizeof(value));
 	}
 
 private:
