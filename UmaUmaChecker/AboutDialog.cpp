@@ -23,7 +23,7 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 	wxBoxSizer* sizerInfo = new wxBoxSizer(wxVERTICAL);
 
 	wxBoxSizer* sizerTitle = new wxBoxSizer(wxHORIZONTAL);
-	m_bitmap = new wxStaticBitmap(this, wxID_ANY, wxICON(AppIcon), wxDefaultPosition, wxSize(32, 32));
+	m_bitmap = new wxStaticBitmap(this, wxID_ANY, wxICON(AppIcon), wxDefaultPosition, FromDIP(wxSize(32, 32)));
 	sizerTitle->Add(m_bitmap, 0, wxRIGHT, 5);
 
 	wxStaticText* staticTextTitle = new wxStaticText(this, wxID_ANY, app_title);
