@@ -34,19 +34,21 @@ CheckUpdateDialog::CheckUpdateDialog(wxWindow* parent, UpdateManager::VersionInf
 			sizer->Add(html, 0, wxALL | wxEXPAND, 5);
 		}
 		{
+			wxBoxSizer* stdbutton = new wxBoxSizer(wxHORIZONTAL);
+
 			wxCheckBox* checkbox = new wxCheckBox(this, DontShow, wxT("起動時に確認をしない"));
 			if (bHideDontShowCheck) checkbox->Hide();
-			sizer->Add(checkbox, 0, wxALL, 5);
-		}
-		{
-			wxBoxSizer* stdbutton = new wxBoxSizer(wxHORIZONTAL);
+			stdbutton->Add(checkbox, 0, wxALIGN_CENTER);
+
+			stdbutton->Add(0, 0, 1);
+
 			wxButton* buttonSkip = new wxButton(this, wxID_CANCEL, wxT("スキップ"));
-			stdbutton->Add(buttonSkip);
+			stdbutton->Add(buttonSkip, 0);
 
 			wxButton* buttonUpdate = new wxButton(this, wxID_YES, wxT("更新する"));
-			stdbutton->Add(buttonUpdate);
+			stdbutton->Add(buttonUpdate, 0);
 
-			sizer->Add(stdbutton, 0, wxALL | wxALIGN_RIGHT, 5);
+			sizer->Add(stdbutton, 0, wxALL | wxEXPAND, 5);
 		}
 	}
 
