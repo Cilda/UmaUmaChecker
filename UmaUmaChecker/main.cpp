@@ -4,6 +4,9 @@
 
 #include <wx/app.h>
 #include <wx/log.h>
+#include <wx/debugrpt.h>
+#include <wx/ffile.h>
+
 #include <gdiplus.h>
 #include <VersionHelpers.h>
 
@@ -24,13 +27,18 @@ typedef BOOL(_stdcall* SetProcessDPIAwareFunc)(VOID);
 
 class MyApp : public wxApp {
 public:
+	MyApp()
+	{
+		wxHandleFatalExceptions();
+	}
+
 	virtual bool OnInit()
 	{
 		try {
-			if (!wxApp::OnInit()) return false;
-
 			Log::Create();
 
+			if (!wxApp::OnInit()) return false;
+			
 			LOG_INFO << "/------------------------------------------------------------------------------------------/";
 			LOG_INFO << app_name << L" " << app_version;
 
@@ -62,6 +70,26 @@ public:
 
 		Gdiplus::GdiplusShutdown(token);
 		return 0;
+	}
+
+	virtual void OnFatalException()
+	{
+		GenerateReport(wxDebugReport::Context_Exception);
+	}
+
+	void GenerateReport(wxDebugReport::Context ctx)
+	{
+		wxDebugReportCompress* report = new wxDebugReportCompress();
+
+		report->AddAll(ctx);
+
+		if (wxDebugReportPreviewStd().Show(*report)) {
+			if (report->Process()) {
+				report->Reset();
+			}
+		}
+
+		delete report;
 	}
 
 private:
