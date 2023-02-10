@@ -19,7 +19,7 @@ env:
   
   VCPKG_DEFAULT_TRIPLET: x64-windows-static
 
-  VCPKG_INSTALL_PATH: ${{ github.workspace }}\vcpkg
+  VCPKG_INSTALL_PATH: C:\vcpkg
 
 permissions:
   contents: read
@@ -71,8 +71,8 @@ jobs:
     
     - name: Install vcpkg
       run:
-        cd "${{ github.workspace }}" &&
-        git clone https://github.com/microsoft/vcpkg &&
+        cd "${{ env.VCPKG_INSTALL_PATH }}" &&
+        git pull &&
         .\vcpkg\bootstrap-vcpkg.bat
 
     - name: Check vcpkg
