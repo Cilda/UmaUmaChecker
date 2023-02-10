@@ -55,9 +55,9 @@ private:
 	void MonitorThread();
 
 	// イベント名認識
-	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg);
-	std::vector<std::wstring> RecognizeCardEventText(const cv::Mat& srcImg);
-	std::vector<std::wstring> RecognizeScenarioEventText(const cv::Mat& srcImg);
+	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg, uint64* pHash);
+	std::vector<std::wstring> RecognizeCardEventText(const cv::Mat& srcImg, uint64* pHash);
+	std::vector<std::wstring> RecognizeScenarioEventText(const cv::Mat& srcImg, uint64* pHash);
 
 	// イベント取得
 	std::shared_ptr<EventSource> GetCardEvent(const std::vector<std::wstring>& text_list);
@@ -86,11 +86,12 @@ private:
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 	void UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k);
 
+	uint64 GetImageHash(const cv::Mat& img);
+	int GetHashLength(uint64 hash1, uint64 hash2);
+
 	// ステータス取得用
 	bool DetectCharaStatus(const cv::Mat& src);
 
-	// 文字配列からハッシュ取得
-	size_t CreateHash(const std::vector<std::wstring>& strs);
 public:
 	static const cv::Rect2d CharaEventBound; // キャライベント境界
 	static const cv::Rect2d CardEventBound;
@@ -116,8 +117,8 @@ private:
 	std::wstring DetectedEventName;
 	std::mutex mutex;
 
-	size_t EventHash = 0;
-	size_t PrevEventHash = 0;
+	uint64 EventHash = 0;
+	uint64 PrevEventHash = 0;
 
 	// for event
 	wxFrame* frame;

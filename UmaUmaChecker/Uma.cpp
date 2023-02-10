@@ -261,7 +261,7 @@ void Uma::MonitorThread()
 				}
 			}
 
-			if (PrevEventHash != 0 && PrevEventHash != EventHash) {
+			if (PrevEventHash != 0 && (EventHash == 0 || GetHashLength(EventHash, PrevEventHash) > 10)) {
 				EventHash = PrevEventHash;
 				Config* config = Config::GetInstance();
 				if (config->SaveMissingEvent) {
@@ -327,7 +327,7 @@ bool Uma::IsCharaEvent(const cv::Mat& srcImg)
 	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
 }
 
-std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
+std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg, uint64* pHash)
 {
 	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
 		Uma::CharaEventBound.x * srcImg.size().width,
@@ -364,6 +364,7 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg)
 		}
 
 		AppendCollectedText(text_list);
+		if (pHash) *pHash = GetImageHash(cut);
 
 		return text_list;
 	}
@@ -545,6 +546,44 @@ void Uma::UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k)
 	cv::filter2D(mat, dst, -1, kernel);
 }
 
+uint64 Uma::GetImageHash(const cv::Mat& img)
+{
+	cv::Mat resize;
+
+	cv::resize(img, resize, cv::Size(9, 8));
+	cv::cvtColor(resize, resize, cv::COLOR_RGB2GRAY);
+
+	assert(resize.channels() == 1);
+
+	uint64 hash = 0;
+	unsigned int bit = 63;
+
+	for (int y = 0; y < 8; y++) {
+		for (int x = 0; x < 8; x++) {
+			int p1 = resize.at<unsigned char>(y, x);
+			int p2 = resize.at<unsigned char>(y, x + 1);
+
+			hash |= (uint64)(p1 < p2 ? 1 : 0) << bit;
+			bit--;
+		}
+	}
+
+	return hash;
+}
+
+int Uma::GetHashLength(uint64 hash1, uint64 hash2)
+{
+	uint64 d = hash1 ^ hash2;
+	int length = 0;
+
+	while (d) {
+		d &= d - 1;
+		length++;
+	}
+
+	return length;
+}
+
 bool Uma::DetectCharaStatus(const cv::Mat& src)
 {
 	for (int i = 0; i < 5; i++) {
@@ -568,21 +607,6 @@ bool Uma::DetectCharaStatus(const cv::Mat& src)
 	}
 
 	return false;
-}
-
-size_t Uma::CreateHash(const std::vector<std::wstring>& strs)
-{
-	size_t hash = 0;
-
-	for (auto& str : strs) {
-		int index = 0;
-		for (wchar_t c : str) {
-			hash |= c << (index % (sizeof(hash) * 8 - 8));
-			index++;
-		}
-	}
-
-	return hash;
 }
 
 std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
@@ -682,8 +706,10 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 {
 	if (bScaned) *bScaned = false;
 
+	uint64 hash = 0;
+
 	// サポートカードイベント
-	std::vector<std::wstring> events = RecognizeCardEventText(srcImg);
+	std::vector<std::wstring> events = RecognizeCardEventText(srcImg, &hash);
 	if (!events.empty()) {
 		if (bScaned) *bScaned = true;
 		auto event = GetCardEvent(events);
@@ -691,12 +717,12 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 		if (event) {
 			return event.get();
 		}
-		PrevEventHash = CreateHash(events);
+		PrevEventHash = hash;
 		return nullptr;
 	}
 
 	if (CurrentCharacter) {
-		events = RecognizeCharaEventText(srcImg);
+		events = RecognizeCharaEventText(srcImg, &hash);
 		if (!events.empty()) {
 			if (bScaned) *bScaned = true;
 			auto event = GetCharaEvent(events);
@@ -704,12 +730,12 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 			if (event) {
 				return event.get();
 			}
-			PrevEventHash = CreateHash(events);
+			PrevEventHash = hash;
 			return nullptr;
 		}
 	}
 
-	events = RecognizeScenarioEventText(srcImg);
+	events = RecognizeScenarioEventText(srcImg, &hash);
 	if (!events.empty()) {
 		if (bScaned) *bScaned = true;
 		auto event = GetScenarioEvent(events);
@@ -717,7 +743,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 		if (event) {
 			return event.get();
 		}
-		PrevEventHash = CreateHash(events);
+		PrevEventHash = hash;
 		return nullptr;
 	}
 
@@ -825,7 +851,7 @@ bool Uma::Reload()
 	return true;
 }
 
-std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
+std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg, uint64* pHash)
 {
 	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
 		Uma::CardEventBound.x * srcImg.size().width,
@@ -862,6 +888,7 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 		}
 
 		AppendCollectedText(text_list);
+		if (pHash) *pHash = GetImageHash(cut);
 
 		return text_list;
 	}
@@ -869,7 +896,7 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg)
 	return std::vector<std::wstring>();
 }
 
-std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
+std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg, uint64* pHash)
 {
 	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
 		Uma::ScenarioChoiseBound.x * srcImg.size().width,
@@ -906,6 +933,7 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg)
 		}
 
 		AppendCollectedText(text_list);
+		if (pHash) *pHash = GetImageHash(cut);
 
 		return text_list;
 	}
