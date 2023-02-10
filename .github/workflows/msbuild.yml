@@ -73,7 +73,7 @@ jobs:
       run:
         cd "${{ env.VCPKG_INSTALL_PATH }}" &&
         git pull &&
-        .\vcpkg\bootstrap-vcpkg.bat
+        .\bootstrap-vcpkg.bat
 
     - name: Check vcpkg
       run: dir "${{ env.VCPKG_INSTALL_PATH }}"
