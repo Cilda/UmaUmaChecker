@@ -735,13 +735,14 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 	std::vector<std::wstring> events = RecognizeCardEventText(srcImg, &hash);
 	if (!events.empty()) {
 		if (bScaned) *bScaned = true;
+		if (pEvents) *pEvents = events;
+		if (pHash) *pHash = hash;
+
 		auto event = GetCardEvent(events);
 		if (!event) event = GetEventByBottomOption(srcImg);
 		if (event) {
 			return event.get();
 		}
-		if (pEvents) *pEvents = events;
-		if (pHash) *pHash = hash;
 		return nullptr;
 	}
 
@@ -749,13 +750,14 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		events = RecognizeCharaEventText(srcImg, &hash);
 		if (!events.empty()) {
 			if (bScaned) *bScaned = true;
+			if (pEvents) *pEvents = events;
+			if (pHash) *pHash = hash;
+
 			auto event = GetCharaEvent(events);
 			if (!event) event = GetCharaEventByBottomOption(srcImg);
 			if (event) {
 				return event.get();
 			}
-			if (pEvents) *pEvents = events;
-			if (pHash) *pHash = hash;
 			return nullptr;
 		}
 	}
@@ -763,13 +765,14 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 	events = RecognizeScenarioEventText(srcImg, &hash);
 	if (!events.empty()) {
 		if (bScaned) *bScaned = true;
+		if (pEvents) *pEvents = events;
+		if (pHash) *pHash = hash;
+
 		auto event = GetScenarioEvent(events);
 		if (!event) event = GetScenarioEventByBottomOption(srcImg);
 		if (event) {
 			return event.get();
 		}
-		if (pEvents) *pEvents = events;
-		if (pHash) *pHash = hash;
 		return nullptr;
 	}
 
