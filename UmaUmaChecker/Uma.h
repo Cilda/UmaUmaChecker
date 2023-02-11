@@ -41,7 +41,7 @@ public:
 		return SkillLib.GetCharacters();
 	}
 
-	EventSource* DetectEvent(const cv::Mat& srcImg, bool* bScaned = nullptr);
+	EventSource* DetectEvent(const cv::Mat& srcImg, uint64* pHash = nullptr, std::vector<std::wstring>* pEvents = nullptr, bool* bScaned = nullptr);
 	EventRoot* DetectTrainingCharaName(const cv::Mat& srcImg);
 
 	bool Reload();
@@ -79,15 +79,20 @@ private:
 
 	void AsyncFunction(std::vector<std::wstring>& strs, const cv::Mat& img);
 
-	// その他
+	// イベント名補完
 	void AppendCollectedText(std::vector<std::wstring>& text_list);
 	void ChangeCollectedText(std::wstring& text);
 	double CalcTextMatchRate(const std::wstring& stext, const std::wstring& dtext);
+
+	// 画像操作
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 	void UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k);
 
+	// ハッシュ関数
 	uint64 GetImageHash(const cv::Mat& img);
 	int GetHashLength(uint64 hash1, uint64 hash2);
+
+	void OutputMissingEventInfo(Gdiplus::Bitmap* image, uint64 hash, const std::vector<std::wstring>& events);
 
 	// ステータス取得用
 	bool DetectCharaStatus(const cv::Mat& src);

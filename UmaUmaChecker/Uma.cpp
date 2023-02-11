@@ -7,6 +7,7 @@
 #include <codecvt>
 #include <crtdbg.h>
 #include <future>
+#include <numeric>
 #include "utility.h"
 
 #include <wx/log.h>
@@ -245,7 +246,10 @@ void Uma::MonitorThread()
 
 			auto start1 = std::chrono::system_clock::now();
 
-			EventSource* event = DetectEvent(srcImage, &bScaned);
+			uint64 hash = 0;
+			std::vector<std::wstring> events;
+
+			EventSource* event = DetectEvent(srcImage, &hash, &events, &bScaned);
 			if (event) {
 				if (event != CurrentEvent) {
 					CurrentEvent = event;
@@ -260,33 +264,14 @@ void Uma::MonitorThread()
 					wxQueueEvent(frame, event.Clone());
 				}
 			}
-
-			if (PrevEventHash != 0 && (EventHash == 0 || GetHashLength(EventHash, PrevEventHash) > 10)) {
-				EventHash = PrevEventHash;
-				Config* config = Config::GetInstance();
-				if (config->SaveMissingEvent) {
-					std::wstring directory = config->ScreenshotSavePath + L"\\AutoSave\\";
-					if (config->ScreenshotSavePath.empty()) {
-						directory = utility::GetExeDirectory() + L"\\screenshots\\AutoSave\\";
-					}
-
-					CreateDirectoryW(directory.c_str(), NULL);
-
-					std::wstring savename = directory
-						+ std::wstring(L"debug_")
-						+ std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
-						+ L".png";
-
-					CLSID clsid;
-					utility::GetEncoderClsid(L"image/png", &clsid);
-					image->Save(savename.c_str(), &clsid);
-				}
+			else if (!events.empty()) {
+				OutputMissingEventInfo(image, hash, events);
 			}
 
 			auto end1 = std::chrono::system_clock::now();
 			auto msec1 = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - start1).count();
 
-			wxLogDebug(wxT("DetectEvent(): %lld msec"), msec1);
+			//wxLogDebug(wxT("DetectEvent(): %lld msec"), msec1);
 
 			if (!bScaned) {
 				auto start2 = std::chrono::system_clock::now();
@@ -302,7 +287,7 @@ void Uma::MonitorThread()
 				auto end2 = std::chrono::system_clock::now();
 				auto msec2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2).count();
 
-				wxLogDebug(wxT("DetectTrainingCharaName(): %lld msec"), msec2);
+				//wxLogDebug(wxT("DetectTrainingCharaName(): %lld msec"), msec2);
 			}
 
 			delete image;
@@ -584,6 +569,43 @@ int Uma::GetHashLength(uint64 hash1, uint64 hash2)
 	return length;
 }
 
+void Uma::OutputMissingEventInfo(Gdiplus::Bitmap* image, uint64 hash, const std::vector<std::wstring>& events)
+{
+	if (PrevEventHash != hash) {
+		Config* config = Config::GetInstance();
+
+		PrevEventHash = hash;
+
+		if (config->SaveMissingEvent) {
+			std::wstring directory = config->ScreenshotSavePath + L"\\AutoSave\\";
+			if (config->ScreenshotSavePath.empty()) {
+				directory = utility::GetExeDirectory() + L"\\screenshots\\AutoSave\\";
+			}
+
+			CreateDirectoryW(directory.c_str(), NULL);
+
+			std::wstring savename = directory
+				+ std::wstring(L"debug_")
+				+ std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
+				+ L".png";
+
+			CLSID clsid;
+			utility::GetEncoderClsid(L"image/png", &clsid);
+			image->Save(savename.c_str(), &clsid);
+		}
+
+		if (config->EnableDebug) {
+			std::wstring str = std::accumulate(events.begin() + 1, events.end(), events[0], [](const std::wstring& a, const std::wstring& b) {
+				if (b.empty()) return a;
+
+				return a + L", " + b;
+			});
+			LOG_DEBUG << L"イベント不一致 識別文字[" << str << L"]";
+			wxLogDebug(wxT("イベント不一致 識別文字[%s]"), str);
+		}
+	}
+}
+
 bool Uma::DetectCharaStatus(const cv::Mat& src)
 {
 	for (int i = 0; i < 5; i++) {
@@ -702,9 +724,10 @@ std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& 
 	return nullptr;
 }
 
-EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
+EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<std::wstring>* pEvents, bool* bScaned)
 {
 	if (bScaned) *bScaned = false;
+	if (pHash) *pHash = 0;
 
 	uint64 hash = 0;
 
@@ -717,7 +740,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 		if (event) {
 			return event.get();
 		}
-		PrevEventHash = hash;
+		if (pEvents) *pEvents = events;
+		if (pHash) *pHash = hash;
 		return nullptr;
 	}
 
@@ -730,7 +754,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 			if (event) {
 				return event.get();
 			}
-			PrevEventHash = hash;
+			if (pEvents) *pEvents = events;
+			if (pHash) *pHash = hash;
 			return nullptr;
 		}
 	}
@@ -743,7 +768,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, bool* bScaned)
 		if (event) {
 			return event.get();
 		}
-		PrevEventHash = hash;
+		if (pEvents) *pEvents = events;
+		if (pHash) *pHash = hash;
 		return nullptr;
 	}
 

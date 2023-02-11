@@ -177,8 +177,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 		// 高度な機能
 		wxStaticBoxSizer* sizeS3 = new wxStaticBoxSizer(wxVERTICAL, this, wxT("デバッグモード"));
 		{
-			m_checkDebugEnable = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("デバッグを有効にする"));
-			m_checkDebugEnable->Enable(false);
+			m_checkDebugEnable = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("output.log にデバッグログを出力する"));
 			m_checkSaveScreenShot = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("イベントを識別できなかった場合にキャプチャする"));
 
 			sizeS3->Add(m_checkDebugEnable, 0, wxALL, 5);
