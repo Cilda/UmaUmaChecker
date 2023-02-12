@@ -118,7 +118,7 @@ Gdiplus::Bitmap* Uma::ScreenShot()
 
 		GetClientRect(hWnd, &rect);
 
-		if (!capture || winrt_capture_get_target(capture) != hWnd || prev_rect.right != rect.right || prev_rect.bottom != rect.bottom) {
+		if (!capture || winrt_capture_get_target(capture) != hWnd) {
 			if (capture) free_winrt_capture(capture);
 			capture = winrt_init_capture(hWnd);
 			prev_rect = rect;

@@ -101,9 +101,9 @@ Gdiplus::Bitmap* GraphicsCapture::ScreenShot()
 	winrt::com_ptr<ID3D11DeviceContext> context;
 	device->GetImmediateContext(context.put());
 
-	device->CreateTexture2D(&imgdesc, 0, pCPUTexture.put());
+	if (FAILED(device->CreateTexture2D(&imgdesc, 0, pCPUTexture.put()))) return nullptr;
 	context->CopyResource(pCPUTexture.get(), texture.get());
-	context->Map(pCPUTexture.get(), 0, D3D11_MAP_READ, 0, &subresource);
+	if (FAILED(context->Map(pCPUTexture.get(), 0, D3D11_MAP_READ, 0, &subresource))) return nullptr;
 
 	Gdiplus::Bitmap* raw = new Gdiplus::Bitmap(desc.Width, desc.Height, subresource.RowPitch, PixelFormat32bppRGB, (byte*)subresource.pData);
 
@@ -147,6 +147,14 @@ winrt::com_ptr<ID3D11Texture2D> GraphicsCapture::GetFrame()
 			continue;
 		}
 
+		auto size = frame.ContentSize();
+
+		if (size.Width != this->size.Width || size.Height != this->size.Height) {
+			this->size = size;
+			CaptureFramePool.Recreate(d3ddevice, winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, 1, size);
+			continue;
+		}
+
 		auto surface = frame.Surface();
 		if (!surface) return nullptr;
 
@@ -155,13 +163,6 @@ winrt::com_ptr<ID3D11Texture2D> GraphicsCapture::GetFrame()
 		auto access = surface.as<Windows::Graphics::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess>();
 		HRESULT hr = access->GetInterface(winrt::guid_of<ID3D11Texture2D>(), texture.put_void());
 		if (FAILED(hr)) return nullptr;
-
-		auto size = frame.ContentSize();
-
-		if (size.Width != this->size.Width || size.Height != this->size.Height) {
-			this->size = size;
-			CaptureFramePool.Recreate(d3ddevice, winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized, 1, size);
-		}
 
 		return texture;
 	}
