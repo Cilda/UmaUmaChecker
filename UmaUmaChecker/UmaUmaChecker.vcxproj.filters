@@ -213,4 +213,21 @@
       <Filter>リソース ファイル</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Library\Chara.json">
+      <Filter>リソース ファイル</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Library\Events.json">
+      <Filter>リソース ファイル</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Library\ReplaceText.json">
+      <Filter>リソース ファイル</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Library\ScenarioEvents.json">
+      <Filter>リソース ファイル</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Library\Skills.json">
+      <Filter>リソース ファイル</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
 </Project>
