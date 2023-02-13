@@ -9,7 +9,16 @@ EXPORT void __stdcall winrt_init_apartment()
 
 EXPORT struct GraphicsCapture* __stdcall winrt_init_capture(HWND hWnd)
 {
-	GraphicsCapture* capture = new GraphicsCapture(hWnd);
+	GraphicsCapture* capture = nullptr;
+
+	try {
+		capture = new GraphicsCapture(hWnd);
+	}
+	catch (...) {
+		if (capture) delete capture;
+		return nullptr;
+	}
+
 	return capture;
 }
 

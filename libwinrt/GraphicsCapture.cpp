@@ -17,17 +17,17 @@
 
 GraphicsCapture::GraphicsCapture(HWND hWnd) : hTargetWnd(hWnd)
 {
-	D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, D3D11_SDK_VERSION, device.put(), nullptr, context.put());
+	winrt::check_hresult(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, D3D11_SDK_VERSION, device.put(), nullptr, context.put()));
 
 	winrt::com_ptr<IDXGIDevice> DxgiDevice;
-	auto hr = device->QueryInterface<IDXGIDevice>(DxgiDevice.put());
+	HRESULT hr = device->QueryInterface<IDXGIDevice>(DxgiDevice.put());
 
 	winrt::com_ptr<IInspectable> gdevice;
-	CreateDirect3D11DeviceFromDXGIDevice(DxgiDevice.get(), gdevice.put());
+	winrt::check_hresult(CreateDirect3D11DeviceFromDXGIDevice(DxgiDevice.get(), gdevice.put()));
 	this->d3ddevice = gdevice.as<winrt::Windows::Graphics::DirectX::Direct3D11::IDirect3DDevice>();
 
 	auto interop = winrt::get_activation_factory<winrt::Windows::Graphics::Capture::GraphicsCaptureItem>().as<IGraphicsCaptureItemInterop>();
-	interop->CreateForWindow(hWnd, winrt::guid_of<ABI::Windows::Graphics::Capture::IGraphicsCaptureItem>(), winrt::put_abi(GraphicsCaptureItem));
+	winrt::check_hresult(interop->CreateForWindow(hWnd, winrt::guid_of<ABI::Windows::Graphics::Capture::IGraphicsCaptureItem>(), winrt::put_abi(GraphicsCaptureItem)));
 
 	this->size = GraphicsCaptureItem.Size();
 

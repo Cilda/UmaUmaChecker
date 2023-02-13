@@ -113,7 +113,6 @@ Gdiplus::Bitmap* Uma::ScreenShot()
 	auto config = Config::GetInstance();
 
 	if (winrt_capture_is_supported() && config->CaptureMode == 1) {
-		static RECT prev_rect;
 		RECT rect;
 
 		GetClientRect(hWnd, &rect);
@@ -121,10 +120,9 @@ Gdiplus::Bitmap* Uma::ScreenShot()
 		if (!capture || winrt_capture_get_target(capture) != hWnd) {
 			if (capture) free_winrt_capture(capture);
 			capture = winrt_init_capture(hWnd);
-			prev_rect = rect;
 		}
 
-		return winrt_screenshot(capture);
+		return capture ? winrt_screenshot(capture) : nullptr;
 	}
 
 	RECT rc, rw;
