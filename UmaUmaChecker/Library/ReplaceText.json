@@ -35,6 +35,18 @@
     {
       "search": "成切”",
       "replace": "成功”"
+    },
+    {
+      "search": "\\(",
+      "replace": "（"
+    },
+    {
+      "search": "\\)",
+      "replace": "）"
+    },
+    {
+      "search": "豆合宿",
+      "replace": "夏合宿"
     }
   ]
 }
