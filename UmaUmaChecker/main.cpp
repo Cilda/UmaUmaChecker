@@ -48,7 +48,9 @@ public:
 			Config* config = Config::GetInstance();
 			config->Load();
 
+#ifndef _DEBUG
 			UpdateManager::GetInstance().UpdateEvents();
+#endif
 
 			MainFrame* frame = new MainFrame(NULL);
 			frame->Show(true);

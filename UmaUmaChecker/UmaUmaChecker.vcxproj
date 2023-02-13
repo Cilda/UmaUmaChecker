@@ -308,38 +308,78 @@
   <ItemGroup>
     <CopyFileToFolders Include="Library\Chara.json">
       <FileType>Document</FileType>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </RootFolder>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\Library</DestinationFolders>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Library\Events.json">
       <FileType>Document</FileType>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </RootFolder>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\Library</DestinationFolders>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Library\ReplaceText.json">
       <FileType>Document</FileType>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </RootFolder>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\Library</DestinationFolders>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Library\ScenarioEvents.json">
       <FileType>Document</FileType>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </RootFolder>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\Library</DestinationFolders>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Library\Skills.json">
       <FileType>Document</FileType>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </RootFolder>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </RootFolder>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\Library</DestinationFolders>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -228,10 +228,10 @@ void EventData::InitDB(const std::filesystem::path& path)
 
 	for (auto& source : EventMap) {
 		dbw_event.insert(source.first);
+	}
 
-		for (auto& event : source.second->Options) {
-			if (!event->Title.empty()) dbw_option.insert(event->Title);
-		}
+	for (auto& option : OptionMap) {
+		if (!option.first.empty()) dbw_option.insert(option.first);
 	}
 
 	for (auto& root : EventRoots) {
