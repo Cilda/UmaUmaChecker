@@ -269,7 +269,7 @@ void Uma::MonitorThread()
 			auto end1 = std::chrono::system_clock::now();
 			auto msec1 = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - start1).count();
 
-			//wxLogDebug(wxT("DetectEvent(): %lld msec"), msec1);
+			wxLogDebug(wxT("DetectEvent(): %lld msec"), msec1);
 
 			if (!bScaned) {
 				auto start2 = std::chrono::system_clock::now();
@@ -285,7 +285,7 @@ void Uma::MonitorThread()
 				auto end2 = std::chrono::system_clock::now();
 				auto msec2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2).count();
 
-				//wxLogDebug(wxT("DetectTrainingCharaName(): %lld msec"), msec2);
+				wxLogDebug(wxT("DetectTrainingCharaName(): %lld msec"), msec2);
 			}
 
 			delete image;
@@ -377,8 +377,6 @@ std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 {
 	auto start = std::chrono::system_clock::now();
 
-	std::lock_guard<std::mutex> lock(mutex);
-
 	auto api = tess_pool.get();
 
 	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
@@ -388,12 +386,8 @@ std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 	std::wstring text = utility::from_u8string(utf8_text.get());
 	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
-	//Collector.Collect(text);
-
 	auto end = std::chrono::system_clock::now();
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-	//wxLogDebug(wxT("GetTextFromImage(): %lld"), msec);
 
 	tess_pool.release(api);
 	return text;
@@ -449,6 +443,7 @@ void Uma::AsyncFunction(std::vector<std::wstring>& strs, const cv::Mat& img)
 	std::wstring str = GetTextFromImage(img);
 	if (str.empty()) return;
 
+	std::lock_guard<std::mutex> lock(mutex);
 	strs.push_back(str);
 }
 
