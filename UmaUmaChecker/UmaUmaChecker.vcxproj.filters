@@ -229,5 +229,8 @@
     <CopyFileToFolders Include="Library\Skills.json">
       <Filter>リソース ファイル</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="tessdata\jpn.traineddata">
+      <Filter>リソース ファイル</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
