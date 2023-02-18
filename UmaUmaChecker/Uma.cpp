@@ -181,11 +181,13 @@ bool Uma::Start()
 
 void Uma::Stop()
 {
-	if (!thread) return;
+	if (!thread || !thread->joinable()) return;
 
+	QueueUserAPC([](ULONG_PTR) {}, thread->native_handle(), 0);
 	bStop = true;
 	thread->join();
 	delete thread;
+
 	thread = nullptr;
 	CurrentEvent = nullptr;
 
@@ -297,7 +299,7 @@ void Uma::MonitorThread()
 		//LOG_DEBUG << wxString::Format(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
 		//OutputDebugStringW(wxString::Format(wxT("MonitorThread() ループ処理時間: %lld msec"), msec).wx_str());
 
-		if (msec < 1000) Sleep(1000 - msec);
+		if (msec < 1000) SleepEx(1000 - msec, TRUE);
 	}
 }
 
