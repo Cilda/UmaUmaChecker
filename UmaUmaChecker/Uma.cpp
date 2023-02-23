@@ -791,8 +791,9 @@ EventRoot* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 
 	if (ratio > 0.05) {
 		cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+		UnsharpMask(rsImg, rsImg, UnsharpRatio);
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-		cv::threshold(gray, bin, 85, 255, cv::THRESH_BINARY_INV);
+		cv::threshold(gray, bin, 85, 255, cv::THRESH_BINARY);
 
 		std::wstring text = GetMultiTextFromImage(bin);
 
