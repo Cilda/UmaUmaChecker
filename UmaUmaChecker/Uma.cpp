@@ -28,8 +28,8 @@ const cv::Rect2d Uma::CharaEventBound = { 0.15206185567010309278350515463918, 0.
 const cv::Rect2d Uma::CardEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
 const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
-const cv::Rect2d Uma::TrainingCharaSingleLineBound = { 0.3186, 0.1358, 0.66839, 0.02769 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
-const cv::Rect2d Uma::TrainingCharaMultiLineBound = { 0.3186, 0.1107, 0.66839, 0.05410 }; // { 0.3186, 0.1107, 0.4844, 0.05410 }
+const cv::Rect2d Uma::TrainingCharaAliasNameBound = { 0.31715771230502599653379549393414, 0.11024390243902439024390243902439, 0.66897746967071057192374350086655, 0.02829268292682926829268292682927 };
+const cv::Rect2d Uma::TrainingCharaNameBound = { 0.31715771230502599653379549393414, 0.1375609756097560975609756097561, 0.66897746967071057192374350086655, 0.02439024390243902439024390243902 };
 const cv::Rect2d Uma::StatusBounds[5] = {
 	{ 0.1010638297872340425531914893617, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 	{ 0.26063829787234042553191489361702, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
@@ -59,8 +59,6 @@ Uma::Uma(wxFrame* frame)
 
 		tess_pool.join_manage_resource(api);
 	}
-	//api = new tesseract::TessBaseAPI();
-	apiMulti = new tesseract::TessBaseAPI();
 
 	this->frame = frame;
 }
@@ -70,7 +68,6 @@ Uma::~Uma()
 	if (thread) {
 		Stop();
 	}
-	delete apiMulti;
 	if (capture) {
 		free_winrt_capture(capture);
 		capture = nullptr;
@@ -90,8 +87,6 @@ void Uma::Init()
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
 	LOG_INFO << "Loaded EventData at " << msec << " msec!";
-
-	apiMulti->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
 
 #ifdef USE_OCR
 	InitOCR();
@@ -392,29 +387,6 @@ std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
 	tess_pool.release(api);
-	return text;
-}
-
-std::wstring Uma::GetMultiTextFromImage(cv::Mat& img)
-{
-	auto start = std::chrono::system_clock::now();
-
-	std::lock_guard<std::mutex> lock(mutex);
-
-	apiMulti->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
-	apiMulti->Recognize(NULL);
-
-	const std::unique_ptr<const char[]> utf8_text(apiMulti->GetUTF8Text());
-	std::wstring text = utility::from_u8string(utf8_text.get());
-	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-
-	//Collector.Collect(text);
-
-	auto end = std::chrono::system_clock::now();
-	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-	//wxLogDebug(wxT("GetMultiTextFromImage(): %lld"), msec);
-
 	return text;
 }
 
@@ -776,28 +748,77 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 
 EventRoot* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 {
-	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
-		Uma::TrainingCharaMultiLineBound.x * srcImg.size().width,
-		Uma::TrainingCharaMultiLineBound.y * srcImg.size().height,
-		Uma::TrainingCharaMultiLineBound.width * srcImg.size().width,
-		Uma::TrainingCharaMultiLineBound.height * srcImg.size().height
+	cv::Mat cut1 = cv::Mat(srcImg, cv::Rect(
+		Uma::TrainingCharaNameBound.x * srcImg.size().width,
+		Uma::TrainingCharaNameBound.y * srcImg.size().height,
+		Uma::TrainingCharaNameBound.width * srcImg.size().width,
+		Uma::TrainingCharaNameBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg, gray, bin, bg;
-	cv::Mat cloneImg;
+	cv::Mat bin1, bin2, bg;
 
 	// 判定
-	cv::inRange(cut, cv::Scalar(15, 55, 115), cv::Scalar(80, 114, 160), bg);
+	cv::inRange(cut1, cv::Scalar(15, 55, 115), cv::Scalar(80, 114, 160), bg);
 	double ratio = (double)cv::countNonZero(bg) / bg.size().area();
 
-	if (ratio > 0.05) {
-		cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-		UnsharpMask(rsImg, rsImg, UnsharpRatio);
-		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-		cv::threshold(gray, bin, 85, 255, cv::THRESH_BINARY);
+	if (ratio > 0.04) {
+		{
+			cv::Mat rsImg, gray;
 
-		std::wstring text = GetMultiTextFromImage(bin);
+			cv::resize(cut1, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+			UnsharpMask(rsImg, rsImg, UnsharpRatio);
+			cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+			cv::threshold(gray, bin1, 85, 255, cv::THRESH_BINARY);
+		}
+		{
+			cv::Mat cut2 = cv::Mat(srcImg, cv::Rect(
+				Uma::TrainingCharaAliasNameBound.x * srcImg.size().width,
+				Uma::TrainingCharaAliasNameBound.y * srcImg.size().height,
+				Uma::TrainingCharaAliasNameBound.width * srcImg.size().width,
+				Uma::TrainingCharaAliasNameBound.height * srcImg.size().height
+			));
+			cv::Mat rsImg, gray;
 
-		auto chara = SkillLib.CharaEvent.RetrieveName(text);
+			cv::resize(cut2, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+			UnsharpMask(rsImg, rsImg, UnsharpRatio);
+			cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+			cv::threshold(gray, bin2, 85, 255, cv::THRESH_BINARY);
+		}
+
+		std::wstring alias;
+		std::wstring name;
+
+		{
+			auto a1 = std::async(std::launch::async, [&] { alias = GetTextFromImage(bin2); });
+			auto a2 = std::async(std::launch::async, [&] { name = GetTextFromImage(bin1); });
+		}
+
+		if (alias.length() > 0) {
+			switch (alias.front()) {
+				case '(':
+				case '（':
+				case '【':
+				case '「':
+					alias[0] = '［';
+					break;
+				default:
+					alias = L"［" + alias;
+					break;
+			}
+
+			switch (alias.back()) {
+				case ')':
+				case '）':
+				case '】':
+				case '」':
+					alias[0] = '］';
+					break;
+				default:
+					alias += L"］";
+					break;
+			}
+		}
+
+		auto chara = SkillLib.CharaEvent.RetrieveName(alias + name);
 		if (chara.get() == CurrentCharacter) return nullptr;
 
 		return chara ? chara.get() : nullptr;

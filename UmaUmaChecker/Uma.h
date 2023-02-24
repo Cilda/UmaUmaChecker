@@ -74,7 +74,6 @@ private:
 
 	// OCR関数
 	std::wstring GetTextFromImage(const cv::Mat& img);
-	std::wstring GetMultiTextFromImage(cv::Mat& img);
 	int GetNumericFromImage(const cv::Mat& img);
 
 	void AsyncFunction(std::vector<std::wstring>& strs, const cv::Mat& img);
@@ -102,8 +101,8 @@ public:
 	static const cv::Rect2d CardEventBound;
 	static const cv::Rect2d BottomChoiseBound;
 	static const cv::Rect2d ScenarioChoiseBound;
-	static const cv::Rect2d TrainingCharaSingleLineBound;
-	static const cv::Rect2d TrainingCharaMultiLineBound;
+	static const cv::Rect2d TrainingCharaAliasNameBound;
+	static const cv::Rect2d TrainingCharaNameBound;
 	static const cv::Rect2d StatusBounds[5];
 
 public:
@@ -117,8 +116,6 @@ private:
 	TextCollector Collector;
 	EventRoot* CurrentCharacter;
 	object_pool<tesseract::TessBaseAPI> tess_pool;
-	//tesseract::TessBaseAPI* api;
-	tesseract::TessBaseAPI* apiMulti;
 	std::wstring DetectedEventName;
 	std::mutex mutex;
 

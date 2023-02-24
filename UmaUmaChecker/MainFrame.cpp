@@ -433,6 +433,12 @@ void MainFrame::OnPreviewDragFile(wxCommandEvent& event)
 		if (EventSrc) {
 			ChangeEventOptions(EventSrc);
 		}
+#if _DEBUG
+		else {
+			EventRoot* root = umaMgr->DetectTrainingCharaName(mat);
+			if (root) LOG_DEBUG << L"キャラ認識テスト[" << root->Name << L"]";
+		}
+#endif
 
 		delete gimage;
 	}
