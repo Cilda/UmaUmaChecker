@@ -110,10 +110,10 @@ void EventLibrary::InitScenarioEventDB()
 	CreateDirectoryA(DBPath.c_str(), NULL);
 	CreateDirectoryA((DBPath + "Scenario\\").c_str(), NULL);
 
-	simstring::ngram_generator gen(3, false);
+	simstring::ngram_generator gen(2, false);
 	simstring::writer_base<std::wstring> dbw(gen, DBPath + "Scenario\\event.db");
 
-	simstring::ngram_generator gen2(3, false);
+	simstring::ngram_generator gen2(2, false);
 	simstring::writer_base<std::wstring> dbw2(gen2, DBPath + "Scenario\\option.db");
 
 	for (auto& scenario : ScenarioEvents) {

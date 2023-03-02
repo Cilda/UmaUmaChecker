@@ -217,13 +217,13 @@ void EventData::InitDB(const std::filesystem::path& path)
 	CreateDirectoryW((wchar_t*)path.parent_path().parent_path().c_str(), NULL);
 	CreateDirectoryW((wchar_t*)path.parent_path().c_str(), NULL);
 
-	simstring::ngram_generator gen_event(3, false);
+	simstring::ngram_generator gen_event(2, false);
 	simstring::writer_base<std::wstring> dbw_event(gen_event, dbpath.string());
 
-	simstring::ngram_generator gen_option(3, false);
+	simstring::ngram_generator gen_option(2, false);
 	simstring::writer_base<std::wstring> dbw_option(gen_option, optiondbpath.string());
 
-	simstring::ngram_generator gen_name(3, false);
+	simstring::ngram_generator gen_name(2, false);
 	simstring::writer_base<std::wstring> dbw_name(gen_name, namedbpath.string());
 
 	for (auto& source : EventMap) {
