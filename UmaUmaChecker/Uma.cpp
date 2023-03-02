@@ -40,14 +40,8 @@ const cv::Rect2d Uma::StatusBounds[5] = {
 const double Uma::ResizeRatio = 2.0;
 const float Uma::UnsharpRatio = 2.0f;
 
-Uma::Uma(wxFrame* frame)
+Uma::Uma(wxFrame* frame) : capture(nullptr), bDetected(false), bStop(false), thread(nullptr), CurrentCharacter(nullptr), CurrentEvent(nullptr)
 {
-	bDetected = false;
-	bStop = false;
-	thread = nullptr;
-	CurrentCharacter = nullptr;
-	CurrentEvent = nullptr;
-
 	auto instance = Config::GetInstance();
 
 	int pool_size = std::max(instance->OcrPoolSize, 1);
