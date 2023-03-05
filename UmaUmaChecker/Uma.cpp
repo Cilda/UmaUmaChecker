@@ -815,7 +815,7 @@ EventRoot* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 				case '）':
 				case '】':
 				case '」':
-					alias[0] = '］';
+					alias[alias.size() - 1] = '］';
 					break;
 				default:
 					alias += L"］";
