@@ -86,6 +86,7 @@ private:
 	// 画像操作
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 	void UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k);
+	void ResizeBest(cv::Mat& src, cv::Mat& dest, int height);
 
 	// ハッシュ関数
 	uint64 GetImageHash(const cv::Mat& img);

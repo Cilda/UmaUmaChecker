@@ -309,15 +309,16 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg, ui
 		Uma::CharaEventBound.width * srcImg.size().width,
 		Uma::CharaEventBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg, rsImg2;
 
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	rsImg2 = rsImg.clone();
-	UnsharpMask(rsImg, rsImg, UnsharpRatio);
-
-	if (IsCharaEvent(rsImg)) {
+	if (IsCharaEvent(cut)) {
 		cv::Mat gray, bin, blur;
 		cv::Mat bin2;
+		cv::Mat rsImg, rsImg2;
+
+		ResizeBest(cut, rsImg, srcImg.size().height);
+		//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+		rsImg2 = rsImg.clone();
+		UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::bitwise_not(gray, gray);
@@ -490,6 +491,13 @@ void Uma::UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k)
 
 	cv::Mat kernel(3, 3, CV_32F, kernelData);
 	cv::filter2D(mat, dst, -1, kernel);
+}
+
+void Uma::ResizeBest(cv::Mat& src, cv::Mat& dest, int height)
+{
+	// フォントサイズが30px～33pxだと一番識別率が良い
+	double ratio = (int)(58.125 * 32) / (double)height;
+	cv::resize(src, dest, cv::Size(), ratio, ratio, cv::INTER_CUBIC);
 }
 
 uint64 Uma::GetImageHash(const cv::Mat& img)
@@ -899,15 +907,16 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg, uin
 		Uma::CardEventBound.width * srcImg.size().width,
 		Uma::CardEventBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg, rsImg2;
-
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	rsImg2 = rsImg.clone();
-	UnsharpMask(rsImg, rsImg, UnsharpRatio);
-
+	
 	if (IsCardEvent(cut)) {
 		cv::Mat gray, bin, blur;
 		cv::Mat bin2;
+		cv::Mat rsImg, rsImg2;
+
+		ResizeBest(cut, rsImg, srcImg.size().height);
+		//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+		rsImg2 = rsImg.clone();
+		UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::bitwise_not(gray, gray);
@@ -944,15 +953,16 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg,
 		Uma::ScenarioChoiseBound.width * srcImg.size().width,
 		Uma::ScenarioChoiseBound.height * srcImg.size().height
 	));
-	cv::Mat rsImg, rsImg2;
-
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	rsImg2 = rsImg.clone();
-	UnsharpMask(rsImg, rsImg, UnsharpRatio);
-
+	
 	if (IsScenarioEvent(cut)) {
 		cv::Mat gray, bin, blur;
 		cv::Mat bin2;
+		cv::Mat rsImg, rsImg2;
+
+		ResizeBest(cut, rsImg, srcImg.size().height);
+		//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+		rsImg2 = rsImg.clone();
+		UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::bitwise_not(gray, gray);
