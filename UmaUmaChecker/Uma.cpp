@@ -322,12 +322,15 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg, ui
 
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 		cv::bitwise_not(gray, gray);
+
 		bin = Uma::ImageBinarization(rsImg);
 		RemoveWhiteSpace(bin, bin);
 		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
 		bin2 = Uma::ImageBinarization(rsImg2);
 		RemoveWhiteSpace(bin2, bin2);
+
+		gray = cv::Mat(gray, cv::Rect(0, 0, bin.size().width, gray.size().height));
 		
 		std::vector<std::wstring> text_list;
 		{
@@ -927,6 +930,8 @@ std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg, uin
 		bin2 = Uma::ImageBinarization(rsImg2);
 		RemoveWhiteSpace(bin2, bin2);
 
+		gray = cv::Mat(gray, cv::Rect(0, 0, bin.size().width, gray.size().height));
+
 		std::vector<std::wstring> text_list;
 		{
 			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
@@ -972,6 +977,8 @@ std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg,
 
 		bin2 = Uma::ImageBinarization(rsImg2);
 		RemoveWhiteSpace(bin2, bin2);
+
+		gray = cv::Mat(gray, cv::Rect(0, 0, bin.size().width, gray.size().height));
 
 		std::vector<std::wstring> text_list;
 		{
