@@ -1,6 +1,7 @@
+//#define _WINSOCKAPI_
 #include <winsock2.h>
 #include <Windows.h>
-#include <WinInet.h>
+//#include <WinInet.h>
 
 #include "Uma.h"
 

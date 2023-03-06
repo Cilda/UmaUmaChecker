@@ -7,6 +7,10 @@
 
 #include "Event.h"
 
+namespace simstring {
+	class reader;
+}
+
 class EventData
 {
 public:
@@ -36,4 +40,8 @@ private:
 	std::filesystem::path dbpath;
 	std::filesystem::path optiondbpath;
 	std::filesystem::path namedbpath;
+
+	std::shared_ptr<simstring::reader> titlereader;
+	std::shared_ptr<simstring::reader> optionreader;
+	std::shared_ptr<simstring::reader> namereader;
 };

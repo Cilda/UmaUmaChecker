@@ -99,19 +99,13 @@ std::shared_ptr<EventSource> EventData::RetrieveTitle(const std::wstring& title,
 {
 	if (title.empty()) return nullptr;
 
-	simstring::reader dbr;
-
-	dbr.open(dbpath.string());
-
 	std::vector<std::wstring> xstrs;
 
 	for (double ratio = 100; ratio > 40; ratio -= 10) {
-		dbr.retrieve(title, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
+		titlereader->retrieve(title, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
 	}
-
-	dbr.close();
 
 	if (xstrs.empty()) return nullptr;
 
@@ -136,19 +130,13 @@ std::shared_ptr<EventSource> EventData::RetrieveTitle(const std::wstring& title,
 
 std::shared_ptr<EventSource> EventData::RetrieveOption(const std::wstring& option)
 {
-	simstring::reader dbr;
-
-	dbr.open(optiondbpath.string());
-
 	std::vector<std::wstring> xstrs;
 
 	for (double ratio = 100; ratio > 40; ratio -= 10) {
-		dbr.retrieve(option, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
+		optionreader->retrieve(option, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
 	}
-
-	dbr.close();
 
 	if (xstrs.empty()) return nullptr;
 
@@ -165,19 +153,13 @@ std::shared_ptr<EventSource> EventData::RetrieveOption(const std::wstring& optio
 
 std::shared_ptr<EventRoot> EventData::RetrieveName(const std::wstring& name)
 {
-	simstring::reader dbr;
-
-	dbr.open(namedbpath.string());
-
 	std::vector<std::wstring> xstrs;
 
 	for (double ratio = 100; ratio > 20; ratio -= 10) {
-		dbr.retrieve(name, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
+		namereader->retrieve(name, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
 		if (xstrs.size() > 0)
 			break;
 	}
-
-	dbr.close();
 
 	if (xstrs.empty()) return nullptr;
 
@@ -236,6 +218,13 @@ void EventData::InitDB(const std::filesystem::path& path)
 	dbw_option.close();
 	dbw_name.close();
 
+	titlereader = std::shared_ptr<simstring::reader>(new simstring::reader());
+	optionreader = std::shared_ptr<simstring::reader>(new simstring::reader());
+	namereader = std::shared_ptr<simstring::reader>(new simstring::reader());
+
+	titlereader->open(dbpath.string());
+	optionreader->open(optiondbpath.string());
+	namereader->open(namedbpath.string());
 }
 
 std::wstring EventData::GetBestMatchString(const std::vector<std::wstring>& xstrs, const std::wstring& text)
