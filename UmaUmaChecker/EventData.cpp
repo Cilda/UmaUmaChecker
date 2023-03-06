@@ -22,83 +22,77 @@ EventData::~EventData()
 bool EventData::Load(const std::wstring& path)
 {
 	std::fstream stream(path);
-	if (stream.good()) {
-		std::stringstream text;
+	if (!stream.good()) return false;
 
-		text << stream.rdbuf();
+	try {
+		json skills = json::parse(stream);
 
-		try {
-			json skills = json::parse(text.str());
+		for (auto& cards : skills.items().begin().value()) {
+			std::vector<std::shared_ptr<EventRoot>> RankList;
 
-			for (auto& cards : skills.items().begin().value()) {
-				std::vector<std::shared_ptr<EventRoot>> RankList;
+			for (auto& card : cards.items()) {
+				auto name = card.key();
+				auto events = card.value()["Events"];
+				std::shared_ptr<EventRoot> skill(new EventRoot());
 
-				for (auto& card : cards.items()) {
-					auto name = card.key();
-					auto events = card.value()["Events"];
-					std::shared_ptr<EventRoot> skill(new EventRoot());
+				skill->Name = utility::from_u8string(name);
 
-					skill->Name = utility::from_u8string(name);
+				for (auto& e : events) {
+					for (auto& choise : e.items()) {
+						std::shared_ptr<EventSource> event(new EventSource());
 
-					for (auto& e : events) {
-						for (auto& choise : e.items()) {
-							std::shared_ptr<EventSource> event(new EventSource());
+						for (auto& option : choise.value()) {
+							std::shared_ptr<EventOption> choise(new EventOption());
 
-							for (auto& option : choise.value()) {
-								std::shared_ptr<EventOption> choise(new EventOption());
+							choise->Title = utility::from_u8string(option["Title"].get<std::string>());
+							choise->Effect = utility::from_u8string(option["Effect"].get<std::string>());
+							event->Options.push_back(choise);
 
-								choise->Title = utility::from_u8string(option["Title"].get<std::string>());
-								choise->Effect = utility::from_u8string(option["Effect"].get<std::string>());
-								event->Options.push_back(choise);
-
-								if (OptionMap.find(choise->Title) == OptionMap.end()) {
-									OptionMap[choise->Title] = event;
-								}
-							}
-
-							std::wstring EventName = utility::from_u8string(choise.key());
-							event->Name = EventName;
-							skill->Events[EventName] = event;
-
-							if (EventMap.find(EventName) == EventMap.end()) {
-								EventMap[EventName] = event;
+							if (OptionMap.find(choise->Title) == OptionMap.end()) {
+								OptionMap[choise->Title] = event;
 							}
 						}
+
+						std::wstring EventName = utility::from_u8string(choise.key());
+						event->Name = EventName;
+						skill->Events[EventName] = event;
+
+						if (EventMap.find(EventName) == EventMap.end()) {
+							EventMap[EventName] = event;
+						}
 					}
-
-					EventRoots.push_back(skill);
-					RankList.push_back(skill);
-
-					NameMap[skill->Name] = skill;
 				}
 
-				std::sort(RankList.begin(), RankList.end(), [](std::shared_ptr<EventRoot> a, std::shared_ptr<EventRoot> b) {
-					std::wregex regex(L"^［(.+?)］(.+?)$");
-					std::wcmatch m1, m2;
+				EventRoots.push_back(skill);
+				RankList.push_back(skill);
 
-					std::regex_search(a->Name.c_str(), m1, regex);
-					std::regex_search(b->Name.c_str(), m2, regex);
-
-					return m1[2].str() < m2[2].str();
-				});
-
-				ByRank.push_back(RankList);
-				RankList.clear();
+				NameMap[skill->Name] = skill;
 			}
+
+			std::sort(RankList.begin(), RankList.end(), [](std::shared_ptr<EventRoot> a, std::shared_ptr<EventRoot> b) {
+				std::wregex regex(L"^［(.+?)］(.+?)$");
+				std::wcmatch m1, m2;
+
+				std::regex_search(a->Name.c_str(), m1, regex);
+				std::regex_search(b->Name.c_str(), m2, regex);
+
+				return m1[2].str() < m2[2].str();
+			});
+
+			ByRank.push_back(RankList);
+			RankList.clear();
 		}
-		catch (json::exception& ex) {
-			return false;
-		}
-
-		std::filesystem::path base_path = path;
-		std::filesystem::path dbpath_parent = utility::GetExeDirectory() + L"\\simstring\\";
-
-		InitDB(dbpath_parent / base_path.stem() / L"");
-
-		return true;
+	}
+	catch (json::exception& ex) {
+		return false;
 	}
 
-	return false;
+	std::filesystem::path base_path = path;
+	std::filesystem::path dbpath_parent = utility::GetExeDirectory() + L"\\simstring\\";
+
+	InitDB(dbpath_parent / base_path.stem() / L"");
+
+	return true;
 }
 
 std::shared_ptr<EventSource> EventData::RetrieveTitle(const std::wstring& title, EventRoot* root)
