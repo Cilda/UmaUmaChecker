@@ -243,10 +243,7 @@
     <ClCompile Include="wxComboBoxPopup.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DebugFrame.cpp" />
-    <ClCompile Include="EventOption.cpp" />
-    <ClCompile Include="EventSource.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="EventRoot.cpp" />
     <ClCompile Include="PreviewFrame.cpp" />
     <ClCompile Include="SettingDialog.cpp" />
     <ClCompile Include="SystemUsage.cpp" />
@@ -275,11 +272,9 @@
     <ClInclude Include="wxComboBoxPopup.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DebugFrame.h" />
-    <ClInclude Include="EventOption.h" />
-    <ClInclude Include="EventSource.h" />
     <ClInclude Include="PreviewFrame.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="EventRoot.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="SettingDialog.h" />
     <ClInclude Include="SystemUsage.h" />
     <ClInclude Include="TextCollector.h" />
