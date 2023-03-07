@@ -27,7 +27,9 @@ bool EventData::Load(const std::wstring& path)
 	try {
 		json skills = json::parse(stream);
 
-		for (auto& cards : skills.items().begin().value()) {
+		auto top = skills.items().begin().value();
+		for (auto itr = top.rbegin(); itr != top.rend(); itr++) {
+			auto& cards = itr.value();
 			std::vector<std::shared_ptr<EventRoot>> RankList;
 
 			for (auto& card : cards.items()) {
