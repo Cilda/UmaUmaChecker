@@ -9,7 +9,7 @@
 
 #include "utility.h"
 
-using json = nlohmann::json;
+using json = nlohmann::ordered_json;
 
 EventData::EventData()
 {
@@ -27,9 +27,7 @@ bool EventData::Load(const std::wstring& path)
 	try {
 		json skills = json::parse(stream);
 
-		auto top = skills.items().begin().value();
-		for (auto itr = top.rbegin(); itr != top.rend(); itr++) {
-			auto& cards = itr.value();
+		for (auto& cards : skills.items().begin().value()) {
 			std::vector<std::shared_ptr<EventRoot>> RankList;
 
 			for (auto& card : cards.items()) {
