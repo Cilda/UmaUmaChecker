@@ -71,6 +71,7 @@ private:
 	bool IsCharaEvent(const cv::Mat& srcImg);
 	bool IsCardEvent(const cv::Mat& srcImg);
 	bool IsScenarioEvent(const cv::Mat& srcImg);
+	bool IsBottomOption(const cv::Mat& srcImg);
 
 	// OCR関数
 	std::wstring GetTextFromImage(const cv::Mat& img);

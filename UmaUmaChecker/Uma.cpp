@@ -369,6 +369,15 @@ bool Uma::IsScenarioEvent(const cv::Mat& srcImg)
 	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
 }
 
+bool Uma::IsBottomOption(const cv::Mat& srcImg)
+{
+	cv::Mat bg;
+	cv::Mat img = srcImg.clone();
+
+	cv::inRange(img, cv::Scalar(5, 40, 100), cv::Scalar(25, 70, 130), bg);
+	return (double)cv::countNonZero(bg) / bg.size().area() > 0.01;
+}
+
 std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 {
 	auto start = std::chrono::system_clock::now();
@@ -614,6 +623,8 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 		Uma::BottomChoiseBound.height * srcImg.size().height
 	));
 
+	if (!IsBottomOption(cut)) return nullptr;
+
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
@@ -645,6 +656,8 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 		Uma::BottomChoiseBound.height * srcImg.size().height
 	));
 
+	if (!IsBottomOption(cut)) return nullptr;
+
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
@@ -675,6 +688,8 @@ std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& 
 		Uma::BottomChoiseBound.width * srcImg.size().width,
 		Uma::BottomChoiseBound.height * srcImg.size().height
 	));
+
+	if (!IsBottomOption(cut)) return nullptr;
 
 	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
