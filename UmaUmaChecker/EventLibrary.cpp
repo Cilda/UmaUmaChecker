@@ -14,7 +14,7 @@
 
 #include "version.h"
 
-using json = nlohmann::json;
+using json = nlohmann::ordered_json;
 
 const double EventLibrary::MIN_DEFAULT_RATIO = 0.4;
 const double EventLibrary::MIN_CHARA_RATIO = 0.4;
@@ -56,53 +56,45 @@ bool EventLibrary::Load()
 bool EventLibrary::LoadScenarioEvent()
 {
 	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\ScenarioEvents.json");
-	if (stream.good()) {
-		std::stringstream text;
+	if (!stream.good()) return false;
 
-		text << stream.rdbuf();
+	try {
+		json events = json::parse(stream);
 
-		try {
-			json events = json::parse(text.str());
+		for (auto& scenario : events.items()) {
+			std::shared_ptr<EventRoot> root(new EventRoot());
 
-			const std::filesystem::path types[] = { L"URA", L"アオハル", L"クラマ", L"グラライ" };
-			for (int i = 0; i < 4; i++) {
-				auto scenario = events[types[i].u8string()];
-				std::shared_ptr<EventRoot> root(new EventRoot());
-
-				for (auto& event : scenario.items()) {
-					std::shared_ptr<EventSource> source(new EventSource());
+			for (auto& event : scenario.value().items()) {
+				std::shared_ptr<EventSource> source(new EventSource());
 					
-					for (auto& option : event.value()) {
-						std::shared_ptr<EventOption> event_option(new EventOption());
+				for (auto& option : event.value()) {
+					std::shared_ptr<EventOption> event_option(new EventOption());
 
-						event_option->Title = utility::from_u8string(option["Title"].get<std::string>());
-						event_option->Effect = utility::from_u8string(option["Effect"].get<std::string>());
+					event_option->Title = utility::from_u8string(option["Title"].get<std::string>());
+					event_option->Effect = utility::from_u8string(option["Effect"].get<std::string>());
 						
-						source->Options.push_back(event_option);
+					source->Options.push_back(event_option);
 
-						if (OptionMap.find(event_option->Title) == OptionMap.end()) {
-							OptionMap[event_option->Title] = source;
-						}
+					if (OptionMap.find(event_option->Title) == OptionMap.end()) {
+						OptionMap[event_option->Title] = source;
 					}
-
-					std::wstring EventName = utility::from_u8string(event.key());
-					source->Name = EventName;
-					root->Events[EventName] = source;
-					ScenarioEventMap[EventName] = source;
 				}
 
-				root->Name = types[i].wstring();
-				ScenarioEvents.push_back(root);
+				std::wstring EventName = utility::from_u8string(event.key());
+				source->Name = EventName;
+				root->Events[EventName] = source;
+				ScenarioEventMap[EventName] = source;
 			}
-		}
-		catch (json::exception& ex) {
-			return false;
-		}
 
-		return true;
+			root->Name = utility::from_u8string(scenario.key());
+			ScenarioEvents.push_back(root);
+		}
+	}
+	catch (json::exception& ex) {
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 void EventLibrary::InitScenarioEventDB()
