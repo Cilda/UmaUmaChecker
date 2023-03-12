@@ -230,6 +230,7 @@
   <ItemGroup>
     <ClCompile Include="AboutDialog.cpp" />
     <ClCompile Include="CheckUpdateDialog.cpp" />
+    <ClCompile Include="CombineImage.cpp" />
     <ClCompile Include="EventData.cpp" />
     <ClCompile Include="FontComboBox.cpp" />
     <ClCompile Include="GrandLiveMusicListFrame.cpp" />
@@ -258,6 +259,7 @@
   <ItemGroup>
     <ClInclude Include="AboutDialog.h" />
     <ClInclude Include="CheckUpdateDialog.h" />
+    <ClInclude Include="CombineImage.h" />
     <ClInclude Include="EventData.h" />
     <ClInclude Include="FontComboBox.h" />
     <ClInclude Include="GrandLiveMusicListFrame.h" />
