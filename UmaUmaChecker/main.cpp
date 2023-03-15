@@ -74,6 +74,7 @@ public:
 		return 0;
 	}
 
+#if _DEBUG
 	virtual void OnFatalException()
 	{
 		GenerateReport(wxDebugReport::Context_Exception);
@@ -93,6 +94,7 @@ public:
 
 		delete report;
 	}
+#endif
 
 private:
 	Gdiplus::GdiplusStartupInput input;
