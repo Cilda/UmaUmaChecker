@@ -235,11 +235,13 @@
     <ClCompile Include="FontComboBox.cpp" />
     <ClCompile Include="GrandLiveMusicListFrame.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Tesseract.cpp" />
     <ClCompile Include="ThemeWrapper.cpp" />
     <ClCompile Include="Theme\BaseRenderer.cpp" />
     <ClCompile Include="Theme\DarkThemeRenderer.cpp" />
     <ClCompile Include="Theme\StdRenderer.cpp" />
     <ClCompile Include="Theme\ThemeManager.cpp" />
+    <ClCompile Include="UmaTripRecognizer.cpp" />
     <ClCompile Include="UpdateManager.cpp" />
     <ClCompile Include="wxComboBoxPopup.cpp" />
     <ClCompile Include="Config.cpp" />
@@ -265,11 +267,13 @@
     <ClInclude Include="GrandLiveMusicListFrame.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="object_pool.hpp" />
+    <ClInclude Include="Tesseract.h" />
     <ClInclude Include="ThemeWrapper.h" />
     <ClInclude Include="Theme\BaseRenderer.h" />
     <ClInclude Include="Theme\DarkThemeRenderer.h" />
     <ClInclude Include="Theme\StdRenderer.h" />
     <ClInclude Include="Theme\ThemeManager.h" />
+    <ClInclude Include="UmaTripRecognizer.h" />
     <ClInclude Include="UpdateManager.h" />
     <ClInclude Include="wxComboBoxPopup.h" />
     <ClInclude Include="Config.h" />
