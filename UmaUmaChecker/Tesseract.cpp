@@ -24,7 +24,7 @@ void Tesseract::Initialize()
 	bInitialized = true;
 }
 
-std::wstring Tesseract::Recognize(cv::Mat& image)
+std::wstring Tesseract::Recognize(const cv::Mat& image)
 {
 	if (!bInitialized) return L"";
 

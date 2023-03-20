@@ -12,7 +12,7 @@ public:
 	~Tesseract() = delete;
 
 	static void Initialize();
-	static std::wstring Recognize(cv::Mat& image);
+	static std::wstring Recognize(const cv::Mat& image);
 
 private:
 	static bool bInitialized;

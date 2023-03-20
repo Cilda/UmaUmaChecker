@@ -18,12 +18,9 @@
 
 #include "Log.h"
 #include "utility.h"
-
+#include "Tesseract.h"
 #include "../libwinrt/winrt_capture.h"
 
-#ifdef USE_MS_OCR
-#include "../UmaOCRWrapper/UmaOCRWrapper.h"
-#endif
 
 const cv::Rect2d Uma::CharaEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::CardEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
@@ -43,18 +40,6 @@ const float Uma::UnsharpRatio = 2.0f;
 
 Uma::Uma(wxFrame* frame) : capture(nullptr), bDetected(false), bStop(false), thread(nullptr), CurrentCharacter(nullptr), CurrentEvent(nullptr)
 {
-	auto instance = Config::GetInstance();
-
-	int pool_size = std::max(instance->OcrPoolSize, 1);
-
-	for (int i = 0; i < pool_size; i++) {
-		tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
-		api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
-		api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
-
-		tess_pool.join_manage_resource(api);
-	}
-
 	this->frame = frame;
 }
 
@@ -380,44 +365,15 @@ bool Uma::IsBottomOption(const cv::Mat& srcImg)
 
 std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 {
-	auto start = std::chrono::system_clock::now();
-
-	auto api = tess_pool.get();
-
-	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
-	api->Recognize(NULL);
-
-	const std::unique_ptr<const char[]> utf8_text(api->GetUTF8Text());
-	std::wstring text = utility::from_u8string(utf8_text.get());
-	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-
-	auto end = std::chrono::system_clock::now();
-	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-	tess_pool.release(api);
-	return text;
+	return Tesseract::Recognize(img);
 }
 
 int Uma::GetNumericFromImage(const cv::Mat& img)
 {
-	auto start = std::chrono::system_clock::now();
+	std::wstring value = Tesseract::Recognize(img);
+	if (value.empty()) return 0;
 
-	std::lock_guard<std::mutex> lock(mutex);
-
-	auto api = tess_pool.get();
-
-	api->SetImage(img.data, img.size().width, img.size().height, img.channels(), img.step1());
-	api->Recognize(NULL);
-
-	const std::unique_ptr<const char[]> utf8_text(api->GetUTF8Text());
-	std::wstring text = utility::from_u8string(utf8_text.get());
-	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
-
-	auto end = std::chrono::system_clock::now();
-	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-	tess_pool.release(api);
-	return std::stoi(text);
+	return std::stoi(value);
 }
 
 void Uma::AsyncFunction(std::vector<std::wstring>& strs, const cv::Mat& img)

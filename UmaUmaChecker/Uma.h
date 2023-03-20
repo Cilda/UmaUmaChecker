@@ -117,7 +117,6 @@ private:
 	EventLibrary SkillLib;
 	TextCollector Collector;
 	EventRoot* CurrentCharacter;
-	object_pool<tesseract::TessBaseAPI> tess_pool;
 	std::wstring DetectedEventName;
 	std::mutex mutex;
 

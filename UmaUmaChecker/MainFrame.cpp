@@ -191,8 +191,6 @@ void MainFrame::Init()
 
 #ifdef _DEBUG
 	new wxLogWindow(this, wxT("ログ"));
-	GrandLiveMusicListFrame* frame = new GrandLiveMusicListFrame(this);
-	frame->Show();
 #endif
 }
 

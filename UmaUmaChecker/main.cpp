@@ -18,6 +18,7 @@
 
 #include "Log.h"
 #include "version.h"
+#include "Tesseract.h"
 
 typedef HRESULT(_stdcall* SetThreadDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef BOOL(*SetProcessDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
@@ -51,6 +52,7 @@ public:
 #ifndef _DEBUG
 			UpdateManager::GetInstance().UpdateEvents();
 #endif
+			Tesseract::Initialize();
 
 			MainFrame* frame = new MainFrame(NULL);
 			frame->Show(true);
