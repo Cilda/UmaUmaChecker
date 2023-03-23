@@ -12,6 +12,8 @@ public:
 	~Tesseract() = delete;
 
 	static void Initialize();
+	static void Uninitialize();
+
 	static std::wstring Recognize(const cv::Mat& image);
 
 private:

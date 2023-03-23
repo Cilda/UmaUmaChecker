@@ -15,13 +15,22 @@ public:
 
 	virtual ~object_pool()
 	{
-		pools.clear();
+		clear();
+	}
+
+	void clear()
+	{
+		for (T* p : data) {
+			delete p;
+		}
+
 		data.clear();
+		pools.clear();
 	}
 
 	void join_manage_resource(T* obj)
 	{
-		data.emplace_back(obj);
+		data.push_back(obj);
 		pools.push_back(obj);
 	}
 
@@ -48,6 +57,6 @@ private:
 	std::mutex mutex;
 	std::condition_variable cond;
 	std::list<T*> pools;
-	std::list<std::unique_ptr<T>> data;
+	std::list<T*> data;
 };
 

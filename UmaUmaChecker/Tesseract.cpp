@@ -24,6 +24,11 @@ void Tesseract::Initialize()
 	bInitialized = true;
 }
 
+void Tesseract::Uninitialize()
+{
+	tess_pool.clear();
+}
+
 std::wstring Tesseract::Recognize(const cv::Mat& image)
 {
 	if (!bInitialized) return L"";

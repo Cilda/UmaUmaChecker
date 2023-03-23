@@ -73,6 +73,8 @@ public:
 		config->Save();
 
 		Gdiplus::GdiplusShutdown(token);
+		Tesseract::Uninitialize();
+
 		return 0;
 	}
 
