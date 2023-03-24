@@ -13,5 +13,8 @@ public:
 
 private:
 	static cv::Rect2d range;
+	static double StartXRatio;
+	static double WidthRatio;
+	static double HeightRatio;
 };
 

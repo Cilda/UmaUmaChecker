@@ -3,10 +3,15 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 
+#include <opencv2/opencv.hpp>
+
+#include "UmaTripRecognizer.h"
+
 DebugFrame::DebugFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("デバッグウィンドウ"))
 {
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	this->SetBackgroundColour(wxColour(255, 255, 255));
+	this->DragAcceptFiles(true);
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -28,6 +33,7 @@ DebugFrame::DebugFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("デバ
 	this->Centre(wxBOTH);
 
 	m_buttonOcr->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DebugFrame::OnClickOcr, this);
+	this->Bind(wxEVT_DROP_FILES, &DebugFrame::OnDropFile, this);
 }
 
 DebugFrame::~DebugFrame()
@@ -36,5 +42,18 @@ DebugFrame::~DebugFrame()
 
 void DebugFrame::OnClickOcr(wxCommandEvent& event)
 {
+}
+
+void DebugFrame::OnDropFile(wxDropFilesEvent& event)
+{
+	if (event.GetNumberOfFiles() > 0) {
+		wxString filename = event.GetFiles()[0];
+
+		if (wxFileExists(filename)) {
+			cv::Mat img = cv::imread(filename.ToStdString());
+			UmaTripRecognizer recognizer;
+			recognizer.Detect(img);
+		}
+	}
 }
 

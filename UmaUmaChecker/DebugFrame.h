@@ -12,6 +12,7 @@ public:
 
 private:
 	void OnClickOcr(wxCommandEvent& event);
+	void OnDropFile(wxDropFilesEvent& event);
 
 private:
 	wxChoice* m_comboOcrSource;
