@@ -60,7 +60,7 @@ std::wstring UmaTripRecognizer::Detect(cv::Mat& src)
 
 		if (black_ratio > 0.01) {
 			std::wstring name = Tesseract::Recognize(bin);
-			wxLogDebug(wxT("%s"), name);
+			return name;
 		}
 	}
 
