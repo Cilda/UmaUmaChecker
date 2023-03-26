@@ -8,8 +8,14 @@
 cv::Rect2d UmaTripRecognizer::range = {
 	0.02777777777777777777777777777778,
 	0.2890625,
-	0.93849206349206349206349206349206,
+	0.92849206349206349206349206349206,
 	0.37276785714285714285714285714286
+};
+cv::Rect2d UmaTripRecognizer::TitleRange = {
+	0.01388888888888888888888888888889,
+	0.23102678571428571428571428571429,
+	0.9781746031746031746031746031746,
+	0.04799107142857142857142857142857
 };
 double UmaTripRecognizer::StartXRatio = 0.183;
 double UmaTripRecognizer::WidthRatio = 0.459;
@@ -23,11 +29,13 @@ UmaTripRecognizer::~UmaTripRecognizer()
 {
 }
 
-std::wstring UmaTripRecognizer::Detect(cv::Mat& src)
+bool UmaTripRecognizer::Detect(cv::Mat& src, std::vector<std::wstring>& vec)
 {
 	std::vector<std::vector<cv::Point>> contours;
 	std::vector<cv::Vec4i> hierarchy;
 	cv::Mat bin;
+
+	if (!IsDialog(src)) return L"";
 
 	auto img = cv::Mat(src, cv::Rect(range.x * src.size().width, range.y * src.size().height, range.width * src.size().width, range.height * src.size().height));
 	
@@ -60,9 +68,24 @@ std::wstring UmaTripRecognizer::Detect(cv::Mat& src)
 
 		if (black_ratio > 0.01) {
 			std::wstring name = Tesseract::Recognize(bin);
-			return name;
+			vec.push_back(name);
 		}
 	}
 
-	return L"";
+	return vec.size() > 0;
+}
+
+bool UmaTripRecognizer::IsDialog(cv::Mat& src)
+{
+	cv::Mat img = cv::Mat(src, cv::Rect(
+		TitleRange.x * src.size().width,
+		TitleRange.y * src.size().height,
+		TitleRange.width * src.size().width,
+		TitleRange.height * src.size().height
+	));
+	cv::Mat bin;
+	cv::inRange(img, cv::Scalar(5, 190, 103), cv::Scalar(15, 215, 150), bin);
+	double ratio = cv::countNonZero(bin) / (double)bin.size().area();
+
+	return ratio > 0.7;
 }

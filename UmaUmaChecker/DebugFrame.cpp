@@ -2,6 +2,8 @@
 
 #include <wx/sizer.h>
 #include <wx/button.h>
+#include <wx/dynarray.h>
+#include <wx/log.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -52,7 +54,12 @@ void DebugFrame::OnDropFile(wxDropFilesEvent& event)
 		if (wxFileExists(filename)) {
 			cv::Mat img = cv::imread(filename.ToStdString());
 			UmaTripRecognizer recognizer;
-			recognizer.Detect(img);
+			std::vector<std::wstring> names;
+
+			recognizer.Detect(img, names);
+			if (names.size() > 0) {
+				
+			}
 		}
 	}
 }
