@@ -625,7 +625,7 @@ void MainFrame::SetTrainingCharaComboBox()
 	int r = 3;
 
 	auto& characters = umaMgr->GetCharacters();
-	for (auto itr = characters.rbegin(); itr != characters.rend(); itr++) {
+	for (auto itr = characters.begin(); itr != characters.end(); itr++) {
 		m_comboBoxUma->Append(std::wstring(L"☆") + std::to_wstring(r));
 
 		for (auto& chara : *itr) {
