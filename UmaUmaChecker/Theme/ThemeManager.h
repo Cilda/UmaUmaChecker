@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseRenderer.h"
+#include <memory>
 
 class ThemeManager final
 {
@@ -16,7 +17,7 @@ private:
 	static void NotifyAllControl(wxWindow* parent);
 
 private:
-	static BaseRenderer* render;
+	static std::unique_ptr<BaseRenderer> render;
 };
 
 struct FunctionRecord
