@@ -11,11 +11,7 @@
 #include <mutex>
 
 #include <opencv2/opencv.hpp>
-
-
-#ifndef USE_MS_OCR
 #include <tesseract/baseapi.h>
-#endif
 
 #include "Config.h"
 #include "object_pool.hpp"

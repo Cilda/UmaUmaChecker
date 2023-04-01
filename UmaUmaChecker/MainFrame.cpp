@@ -246,10 +246,14 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 			directory = utility::GetExeDirectory() + L"\\Screenshots\\";
 		}
 
-		std::wstring savename = directory
-			+ std::wstring(L"screenshot_")
-			+ std::to_wstring(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
-			+ config->GetImageExtension();
+		tm lt;
+		time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+		localtime_s(&lt, &now);
+		std::wstring time = static_cast<std::wostringstream&&>(std::wostringstream() << std::put_time(&lt, L"%Y-%m-%d_%H-%M-%S")).str();
+
+		std::wstring filename = L"screenshot_" + time;
+		std::wstring savename = directory + filename + config->GetImageExtension();
 
 		utility::GetEncoderClsid(config->GetImageMimeType().c_str(), &clsid);
 
