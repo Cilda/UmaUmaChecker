@@ -235,6 +235,7 @@
     <ClCompile Include="FontComboBox.cpp" />
     <ClCompile Include="GrandLiveMusicListFrame.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="ScenarioData.cpp" />
     <ClCompile Include="Tesseract.cpp" />
     <ClCompile Include="ThemeWrapper.cpp" />
     <ClCompile Include="Theme\BaseRenderer.cpp" />
@@ -267,6 +268,8 @@
     <ClInclude Include="GrandLiveMusicListFrame.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="object_pool.hpp" />
+    <ClInclude Include="ScenarioData.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="Tesseract.h" />
     <ClInclude Include="ThemeWrapper.h" />
     <ClInclude Include="Theme\BaseRenderer.h" />

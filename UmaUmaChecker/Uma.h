@@ -34,7 +34,7 @@ public:
 	std::wstring GetTrainingCharacter() const { return CurrentCharacter ? CurrentCharacter->Name : L""; }
 
 	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const {
-		return SkillLib.GetCharacters();
+		return SkillLib.CharaEvent.GetRanks();
 	}
 
 	EventSource* DetectEvent(const cv::Mat& srcImg, uint64* pHash = nullptr, std::vector<std::wstring>* pEvents = nullptr, bool* bScaned = nullptr);

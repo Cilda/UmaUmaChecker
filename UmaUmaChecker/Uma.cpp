@@ -68,10 +68,6 @@ void Uma::Init()
 
 	LOG_INFO << "Loaded EventData at " << msec << " msec!";
 
-#ifdef USE_OCR
-	InitOCR();
-#endif
-
 	Collector.Load();
 }
 
@@ -171,7 +167,7 @@ void Uma::Stop()
 
 bool Uma::SetTrainingCharacter(const std::wstring& CharaName)
 {
-	CurrentCharacter = SkillLib.GetCharacter(CharaName);
+	CurrentCharacter = SkillLib.CharaEvent.GetName(CharaName).get();
 	return CurrentCharacter != nullptr;
 }
 
@@ -654,14 +650,14 @@ std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& 
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.RetrieveScenarioEventFromOptionTitle(text);
+		auto event = SkillLib.ScenarioEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.RetrieveScenarioEventFromOptionTitle(text);
+		auto event = SkillLib.ScenarioEvent.RetrieveTitle(text);
 		if (event) return event;
 	}
 
@@ -850,7 +846,7 @@ std::shared_ptr<EventSource> Uma::GetScenarioEvent(const std::vector<std::wstrin
 	std::shared_ptr<EventSource> rvalue;
 
 	for (auto& text : text_list) {
-		auto ret = SkillLib.RetrieveScenarioEvent(text);
+		auto ret = SkillLib.ScenarioEvent.RetrieveOption(text);
 		if (ret) {
 			double rate = CalcTextMatchRate(text, ret->Name);
 			if (rate > best_rate) {
