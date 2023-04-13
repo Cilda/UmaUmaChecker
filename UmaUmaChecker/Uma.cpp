@@ -657,7 +657,7 @@ std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.ScenarioEvent.RetrieveTitle(text);
+		auto event = SkillLib.ScenarioEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
@@ -846,7 +846,7 @@ std::shared_ptr<EventSource> Uma::GetScenarioEvent(const std::vector<std::wstrin
 	std::shared_ptr<EventSource> rvalue;
 
 	for (auto& text : text_list) {
-		auto ret = SkillLib.ScenarioEvent.RetrieveOption(text);
+		auto ret = SkillLib.ScenarioEvent.RetrieveTitle(text);
 		if (ret) {
 			double rate = CalcTextMatchRate(text, ret->Name);
 			if (rate > best_rate) {
