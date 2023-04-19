@@ -34,7 +34,7 @@ public:
 	std::wstring GetTrainingCharacter() const { return CurrentCharacter ? CurrentCharacter->Name : L""; }
 
 	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const {
-		return SkillLib.CharaEvent.GetRanks();
+		return EventLib.CharaEvent.GetRanks();
 	}
 
 	EventSource* DetectEvent(const cv::Mat& srcImg, uint64* pHash = nullptr, std::vector<std::wstring>* pEvents = nullptr, bool* bScaned = nullptr);
@@ -110,7 +110,7 @@ private:
 	bool bDetected;
 	bool bStop;
 	std::thread* thread;
-	EventLibrary SkillLib;
+	//EventLibrary SkillLib;
 	TextCollector Collector;
 	EventRoot* CurrentCharacter;
 	std::wstring DetectedEventName;

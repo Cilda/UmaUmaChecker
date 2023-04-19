@@ -61,8 +61,6 @@ void Uma::Init()
 	
 	auto start = std::chrono::system_clock::now();
 
-	SkillLib.Load();
-
 	auto end = std::chrono::system_clock::now();
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
@@ -167,7 +165,7 @@ void Uma::Stop()
 
 bool Uma::SetTrainingCharacter(const std::wstring& CharaName)
 {
-	CurrentCharacter = SkillLib.CharaEvent.GetName(CharaName).get();
+	CurrentCharacter = EventLib.CharaEvent.GetName(CharaName).get();
 	return CurrentCharacter != nullptr;
 }
 
@@ -584,14 +582,14 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.CardEvent.RetrieveOption(text);
+		auto event = EventLib.CardEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.CardEvent.RetrieveOption(text);
+		auto event = EventLib.CardEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
@@ -617,14 +615,14 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.CharaEvent.RetrieveOption(text);
+		auto event = EventLib.CharaEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.CharaEvent.RetrieveOption(text);
+		auto event = EventLib.CharaEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
@@ -650,14 +648,14 @@ std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& 
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.ScenarioEvent.RetrieveOption(text);
+		auto event = EventLib.ScenarioEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = SkillLib.ScenarioEvent.RetrieveOption(text);
+		auto event = EventLib.ScenarioEvent.RetrieveOption(text);
 		if (event) return event;
 	}
 
@@ -791,7 +789,7 @@ EventRoot* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 			}
 		}
 
-		auto chara = SkillLib.CharaEvent.RetrieveName(alias + name);
+		auto chara = EventLib.CharaEvent.RetrieveName(alias + name);
 		if (chara.get() == CurrentCharacter) return nullptr;
 
 		return chara ? chara.get() : nullptr;
@@ -806,7 +804,7 @@ std::shared_ptr<EventSource> Uma::GetCardEvent(const std::vector<std::wstring>& 
 	std::shared_ptr<EventSource> rvalue;
 
 	for (auto& text : text_list) {
-		auto ret = SkillLib.CardEvent.RetrieveTitle(text);
+		auto ret = EventLib.CardEvent.RetrieveTitle(text);
 		if (ret) {
 			double rate = CalcTextMatchRate(text, ret->Name);
 			if (rate > best_rate) {
@@ -827,7 +825,7 @@ std::shared_ptr<EventSource> Uma::GetCharaEvent(const std::vector<std::wstring>&
 	std::shared_ptr<EventSource> rvalue;
 
 	for (auto& text : text_list) {
-		auto ret = SkillLib.CharaEvent.RetrieveTitle(text, CurrentCharacter);
+		auto ret = EventLib.CharaEvent.RetrieveTitle(text, CurrentCharacter);
 		if (ret) {
 			double rate = CalcTextMatchRate(text, ret->Name);
 			if (rate > best_rate) {
@@ -846,7 +844,7 @@ std::shared_ptr<EventSource> Uma::GetScenarioEvent(const std::vector<std::wstrin
 	std::shared_ptr<EventSource> rvalue;
 
 	for (auto& text : text_list) {
-		auto ret = SkillLib.ScenarioEvent.RetrieveTitle(text);
+		auto ret = EventLib.ScenarioEvent.RetrieveTitle(text);
 		if (ret) {
 			double rate = CalcTextMatchRate(text, ret->Name);
 			if (rate > best_rate) {
@@ -864,8 +862,8 @@ bool Uma::Reload()
 	CurrentCharacter = nullptr;
 	CurrentEvent = nullptr;
 
-	SkillLib.Clear();
-	SkillLib.Load();
+	EventLib.Clear();
+	EventLib.Load();
 
 	return true;
 }
