@@ -577,7 +577,8 @@ std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 
 	if (!IsBottomOption(cut)) return nullptr;
 
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	ResizeBest(cut, rsImg, srcImg.size().height);
 	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
 
@@ -610,7 +611,8 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 
 	if (!IsBottomOption(cut)) return nullptr;
 
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	ResizeBest(cut, rsImg, srcImg.size().height);
 	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
 
@@ -643,7 +645,8 @@ std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& 
 
 	if (!IsBottomOption(cut)) return nullptr;
 
-	cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	ResizeBest(cut, rsImg, srcImg.size().height);
 	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
 	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
 
