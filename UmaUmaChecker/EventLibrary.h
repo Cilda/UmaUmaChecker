@@ -30,3 +30,5 @@ public:
 private:
 	std::string DBPath;
 };
+
+extern EventLibrary EventLib;

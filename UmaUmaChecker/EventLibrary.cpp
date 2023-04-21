@@ -16,6 +16,8 @@
 
 using json = nlohmann::ordered_json;
 
+EventLibrary EventLib;
+
 EventLibrary::EventLibrary()
 {
 	std::string BasePath = utility::to_string(utility::GetExeDirectory());
