@@ -54,5 +54,6 @@ private:
 
 #define LOG_INFO BOOST_LOG_SEV(Log::GetInstance()->logger, Log::eInfo)
 #define LOG_DEBUG BOOST_LOG_SEV(Log::GetInstance()->logger, Log::eDebug)
+#define LOG_WARNING BOOST_LOG_SEV(Log::GetInstance()->logger, Log::eWarning)
 #define LOG_ERROR BOOST_LOG_SEV(Log::GetInstance()->logger, Log::eError)
 #define LOG_EXCEPTION BOOST_LOG_SEV(Log::GetInstance()->logger, Log::eException)
