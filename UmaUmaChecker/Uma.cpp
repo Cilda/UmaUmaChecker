@@ -680,11 +680,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		if (pHash) *pHash = hash;
 
 		auto event = GetCardEvent(events);
-		if (!event) event = GetEventByBottomOption(srcImg);
-		if (event) {
-			return event.get();
-		}
-		return nullptr;
+		auto eventOption = GetEventByBottomOption(srcImg);
+		return eventOption ? eventOption.get() : event.get();
 	}
 
 	if (CurrentCharacter) {
@@ -695,11 +692,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 			if (pHash) *pHash = hash;
 
 			auto event = GetCharaEvent(events);
-			if (!event) event = GetCharaEventByBottomOption(srcImg);
-			if (event) {
-				return event.get();
-			}
-			return nullptr;
+			auto eventOption = GetCharaEventByBottomOption(srcImg);
+			return eventOption ? eventOption.get() : event.get();
 		}
 	}
 
@@ -710,11 +704,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		if (pHash) *pHash = hash;
 
 		auto event = GetScenarioEvent(events);
-		if (!event) event = GetScenarioEventByBottomOption(srcImg);
-		if (event) {
-			return event.get();
-		}
-		return nullptr;
+		auto eventOption = GetScenarioEventByBottomOption(srcImg);
+		return eventOption ? eventOption.get() : event.get();
 	}
 
 	return nullptr;
