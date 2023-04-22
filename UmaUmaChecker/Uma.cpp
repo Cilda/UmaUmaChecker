@@ -58,13 +58,6 @@ void Uma::Init()
 {
 	CurrentEvent = nullptr;
 	CurrentCharacter = nullptr;
-	
-	auto start = std::chrono::system_clock::now();
-
-	auto end = std::chrono::system_clock::now();
-	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-	LOG_INFO << "Loaded EventData at " << msec << " msec!";
 
 	Collector.Load();
 }
@@ -681,6 +674,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 
 		auto event = GetCardEvent(events);
 		auto eventOption = GetEventByBottomOption(srcImg);
+		if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
 		return eventOption ? eventOption.get() : event.get();
 	}
 
@@ -693,6 +687,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 
 			auto event = GetCharaEvent(events);
 			auto eventOption = GetCharaEventByBottomOption(srcImg);
+			if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
 			return eventOption ? eventOption.get() : event.get();
 		}
 	}
@@ -705,6 +700,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 
 		auto event = GetScenarioEvent(events);
 		auto eventOption = GetScenarioEventByBottomOption(srcImg);
+		if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
 		return eventOption ? eventOption.get() : event.get();
 	}
 
