@@ -673,9 +673,11 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		if (pHash) *pHash = hash;
 
 		auto event = GetCardEvent(events);
-		auto eventOption = GetEventByBottomOption(srcImg);
-		if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
-		return eventOption ? eventOption.get() : event.get();
+		if (!event) event = GetEventByBottomOption(srcImg);
+		if (event) {
+			return event.get();
+		}
+		return nullptr;
 	}
 
 	if (CurrentCharacter) {
@@ -686,9 +688,11 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 			if (pHash) *pHash = hash;
 
 			auto event = GetCharaEvent(events);
-			auto eventOption = GetCharaEventByBottomOption(srcImg);
-			if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
-			return eventOption ? eventOption.get() : event.get();
+			if (!event) event = GetCharaEventByBottomOption(srcImg);
+			if (event) {
+				return event.get();
+			}
+			return nullptr;
 		}
 	}
 
@@ -699,9 +703,11 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		if (pHash) *pHash = hash;
 
 		auto event = GetScenarioEvent(events);
-		auto eventOption = GetScenarioEventByBottomOption(srcImg);
-		if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
-		return eventOption ? eventOption.get() : event.get();
+		if (!event) event = GetScenarioEventByBottomOption(srcImg);
+		if (event) {
+			return event.get();
+		}
+		return nullptr;
 	}
 
 	return nullptr;
