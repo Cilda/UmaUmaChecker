@@ -1,8 +1,8 @@
 name: MSBuild
 
 on:
-  push:
-    branches: [ "master" ]
+  #push:
+  #  branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
@@ -84,7 +84,7 @@ jobs:
     - name: Restore vcpkg caches
       uses: actions/cache@v3.2.3
       with:
-        path: ${{ env.SOLUTION_FILE_PATH }}/vcpkg_installed
+        path: $HOME\AppData\Local\vcpkg\archives
         key: vcpkg-${{hashFiles('./vcpkg.json')}}
         restore-keys: |
           vcpkg-${{hashFiles('./vcpkg.json')}}
