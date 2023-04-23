@@ -44,3 +44,5 @@ autolabeler:
   - label: 'enhancement'
     branch:
       - '/feature\/.+/'
+exclude-labels:
+  - 'skip-changelog'
