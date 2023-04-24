@@ -125,7 +125,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	if (!config->IsShowStatusBar) m_statusBar->Hide();
 	else timer.Start(1000);
 
-	m_comboPopup = new wxComboBoxPopup(this);
+	m_comboPopup = new ThemedWrapper<wxComboBoxPopup>(this);
 
 	this->SetSizer(bSizerTop);
 	this->Fit();
