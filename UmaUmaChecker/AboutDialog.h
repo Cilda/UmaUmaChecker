@@ -5,8 +5,9 @@
 #include <wx/button.h>
 #include <wx/webrequest.h>
 
+#include "ThemeWrapper.h"
 
-class AboutDialog : public wxDialog
+class AboutDialog : public ThemedWindowWrapper<wxDialog>
 {
 public:
 	AboutDialog(wxWindow* parent);

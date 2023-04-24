@@ -16,7 +16,7 @@
 #include "Config.h"
 #include "../libwinrt/winrt_capture.h"
 
-SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent, wxID_ANY, wxT("設定"), wxDefaultPosition, wxSize(500, -1), wxDEFAULT_DIALOG_STYLE)
+SettingDialog::SettingDialog(wxWindow* parent, Config* config) : ThemedWindowWrapper<wxDialog>(parent, wxID_ANY, wxT("設定"), wxDefaultPosition, wxSize(500, -1), wxDEFAULT_DIALOG_STYLE)
 {
 	this->bUpdated = false;
 	this->UpdatedCount = 0;
@@ -25,33 +25,33 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
-	this->SetBackgroundColour(wxColour(255, 255, 255));
+	//this->SetBackgroundColour(wxColour(255, 255, 255));
 	this->SetDoubleBuffered(true);
 
 	wxBoxSizer* sizeParent = new wxBoxSizer(wxVERTICAL);
 	{
-		wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("一般")), wxVERTICAL);
+		wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, wxT("一般")), wxVERTICAL);
 		{
 			wxFlexGridSizer* gridSizer = new wxFlexGridSizer(4, 2, 3, 0);
 			{
 				// 更新
-				m_staticTextUpdate = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("イベントを最新に更新する"));
-				m_buttonUpdate = new wxButton(sizeS1->GetStaticBox(), wxID_ANY, wxT("更新"));
+				m_staticTextUpdate = new ThemedWrapper<wxStaticText>(sizeS1->GetStaticBox(), wxID_ANY, wxT("イベントを最新に更新する"));
+				m_buttonUpdate = new ThemedButtonWrapper<wxButton>(sizeS1->GetStaticBox(), wxID_ANY, wxT("更新"));
 				gridSizer->Add(m_staticTextUpdate, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 				gridSizer->Add(m_buttonUpdate, 0);
 
 				// フォント選択
 				{
-					m_staticTextFontSelect = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("ウィンドウのフォント"));
+					m_staticTextFontSelect = new ThemedWrapper<wxStaticText>(sizeS1->GetStaticBox(), wxID_ANY, wxT("ウィンドウのフォント"));
 					gridSizer->Add(m_staticTextFontSelect, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
 					wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 					{
-						m_comboFontList = new FontComboBox(sizeS1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY | wxCB_SORT);
+						m_comboFontList = new ThemedComboBoxWrapper<FontComboBox>(sizeS1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY | wxCB_SORT);
 						sizer->Add(m_comboFontList, 0, wxRIGHT, 5);
 					}
 					{
-						m_comboFontSizeList = new wxComboBox(sizeS1->GetStaticBox(), wxID_ANY);
+						m_comboFontSizeList = new ThemedComboBoxWrapper<wxComboBox>(sizeS1->GetStaticBox(), wxID_ANY);
 						wxIntegerValidator<int> validator;
 						validator.SetMin(2);
 						validator.SetMax(100);
@@ -73,15 +73,15 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 				*/
 
 				// 表示行数
-				m_staticTextMaxLine = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("効果テキスト最大行数"));
-				m_spinCtrlMaxLine = new wxSpinCtrl(sizeS1->GetStaticBox(), wxID_ANY);
+				m_staticTextMaxLine = new ThemedWrapper<wxStaticText>(sizeS1->GetStaticBox(), wxID_ANY, wxT("効果テキスト最大行数"));
+				m_spinCtrlMaxLine = new ThemedWrapper<wxSpinCtrl>(sizeS1->GetStaticBox(), wxID_ANY);
 				m_spinCtrlMaxLine->SetRange(2, 10);
 				gridSizer->Add(m_staticTextMaxLine, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 				gridSizer->Add(m_spinCtrlMaxLine, 0);
 
 				// テーマ
-				wxStaticText* themeText = new wxStaticText(sizeS1->GetStaticBox(), wxID_ANY, wxT("テーマ"));
-				m_comboTheme = new wxComboBox(sizeS1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+				wxStaticText* themeText = new ThemedWrapper<wxStaticText>(sizeS1->GetStaticBox(), wxID_ANY, wxT("テーマ"));
+				m_comboTheme = new ThemedComboBoxWrapper<wxComboBox>(sizeS1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
 				m_comboTheme->AppendString(wxT("ライト"));
 				m_comboTheme->AppendString(wxT("ダーク"));
 				gridSizer->Add(themeText, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
@@ -91,47 +91,47 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 			}
 
 			// 選択肢表示チェック
-			m_checkBoxHideOption = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("「選択肢なし」のイベントを表示しない"));
+			m_checkBoxHideOption = new ThemedWrapper<wxCheckBox>(sizeS1->GetStaticBox(), wxID_ANY, wxT("「選択肢なし」のイベントを表示しない"));
 			sizeS1->Add(m_checkBoxHideOption, 0, wxLEFT | wxBOTTOM, 5);
 
 			// ステータス表示
-			m_checkBoxShowStatusBar = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("ステータスバーを表示する"));
+			m_checkBoxShowStatusBar = new ThemedWrapper<wxCheckBox>(sizeS1->GetStaticBox(), wxID_ANY, wxT("ステータスバーを表示する"));
 			sizeS1->Add(m_checkBoxShowStatusBar, 0, wxLEFT | wxBOTTOM, 5);
 
 			// 更新確認
-			m_checkBoxCheckUpdate = new wxCheckBox(sizeS1->GetStaticBox(), wxID_ANY, wxT("起動時に更新がある場合は通知する"));
+			m_checkBoxCheckUpdate = new ThemedWrapper<wxCheckBox>(sizeS1->GetStaticBox(), wxID_ANY, wxT("起動時に更新がある場合は通知する"));
 			sizeS1->Add(m_checkBoxCheckUpdate, 0, wxLEFT | wxBOTTOM, 5);
 
 			sizeParent->Add(sizeS1, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 		}
 
 		// OCR設定
-		wxStaticBoxSizer* sizeSystem = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("OCR設定")), wxVERTICAL);
+		wxStaticBoxSizer* sizeSystem = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, wxT("OCR設定")), wxVERTICAL);
 		{
 			wxFlexGridSizer* gridSizer = new wxFlexGridSizer(1, 2, 3, 0);
 			{
-				wxStaticText* Static = new wxStaticText(sizeSystem->GetStaticBox(), wxID_ANY, wxT("OCR数"));
+				wxStaticText* Static = new ThemedWrapper<wxStaticText>(sizeSystem->GetStaticBox(), wxID_ANY, wxT("OCR数"));
 				gridSizer->Add(Static, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
 				wxBoxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 				{
-					m_comboOcrPoolSize = new wxComboBox(sizeSystem->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+					m_comboOcrPoolSize = new ThemedComboBoxWrapper<wxComboBox>(sizeSystem->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
 					for (int i = 1; i <= 10; i++) m_comboOcrPoolSize->AppendString(wxString::Format(wxT("%d"), i));
 					s->Add(m_comboOcrPoolSize, 0);
 
-					s->Add(new wxStaticText(sizeSystem->GetStaticBox(), wxID_ANY, wxT("※アプリケーションの再起動が必要です。")), 0, wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
+					s->Add(new ThemedWrapper<wxStaticText>(sizeSystem->GetStaticBox(), wxID_ANY, wxT("※アプリケーションの再起動が必要です。")), 0, wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
 				}
 				gridSizer->Add(s);
 				sizeSystem->Add(gridSizer, 1, wxALL, 5);
-				sizeSystem->Add(new wxStaticText(sizeSystem->GetStaticBox(), wxID_ANY, wxT("数値を大きくするとメモリとCPU使用率が増えますがイベント読み取り速度が向上します。\n数値を小さくするとメモリとCPU使用率は下がりますがイベント読み取りが遅くなります。")), 0, wxLEFT | wxRIGHT | wxBOTTOM, 5);
+				sizeSystem->Add(new ThemedWrapper<wxStaticText>(sizeSystem->GetStaticBox(), wxID_ANY, wxT("数値を大きくするとメモリとCPU使用率が増えますがイベント読み取り速度が向上します。\n数値を小さくするとメモリとCPU使用率は下がりますがイベント読み取りが遅くなります。")), 0, wxLEFT | wxRIGHT | wxBOTTOM, 5);
 			}
 
 			wxBoxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
 			{
-				wxStaticText* Static = new wxStaticText(sizeSystem->GetStaticBox(), wxID_ANY, wxT("キャプチャ方法"));
+				wxStaticText* Static = new ThemedWrapper<wxStaticText>(sizeSystem->GetStaticBox(), wxID_ANY, wxT("キャプチャ方法"));
 				s2->Add(Static, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
-				m_comboCaptureMode = new wxComboBox(sizeSystem->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+				m_comboCaptureMode = new ThemedComboBoxWrapper<wxComboBox>(sizeSystem->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
 				m_comboCaptureMode->AppendString(wxT("BitBlt"));
 				if (winrt_capture_is_supported()) m_comboCaptureMode->AppendString(wxT("Windows 10 (1903以降)"));
 				s2->Add(m_comboCaptureMode);
@@ -143,27 +143,27 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 		}
 
 		// スクリーンショット
-		wxStaticBoxSizer* sizeS2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("スクリーンショット")), wxVERTICAL);
+		wxStaticBoxSizer* sizeS2 = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, wxT("スクリーンショット")), wxVERTICAL);
 		{
 			wxFlexGridSizer* fgSize = new wxFlexGridSizer(2, 2, 3, 5);
 			fgSize->AddGrowableCol(1);
 			{
-				m_staticTextScreenShotPath = new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("場所"));
+				m_staticTextScreenShotPath = new ThemedWrapper<wxStaticText>(sizeS2->GetStaticBox(), wxID_ANY, wxT("場所"));
 				fgSize->Add(m_staticTextScreenShotPath, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
 				wxBoxSizer* sspathSizer = new wxBoxSizer(wxHORIZONTAL);
 				{
-					m_textCtrlScreenShotPath = new wxTextCtrl(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(280, -1)));
+					m_textCtrlScreenShotPath = new ThemedEditWrapper<wxTextCtrl>(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(280, -1)));
 					sspathSizer->Add(m_textCtrlScreenShotPath, 1);
 
-					m_buttonBrowse = new wxButton(sizeS2->GetStaticBox(), wxID_ANY, wxT("参照"));
+					m_buttonBrowse = new ThemedButtonWrapper<wxButton>(sizeS2->GetStaticBox(), wxID_ANY, wxT("参照"));
 					sspathSizer->Add(m_buttonBrowse);
 				}
 
 				fgSize->Add(sspathSizer, 0, wxEXPAND);
-				fgSize->Add(new wxStaticText(sizeS2->GetStaticBox(), wxID_ANY, wxT("種類")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
+				fgSize->Add(new ThemedWrapper<wxStaticText>(sizeS2->GetStaticBox(), wxID_ANY, wxT("種類")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
-				m_comboFileType = new wxComboBox(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+				m_comboFileType = new ThemedComboBoxWrapper<wxComboBox>(sizeS2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
 				m_comboFileType->Append(wxT("PNG"));
 				m_comboFileType->Append(wxT("JPEG"));
 				m_comboFileType->SetSelection(0);
@@ -175,10 +175,10 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 		}
 
 		// 高度な機能
-		wxStaticBoxSizer* sizeS3 = new wxStaticBoxSizer(wxVERTICAL, this, wxT("デバッグモード"));
+		wxStaticBoxSizer* sizeS3 = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, wxT("デバッグモード")), wxVERTICAL);
 		{
-			m_checkDebugEnable = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("output.log にデバッグログを出力する"));
-			m_checkSaveScreenShot = new wxCheckBox(sizeS3->GetStaticBox(), wxID_ANY, wxT("イベントを識別できなかった場合にキャプチャする"));
+			m_checkDebugEnable = new ThemedWrapper<wxCheckBox>(sizeS3->GetStaticBox(), wxID_ANY, wxT("output.log にデバッグログを出力する"));
+			m_checkSaveScreenShot = new ThemedWrapper<wxCheckBox>(sizeS3->GetStaticBox(), wxID_ANY, wxT("イベントを識別できなかった場合にキャプチャする"));
 
 			sizeS3->Add(m_checkDebugEnable, 0, wxALL, 5);
 			sizeS3->Add(m_checkSaveScreenShot, 0, wxALL, 5);
@@ -188,9 +188,9 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : wxDialog(parent
 
 		// ダイアログボタン
 		m_dialogButtonSizer = new wxStdDialogButtonSizer();
-		wxButton* dbSizerOk = new wxButton(this, wxID_OK);
+		wxButton* dbSizerOk = new ThemedButtonWrapper<wxButton>(this, wxID_OK);
 		m_dialogButtonSizer->SetAffirmativeButton(dbSizerOk);
-		wxButton* dbSizerCancel = new wxButton(this, wxID_CANCEL, wxT("キャンセル"));
+		wxButton* dbSizerCancel = new ThemedButtonWrapper<wxButton>(this, wxID_CANCEL, wxT("キャンセル"));
 		m_dialogButtonSizer->SetCancelButton(dbSizerCancel);
 		m_dialogButtonSizer->Realize();
 
