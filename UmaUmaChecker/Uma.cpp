@@ -610,15 +610,15 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 	std::wstring text = GetTextFromImage(bin);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = EventLib.CharaEvent.RetrieveOption(text);
-		if (event) return event;
+		auto event = EventLib.CharaEvent.RetrieveOption(text, CurrentCharacter);
+		return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
-		auto event = EventLib.CharaEvent.RetrieveOption(text);
-		if (event) return event;
+		auto event = EventLib.CharaEvent.RetrieveOption(text, CurrentCharacter);
+		return event;
 	}
 
 	return nullptr;
