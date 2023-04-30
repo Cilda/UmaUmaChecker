@@ -17,6 +17,7 @@ public:
 	virtual void InitButton(wxWindow* ctrl) {}
 	virtual void InitComboBox(wxWindow* ctrl) {}
 	virtual void InitEdit(wxWindow* ctrl) {}
+	virtual void InitListBox(wxWindow* ctrl) {}
 	virtual void InitCommonControl(wxWindow* ctrl) {}
 
 	virtual wxColour GetBackgroundColor() = 0;
