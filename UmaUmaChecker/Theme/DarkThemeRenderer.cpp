@@ -50,6 +50,11 @@ void DarkThemeRenderer::InitEdit(wxWindow* ctrl)
 	ctrl->SetForegroundColour(wxColor(255, 255, 255));
 }
 
+void DarkThemeRenderer::InitListBox(wxWindow* ctrl)
+{
+	SetWindowTheme(ctrl->GetHWND(), L"DarkMode_Explorer", NULL);
+}
+
 void DarkThemeRenderer::InitCommonControl(wxWindow* ctrl)
 {
 	if (!ctrl->IsTransparentBackgroundSupported()) ctrl->SetBackgroundColour(wxColor(56, 56, 56));

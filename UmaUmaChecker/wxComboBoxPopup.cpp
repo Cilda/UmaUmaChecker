@@ -3,16 +3,18 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
+#include "ThemeWrapper.h"
+
 wxDEFINE_EVENT(wxEVT_HIDE, wxCommandEvent);
 
 wxComboBoxPopup::wxComboBoxPopup(wxWindow* parent) : wxPopupTransientWindow(parent, wxBORDER_NONE)
 {
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	m_listBox = new wxListBox(this, wxID_ANY);
+	m_listBox = new ThemedListBoxWrapper<wxListBox>(this, wxID_ANY);
 	sizer->Add(m_listBox, 1, wxEXPAND, 0);
 	this->SetSizer(sizer);
 
-	this->Fit();
+	//this->Fit();
 
 	m_listBox->Bind(wxEVT_LEFT_DOWN, &wxComboBoxPopup::OnComboClick, this);
 	m_listBox->Bind(wxEVT_MOTION, &wxComboBoxPopup::OnMouseMove, this);
