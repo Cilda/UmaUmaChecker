@@ -227,3 +227,32 @@ protected:
 private:
 	ThemeChangedNotify observer;
 };
+
+template<class wxListBoxBase>
+class ThemedListBoxWrapper final : public wxListBoxBase
+{
+public:
+	template<typename... Args>
+	ThemedListBoxWrapper(Args&&... args) : wxListBoxBase(std::forward<Args>(args)...)
+	{
+		ThemeManager::GetInstance()->InitListBox(this);
+		observer.Subscribe(&ThemedListBoxWrapper::OnThemeChanged, this);
+	}
+
+	~ThemedListBoxWrapper()
+	{
+	}
+
+protected:
+	void OnThemeChanged()
+	{
+		if (ThemeManager::GetInstance()->IsSystemRender()) {
+			ThemeManager::GetInstance()->InitListBox(this);
+		}
+
+		this->Refresh();
+	}
+
+private:
+	ThemeChangedNotify observer;
+};

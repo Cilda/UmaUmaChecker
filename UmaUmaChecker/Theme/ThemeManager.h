@@ -34,7 +34,6 @@ public:
 	~ThemeChangedNotify()
 	{
 		clients.remove(record);
-		delete record;
 	}
 
 	template<typename Class>

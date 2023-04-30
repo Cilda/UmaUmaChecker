@@ -11,13 +11,13 @@
 #include "version.h"
 #include "UpdateManager.h"
 
-AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウマウマチェッカーについて"))
+AboutDialog::AboutDialog(wxWindow* parent) : ThemedWindowWrapper<wxDialog>(parent, wxID_ANY, wxT("ウマウマチェッカーについて"))
 {
 	Config* config = Config::GetInstance();
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
-	this->SetBackgroundColour(wxColour(255, 255, 255));
+	//this->SetBackgroundColour(wxColour(255, 255, 255));
 
 	wxBoxSizer* sizerTop = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* sizerInfo = new wxBoxSizer(wxVERTICAL);
@@ -26,14 +26,14 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 	m_bitmap = new wxStaticBitmap(this, wxID_ANY, wxICON(AppIcon), wxDefaultPosition, FromDIP(wxSize(32, 32)));
 	sizerTitle->Add(m_bitmap, 0, wxRIGHT, 5);
 
-	wxStaticText* staticTextTitle = new wxStaticText(this, wxID_ANY, app_title);
+	wxStaticText* staticTextTitle = new ThemedWrapper<wxStaticText>(this, wxID_ANY, app_title);
 	staticTextTitle->Wrap(-1);
 	staticTextTitle->SetFont(wxFont(20, wxFONTFAMILY_SCRIPT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Yu Gothic UI")));
 	sizerTitle->Add(staticTextTitle);
 
 	sizerInfo->Add(sizerTitle, 0, wxALL | wxCENTER, 5);
 
-	wxStaticText* staticTextVersion = new wxStaticText(this, wxID_ANY, wxString::Format(wxT("%s"), app_copyright), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
+	wxStaticText* staticTextVersion = new ThemedWrapper<wxStaticText>(this, wxID_ANY, wxString::Format(wxT("%s"), app_copyright), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	staticTextVersion->Wrap(-1);
 	sizerInfo->Add(staticTextVersion, 0, wxALL | wxCENTER, 5);
 
@@ -42,10 +42,10 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 	sizerTop->Add(sizerInfo, 0, wxALL, 20);
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	wxStaticText* text = new wxStaticText(this, wxID_ANY, wxT("以下のライブラリを含んでいます:"));
+	wxStaticText* text = new ThemedWrapper<wxStaticText>(this, wxID_ANY, wxT("以下のライブラリを含んでいます:"));
 	sizer->Add(text, 0);
 
-	wxListBox* listBox = new wxListBox(this, wxID_ANY);
+	wxListBox* listBox = new ThemedWrapper<wxListBox>(this, wxID_ANY);
 	listBox->Append(wxT("Tesseract OCR"));
 	listBox->Append(wxT("OpenCV"));
 	listBox->Append(wxT("wxWidgets"));
@@ -62,10 +62,10 @@ AboutDialog::AboutDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, wxT("ウ
 	sizerTop->Add(staticLine, 0, wxEXPAND, 5);
 
 	wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
-	m_buttonOk = new wxButton(this, wxID_OK);
+	m_buttonOk = new ThemedButtonWrapper<wxButton>(this, wxID_OK);
 	bSizerButtons->Add(m_buttonOk, 0, wxLEFT | wxRIGHT, 5);
 
-	m_buttonUpdateCheck = new wxButton(this, wxID_ANY, wxT("更新の確認"));
+	m_buttonUpdateCheck = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("更新の確認"));
 	bSizerButtons->Add(m_buttonUpdateCheck, 0, wxLEFT | wxRIGHT, 5);
 
 	sizerTop->Add(bSizerButtons, 0, wxALL | wxCENTER, 5);

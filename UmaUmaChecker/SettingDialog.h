@@ -13,9 +13,11 @@
 #include <wx/combobox.h>
 #include "FontComboBox.h"
 
+#include "ThemeWrapper.h"
+
 class Config;
 
-class SettingDialog : public wxDialog
+class SettingDialog : public ThemedWindowWrapper<wxDialog>
 {
 public:
 	SettingDialog(wxWindow* parent, Config* config);

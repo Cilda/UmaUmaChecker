@@ -104,7 +104,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		bSizerOption1->Add(TitleCtrl, 2, wxALL, 5);
 
 		// 効果
-		wxUmaTextCtrl* OptionCtrl = new ThemedWrapper<wxUmaTextCtrl>(sbSizerOptions->GetStaticBox());
+		wxUmaTextCtrl* OptionCtrl = new ThemedEditWrapper<wxUmaTextCtrl>(sbSizerOptions->GetStaticBox());
 		OptionCtrl->SetHeightByLine(config->OptionMaxLine);
 		bSizerOption1->Add(OptionCtrl, 3, wxALL | wxEXPAND, 5);
 

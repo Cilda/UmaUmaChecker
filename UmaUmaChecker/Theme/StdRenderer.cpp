@@ -47,6 +47,11 @@ void StdRenderer::InitEdit(wxWindow* ctrl)
 	ctrl->SetForegroundColour(wxColor(0, 0, 0));
 }
 
+void StdRenderer::InitListBox(wxWindow* ctrl)
+{
+	SetWindowTheme(ctrl->GetHWND(), L"Explorer", NULL);
+}
+
 void StdRenderer::InitCommonControl(wxWindow* ctrl)
 {
 	if (!ctrl->IsTransparentBackgroundSupported()) ctrl->SetBackgroundColour(wxColor(255, 255, 255));
