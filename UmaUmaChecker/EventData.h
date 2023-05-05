@@ -20,7 +20,7 @@ public:
 	bool Load(const std::wstring& path);
 
 	std::shared_ptr<EventSource> RetrieveTitle(const std::wstring& title, EventRoot* root = nullptr);
-	std::shared_ptr<EventSource> RetrieveOption(const std::wstring& option);
+	std::shared_ptr<EventSource> RetrieveOption(const std::wstring& option, EventRoot* root = nullptr);
 	std::shared_ptr<EventRoot> RetrieveName(const std::wstring& name);
 	std::shared_ptr<EventRoot> GetName(const std::wstring& name);
 
