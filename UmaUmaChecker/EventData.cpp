@@ -51,6 +51,10 @@ bool EventData::Load(const std::wstring& path)
 							if (OptionMap.find(choise->Title) == OptionMap.end()) {
 								OptionMap[choise->Title] = event;
 							}
+
+							if (skill->OptionMap.find(choise->Title) == skill->OptionMap.end()) {
+								skill->OptionMap[choise->Title] = event;
+							}
 						}
 
 						std::wstring EventName = utility::from_u8string(choise.key());
@@ -143,6 +147,13 @@ std::shared_ptr<EventSource> EventData::RetrieveOption(const std::wstring& optio
 	std::wstring match = xstrs.front();
 	if (xstrs.size() >= 2) {
 		match = GetBestMatchString(xstrs, option);
+	}
+
+	if (root) {
+		auto event = root->OptionMap.find(match);
+		if (event != root->OptionMap.end()) {
+			return event->second;
+		}
 	}
 
 	const auto& event = OptionMap.find(match);
