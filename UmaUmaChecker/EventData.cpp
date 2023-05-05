@@ -128,7 +128,7 @@ std::shared_ptr<EventSource> EventData::RetrieveTitle(const std::wstring& title,
 	}
 }
 
-std::shared_ptr<EventSource> EventData::RetrieveOption(const std::wstring& option, EventRoot* root)
+std::shared_ptr<EventSource> EventData::RetrieveOption(const std::wstring& option)
 {
 	std::vector<std::wstring> xstrs;
 
@@ -147,10 +147,6 @@ std::shared_ptr<EventSource> EventData::RetrieveOption(const std::wstring& optio
 
 	const auto& event = OptionMap.find(match);
 	if (event == OptionMap.end()) return nullptr;
-	else if (root) {
-		const auto exactEvent = root->Events.find(event->second->Name);
-		if (exactEvent != root->Events.end()) return exactEvent->second;
-	}
 
 	return event->second;
 }
