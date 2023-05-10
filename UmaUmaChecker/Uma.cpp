@@ -181,17 +181,9 @@ cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 	cv::Mat gray;
 	cv::Mat bin;
 
-	/*
-	cv::inRange(gray, cv::Scalar(242, 242, 242), cv::Scalar(255, 255, 255), bin);
-	cv::bitwise_not(bin, bin);
-	*/
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	//cv::bitwise_not(gray, gray);
-	//cv::threshold(gray, bin, 0, 255, cv::THRESH_OTSU);
-	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
-
-	//cv::Mat bin2;
-	//cv::erode(bin, bin2, cv::Mat(2, 2, CV_8U, cv::Scalar(1)));
+	cv::threshold(gray, bin, 100, 255, cv::THRESH_OTSU);
+	//cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
 
 	return bin.clone();
 }
@@ -673,9 +665,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		if (pHash) *pHash = hash;
 
 		auto event = GetCardEvent(events);
-		auto eventOption = GetEventByBottomOption(srcImg);
-		if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
-		return eventOption ? eventOption.get() : event.get();
+		if (!event) event = GetEventByBottomOption(srcImg);
+		return event.get();
 	}
 
 	if (CurrentCharacter) {
@@ -686,9 +677,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 			if (pHash) *pHash = hash;
 
 			auto event = GetCharaEvent(events);
-			auto eventOption = GetCharaEventByBottomOption(srcImg);
-			if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
-			return eventOption ? eventOption.get() : event.get();
+			if (!event) event = GetCharaEventByBottomOption(srcImg);
+			return event.get();
 		}
 	}
 
@@ -699,9 +689,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		if (pHash) *pHash = hash;
 
 		auto event = GetScenarioEvent(events);
-		auto eventOption = GetScenarioEventByBottomOption(srcImg);
-		if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
-		return eventOption ? eventOption.get() : event.get();
+		if (!event) event = GetScenarioEventByBottomOption(srcImg);
+		return event.get();
 	}
 
 	return nullptr;
