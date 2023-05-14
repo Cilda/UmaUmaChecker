@@ -19,7 +19,7 @@
 #include "Log.h"
 #include "utility.h"
 #include "Tesseract.h"
-#include "../libwinrt/winrt_capture.h"
+#include "UmaWindowCapture.h"
 
 
 const cv::Rect2d Uma::CharaEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
@@ -38,7 +38,7 @@ const cv::Rect2d Uma::StatusBounds[5] = {
 const double Uma::ResizeRatio = 2.0;
 const float Uma::UnsharpRatio = 2.0f;
 
-Uma::Uma(wxFrame* frame) : capture(nullptr), bDetected(false), bStop(false), thread(nullptr), CurrentCharacter(nullptr), CurrentEvent(nullptr)
+Uma::Uma(wxFrame* frame) : bDetected(false), bStop(false), thread(nullptr), CurrentCharacter(nullptr), CurrentEvent(nullptr)
 {
 	this->frame = frame;
 }
@@ -48,10 +48,6 @@ Uma::~Uma()
 	if (thread) {
 		Stop();
 	}
-	if (capture) {
-		free_winrt_capture(capture);
-		capture = nullptr;
-	}
 }
 
 void Uma::Init()
@@ -60,73 +56,6 @@ void Uma::Init()
 	CurrentCharacter = nullptr;
 
 	Collector.Load();
-}
-
-HWND Uma::GetUmaWindow()
-{
-	return FindWindow(TEXT("UnityWndClass"), TEXT("umamusume"));
-}
-
-Gdiplus::Bitmap* Uma::ScreenShot()
-{
-	HWND hWnd = GetUmaWindow();
-	if (!hWnd) return nullptr;
-
-	auto config = Config::GetInstance();
-
-	if (winrt_capture_is_supported() && config->CaptureMode == 1) {
-		RECT rect;
-
-		GetClientRect(hWnd, &rect);
-
-		if (!capture || winrt_capture_get_target(capture) != hWnd) {
-			if (capture) free_winrt_capture(capture);
-			capture = winrt_init_capture(hWnd);
-		}
-
-		return capture ? winrt_screenshot(capture) : nullptr;
-	}
-
-	RECT rc, rw;
-	POINT pt = { 0, 0 };
-	BITMAPINFO bmpinfo;
-	byte* lpPixel;
-
-	GetWindowRect(hWnd, &rw);
-	GetClientRect(hWnd, &rc);
-
-	if (rc.right == 0 || rc.bottom == 0) return nullptr;
-
-	ClientToScreen(hWnd, &pt);
-
-	ZeroMemory(&bmpinfo, sizeof(bmpinfo));
-	bmpinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmpinfo.bmiHeader.biWidth = rc.right;
-	bmpinfo.bmiHeader.biHeight = rc.bottom;
-	bmpinfo.bmiHeader.biPlanes = 1;
-	bmpinfo.bmiHeader.biBitCount = 24;
-	bmpinfo.bmiHeader.biCompression = BI_RGB;
-
-	HDC hdc = GetDC(NULL);
-	HDC hdc_mem = CreateCompatibleDC(hdc);
-	HBITMAP hBmp = CreateDIBSection(hdc, &bmpinfo, DIB_RGB_COLORS, (void**)&lpPixel, NULL, 0);
-	if (!hBmp) {
-		DeleteDC(hdc_mem);
-		ReleaseDC(hWnd, hdc);
-		return nullptr;
-	}
-
-	HBITMAP hOldBmp = (HBITMAP)SelectObject(hdc_mem, hBmp);
-	BitBlt(hdc_mem, 0, 0, rc.right, rc.bottom, hdc, pt.x, pt.y, SRCCOPY);
-	SelectObject(hdc_mem, hOldBmp);
-
-	Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromHBITMAP(hBmp, NULL);
-
-	DeleteDC(hdc_mem);
-	DeleteObject(hBmp);
-	ReleaseDC(hWnd, hdc);
-
-	return image;
 }
 
 bool Uma::Start()
@@ -182,7 +111,8 @@ cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 	cv::Mat bin;
 
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 100, 255, cv::THRESH_OTSU);
+	//cv::threshold(gray, bin, 100, 255, cv::THRESH_OTSU);
+	cv::adaptiveThreshold(gray, bin, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 11, 2);
 	//cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
 
 	return bin.clone();
@@ -193,7 +123,7 @@ void Uma::MonitorThread()
 	while (!bStop) {
 		auto start = std::chrono::system_clock::now();
 
-		Gdiplus::Bitmap* image = ScreenShot();
+		Gdiplus::Bitmap* image = UmaWindowCapture::GetInstance()->ScreenShot();
 		if (image) {
 			cv::Mat srcImage = BitmapToCvMat(image);
 			bool bScaned = false;

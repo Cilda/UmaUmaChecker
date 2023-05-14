@@ -22,7 +22,10 @@ DebugFrame::DebugFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("デバ
 	m_comboOcrSource->AppendString(wxT("選択肢"));
 	m_comboOcrSource->SetSelection(0);
 
+	m_slider = new wxSlider(this, wxID_ANY, 0, 0, 255);
+
 	sizer->Add(m_comboOcrSource, 0, wxEXPAND | wxALL, 5);
+	sizer->Add(m_slider, 0, wxEXPAND | wxALL, 5);
 
 	m_textCtrlOcrResult = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY);
 	sizer->Add(m_textCtrlOcrResult, 1, wxEXPAND | wxALL, 5);

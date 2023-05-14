@@ -226,7 +226,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_comboTheme->SetSelection(config->Theme);
 	m_comboFontList->SetStringSelection(config->FontName);
 	m_comboFontSizeList->SetValue(wxString::Format(wxT("%d"), config->FontSize));
-	m_comboCaptureMode->SetSelection(config->CaptureMode);
+	m_comboCaptureMode->SetSelection((int)config->CaptureMode);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -264,7 +264,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	config->EnableCheckUpdate = m_checkBoxCheckUpdate->IsChecked();
 	m_comboOcrPoolSize->GetStringSelection().ToInt(&config->OcrPoolSize);
 	config->Theme = m_comboTheme->GetSelection();
-	config->CaptureMode = m_comboCaptureMode->GetSelection();
+	config->CaptureMode = (CaptureMode)m_comboCaptureMode->GetSelection();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);

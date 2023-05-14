@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "CaptureMode.h"
 
 class Config
 {
@@ -32,6 +33,6 @@ public:
 	bool EnableCheckUpdate;
 	int OcrPoolSize;
 	int Theme;
-	int CaptureMode;
+	CaptureMode CaptureMode;
 };
 

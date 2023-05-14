@@ -24,9 +24,6 @@ public:
 
 	void Init();
 
-	HWND GetUmaWindow();
-	Gdiplus::Bitmap* ScreenShot();
-
 	bool Start();
 	void Stop();
 
@@ -121,9 +118,6 @@ private:
 
 	// for event
 	wxFrame* frame;
-
-	// windows graphics capture
-	struct GraphicsCapture* capture;
 
 private:
 	static const double ResizeRatio;

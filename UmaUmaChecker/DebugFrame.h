@@ -3,6 +3,7 @@
 #include <wx/frame.h>
 #include <wx/textctrl.h>
 #include <wx/choice.h>
+#include <wx/slider.h>
 
 class DebugFrame : public wxFrame
 {
@@ -18,5 +19,6 @@ private:
 	wxChoice* m_comboOcrSource;
 	wxTextCtrl* m_textCtrlOcrResult;
 	wxButton* m_buttonOcr;
+	wxSlider* m_slider;
 };
 
