@@ -123,7 +123,7 @@ void Uma::MonitorThread()
 	while (!bStop) {
 		auto start = std::chrono::system_clock::now();
 
-		Gdiplus::Bitmap* image = UmaWindowCapture::GetInstance()->ScreenShot();
+		Gdiplus::Bitmap* image = UmaWindowCapture::ScreenShot();
 		if (image) {
 			cv::Mat srcImage = BitmapToCvMat(image);
 			bool bScaned = false;

@@ -237,7 +237,7 @@ void MainFrame::OnClickStart(wxCommandEvent& event)
 
 void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 {
-	Gdiplus::Bitmap* image = UmaWindowCapture::GetInstance()->ScreenShot();
+	Gdiplus::Bitmap* image = UmaWindowCapture::ScreenShot();
 	if (image) {
 		CLSID clsid;
 		Config* config = Config::GetInstance();

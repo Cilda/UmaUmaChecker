@@ -10,8 +10,6 @@ namespace Gdiplus {
 class UmaWindowCapture
 {
 private:
-	friend std::unique_ptr<UmaWindowCapture>::deleter_type;
-
 	UmaWindowCapture();
 	~UmaWindowCapture();
 
@@ -19,20 +17,16 @@ private:
 	UmaWindowCapture& operator=(const UmaWindowCapture&) = delete;
 
 public:
-	static UmaWindowCapture* GetInstance();
+	static void Uninitilize();
 
-	HWND GetUmaWindow();
-	Gdiplus::Bitmap* ScreenShot();
-
-private:
-	Gdiplus::Bitmap* GdiScreenShot(HWND hWnd);
-	Gdiplus::Bitmap* WinRTScreenShot(HWND hWnd);
+	static HWND GetUmaWindow();
+	static Gdiplus::Bitmap* ScreenShot();
 
 private:
-	struct GraphicsCapture* capture;
-	//CaptureMode CaptureMode;
+	static Gdiplus::Bitmap* GdiScreenShot(HWND hWnd);
+	static Gdiplus::Bitmap* WinRTScreenShot(HWND hWnd);
 
 private:
-	static std::unique_ptr<UmaWindowCapture> instance;
+	static struct GraphicsCapture* capture;
 };
 

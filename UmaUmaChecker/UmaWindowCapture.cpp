@@ -7,27 +7,23 @@
 #include "../libwinrt/winrt_capture.h"
 
 
-std::unique_ptr<UmaWindowCapture> UmaWindowCapture::instance;
+struct GraphicsCapture* UmaWindowCapture::capture = nullptr;
 
-UmaWindowCapture::UmaWindowCapture() : capture(nullptr)
+UmaWindowCapture::UmaWindowCapture()
 {
 }
 
 UmaWindowCapture::~UmaWindowCapture()
 {
+	
+}
+
+void UmaWindowCapture::Uninitilize()
+{
 	if (capture) {
 		free_winrt_capture(capture);
 		capture = nullptr;
 	}
-}
-
-UmaWindowCapture* UmaWindowCapture::GetInstance()
-{
-	if (!instance) {
-		instance = std::unique_ptr<UmaWindowCapture>(new UmaWindowCapture());
-	}
-
-	return instance.get();
 }
 
 HWND UmaWindowCapture::GetUmaWindow()

@@ -271,7 +271,6 @@
     <ClInclude Include="Log.h" />
     <ClInclude Include="object_pool.hpp" />
     <ClInclude Include="ScenarioData.h" />
-    <ClInclude Include="Singleton.h" />
     <ClInclude Include="Tesseract.h" />
     <ClInclude Include="ThemeWrapper.h" />
     <ClInclude Include="Theme\BaseRenderer.h" />
