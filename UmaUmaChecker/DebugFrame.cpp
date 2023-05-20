@@ -95,8 +95,17 @@ void DebugFrame::OnDropFile(wxDropFilesEvent& event)
 				0.02898550724637681159420289855072 * img2.size().height
 			)).clone();
 
+			float k = 2.0f;
 			double ratio = (int)(58.125 * 32) / (double)img2.size().height;
 			cv::resize(img, img, cv::Size(), ratio, ratio, cv::INTER_CUBIC);
+			
+			float kernelData[] = {
+				-k / 9.0f, -k / 9.0f, -k / 9.0f,
+				-k / 9.0f, 1 + (8 * k) / 9.0f, -k / 9.0f,
+				-k / 9.0f, -k / 9.0f, -k / 9.0f
+			};
+			cv::Mat kernel(3, 3, CV_32F, kernelData);
+			cv::filter2D(img, img, -1, kernel);
 
 			cv::cvtColor(img, img, cv::COLOR_RGB2GRAY);
 			cv::bitwise_not(img, img);

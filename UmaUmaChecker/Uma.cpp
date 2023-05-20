@@ -111,6 +111,7 @@ cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 	cv::Mat bin;
 
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
+	cv::bitwise_not(gray, gray);
 	//cv::threshold(gray, bin, 100, 255, cv::THRESH_OTSU);
 	cv::adaptiveThreshold(gray, bin, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 77, 18);
 	//cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
