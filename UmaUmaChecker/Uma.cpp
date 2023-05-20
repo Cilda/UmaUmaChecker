@@ -28,6 +28,7 @@ const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
 const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::TrainingCharaAliasNameBound = { 0.31715771230502599653379549393414, 0.11024390243902439024390243902439, 0.66897746967071057192374350086655, 0.02829268292682926829268292682927 };
 const cv::Rect2d Uma::TrainingCharaNameBound = { 0.31715771230502599653379549393414, 0.1375609756097560975609756097561, 0.66897746967071057192374350086655, 0.02439024390243902439024390243902 };
+const cv::Rect2d Uma::EventIconBound = { 0.15343915343915343915343915343915, 0.18551587301587301587301587301587, 0.0652557319223985890652557319224, 0.03670634920634920634920634920635 };
 const cv::Rect2d Uma::StatusBounds[5] = {
 	{ 0.1010638297872340425531914893617, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 	{ 0.26063829787234042553191489361702, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
@@ -35,6 +36,7 @@ const cv::Rect2d Uma::StatusBounds[5] = {
 	{ 0.57180851063829787234042553191489, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 	{ 0.73138297872340425531914893617021, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 };
+
 const double Uma::ResizeRatio = 2.0;
 const float Uma::UnsharpRatio = 2.0f;
 
@@ -211,6 +213,12 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg, ui
 		cv::Mat bin2;
 		cv::Mat rsImg, rsImg2;
 
+
+		if (IsEventIcon(srcImg)) {
+			double x = Uma::EventIconBound.width * srcImg.size().width;
+			cut = cv::Mat(cut, cv::Rect(x, 0, cut.size().width - x, cut.size().height));
+		}
+
 		ResizeBest(cut, rsImg, srcImg.size().height);
 		//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 		rsImg2 = rsImg.clone();
@@ -377,6 +385,38 @@ void Uma::ResizeBest(cv::Mat& src, cv::Mat& dest, int height)
 	// フォントサイズが30px～33pxだと一番識別率が良い
 	double ratio = (int)(58.125 * 32) / (double)height;
 	cv::resize(src, dest, cv::Size(), ratio, ratio, cv::INTER_CUBIC);
+}
+
+bool Uma::IsEventIcon(const cv::Mat& img)
+{
+	cv::Mat icon = cv::Mat(img, cv::Rect(
+		Uma::EventIconBound.x * img.size().width,
+		Uma::EventIconBound.y * img.size().height,
+		Uma::EventIconBound.width * img.size().width,
+		Uma::EventIconBound.height * img.size().height
+	));
+	cv::Mat gray, bin;
+
+	cv::cvtColor(icon, gray, cv::COLOR_RGB2GRAY);
+	cv::threshold(gray, bin, 140, 255, cv::THRESH_BINARY);
+
+	std::vector<std::vector<cv::Point>> contours;
+	std::vector<cv::Vec4i> hierarchy;
+	cv::Point ret;
+
+	cv::findContours(bin, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+	if (contours.size() > 0) {
+		std::vector<cv::Point> approx;
+		double arc_len = cv::arcLength(contours[0], true);
+		cv::approxPolyDP(contours[0], approx, arc_len * 0.02, true);
+
+		if (cv::isContourConvex(approx)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 uint64 Uma::GetImageHash(const cv::Mat& img)
