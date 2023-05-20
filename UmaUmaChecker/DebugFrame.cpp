@@ -26,7 +26,8 @@ DebugFrame::DebugFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("デバ
 
 	m_comboType = new wxChoice(this, wxID_ANY);
 	m_comboType->AppendString(wxT("cv::threshold"));
-	m_comboType->AppendString(wxT("cv::adaptiveThreshold"));
+	m_comboType->AppendString(wxT("cv::adaptiveThreshold(ADAPTIVE_THRESH_MEAN_C)"));
+	m_comboType->AppendString(wxT("cv::adaptiveThreshold(ADAPTIVE_THRESH_GAUSSIAN_C)"));
 	m_comboType->SetSelection(0);
 	sizer->Add(m_comboType, 0, wxEXPAND | wxALL, 5);
 
@@ -37,7 +38,7 @@ DebugFrame::DebugFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("デバ
 	sizer->Add(sizer2, 0, wxEXPAND | wxALL, 5);
 
 	wxBoxSizer* sizer3 = new wxBoxSizer(wxHORIZONTAL);
-	m_slider2 = new wxSlider(this, wxID_ANY, 2, 2, 255);
+	m_slider2 = new wxSlider(this, wxID_ANY, 2, 0, 255);
 	m_checkBox = new wxCheckBox(this, wxID_ANY, wxT("マイナス"));
 	sizer3->Add(new wxStaticText(this, wxID_ANY, wxT("C:")), 0, wxALIGN_CENTER_VERTICAL);
 	sizer3->Add(m_slider2, 1);
@@ -147,6 +148,9 @@ void DebugFrame::FilterImage()
 			cv::threshold(img, bin, 100, 255, cv::THRESH_OTSU);
 			break;
 		case 1:
+			cv::adaptiveThreshold(img, bin, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, blockSize <= 3 ? 5 : blockSize, C);
+			break;
+		case 2:
 			cv::adaptiveThreshold(img, bin, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, blockSize, C);
 			break;
 	}
