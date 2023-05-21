@@ -19,7 +19,7 @@
 #include "Log.h"
 #include "utility.h"
 #include "Tesseract.h"
-#include "../libwinrt/winrt_capture.h"
+#include "UmaWindowCapture.h"
 
 
 const cv::Rect2d Uma::CharaEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
@@ -28,6 +28,7 @@ const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
 const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::TrainingCharaAliasNameBound = { 0.31715771230502599653379549393414, 0.11024390243902439024390243902439, 0.66897746967071057192374350086655, 0.02829268292682926829268292682927 };
 const cv::Rect2d Uma::TrainingCharaNameBound = { 0.31715771230502599653379549393414, 0.1375609756097560975609756097561, 0.66897746967071057192374350086655, 0.02439024390243902439024390243902 };
+const cv::Rect2d Uma::EventIconBound = { 0.15206185567010309278350515463918, 0.18551587301587301587301587301587, 0.06701940035273368606701940035273, 0.03769841269841269841269841269841 };
 const cv::Rect2d Uma::StatusBounds[5] = {
 	{ 0.1010638297872340425531914893617, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 	{ 0.26063829787234042553191489361702, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
@@ -35,10 +36,11 @@ const cv::Rect2d Uma::StatusBounds[5] = {
 	{ 0.57180851063829787234042553191489, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 	{ 0.73138297872340425531914893617021, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 };
+
 const double Uma::ResizeRatio = 2.0;
 const float Uma::UnsharpRatio = 2.0f;
 
-Uma::Uma(wxFrame* frame) : capture(nullptr), bDetected(false), bStop(false), thread(nullptr), CurrentCharacter(nullptr), CurrentEvent(nullptr)
+Uma::Uma(wxFrame* frame) : bDetected(false), bStop(false), thread(nullptr), CurrentCharacter(nullptr), CurrentEvent(nullptr)
 {
 	this->frame = frame;
 }
@@ -48,10 +50,6 @@ Uma::~Uma()
 	if (thread) {
 		Stop();
 	}
-	if (capture) {
-		free_winrt_capture(capture);
-		capture = nullptr;
-	}
 }
 
 void Uma::Init()
@@ -60,73 +58,6 @@ void Uma::Init()
 	CurrentCharacter = nullptr;
 
 	Collector.Load();
-}
-
-HWND Uma::GetUmaWindow()
-{
-	return FindWindow(TEXT("UnityWndClass"), TEXT("umamusume"));
-}
-
-Gdiplus::Bitmap* Uma::ScreenShot()
-{
-	HWND hWnd = GetUmaWindow();
-	if (!hWnd) return nullptr;
-
-	auto config = Config::GetInstance();
-
-	if (winrt_capture_is_supported() && config->CaptureMode == 1) {
-		RECT rect;
-
-		GetClientRect(hWnd, &rect);
-
-		if (!capture || winrt_capture_get_target(capture) != hWnd) {
-			if (capture) free_winrt_capture(capture);
-			capture = winrt_init_capture(hWnd);
-		}
-
-		return capture ? winrt_screenshot(capture) : nullptr;
-	}
-
-	RECT rc, rw;
-	POINT pt = { 0, 0 };
-	BITMAPINFO bmpinfo;
-	byte* lpPixel;
-
-	GetWindowRect(hWnd, &rw);
-	GetClientRect(hWnd, &rc);
-
-	if (rc.right == 0 || rc.bottom == 0) return nullptr;
-
-	ClientToScreen(hWnd, &pt);
-
-	ZeroMemory(&bmpinfo, sizeof(bmpinfo));
-	bmpinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmpinfo.bmiHeader.biWidth = rc.right;
-	bmpinfo.bmiHeader.biHeight = rc.bottom;
-	bmpinfo.bmiHeader.biPlanes = 1;
-	bmpinfo.bmiHeader.biBitCount = 24;
-	bmpinfo.bmiHeader.biCompression = BI_RGB;
-
-	HDC hdc = GetDC(NULL);
-	HDC hdc_mem = CreateCompatibleDC(hdc);
-	HBITMAP hBmp = CreateDIBSection(hdc, &bmpinfo, DIB_RGB_COLORS, (void**)&lpPixel, NULL, 0);
-	if (!hBmp) {
-		DeleteDC(hdc_mem);
-		ReleaseDC(hWnd, hdc);
-		return nullptr;
-	}
-
-	HBITMAP hOldBmp = (HBITMAP)SelectObject(hdc_mem, hBmp);
-	BitBlt(hdc_mem, 0, 0, rc.right, rc.bottom, hdc, pt.x, pt.y, SRCCOPY);
-	SelectObject(hdc_mem, hOldBmp);
-
-	Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromHBITMAP(hBmp, NULL);
-
-	DeleteDC(hdc_mem);
-	DeleteObject(hBmp);
-	ReleaseDC(hWnd, hdc);
-
-	return image;
 }
 
 bool Uma::Start()
@@ -181,17 +112,11 @@ cv::Mat Uma::ImageBinarization(cv::Mat& srcImg)
 	cv::Mat gray;
 	cv::Mat bin;
 
-	/*
-	cv::inRange(gray, cv::Scalar(242, 242, 242), cv::Scalar(255, 255, 255), bin);
-	cv::bitwise_not(bin, bin);
-	*/
 	cv::cvtColor(srcImg, gray, cv::COLOR_RGB2GRAY);
-	//cv::bitwise_not(gray, gray);
-	//cv::threshold(gray, bin, 0, 255, cv::THRESH_OTSU);
-	cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
-
-	//cv::Mat bin2;
-	//cv::erode(bin, bin2, cv::Mat(2, 2, CV_8U, cv::Scalar(1)));
+	cv::bitwise_not(gray, gray);
+	//cv::threshold(gray, bin, 100, 255, cv::THRESH_OTSU);
+	cv::adaptiveThreshold(gray, bin, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 77, 18);
+	//cv::threshold(gray, bin, 236, 255, cv::THRESH_BINARY_INV);
 
 	return bin.clone();
 }
@@ -201,7 +126,7 @@ void Uma::MonitorThread()
 	while (!bStop) {
 		auto start = std::chrono::system_clock::now();
 
-		Gdiplus::Bitmap* image = ScreenShot();
+		Gdiplus::Bitmap* image = UmaWindowCapture::ScreenShot();
 		if (image) {
 			cv::Mat srcImage = BitmapToCvMat(image);
 			bool bScaned = false;
@@ -287,6 +212,12 @@ std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg, ui
 		cv::Mat gray, bin, blur;
 		cv::Mat bin2;
 		cv::Mat rsImg, rsImg2;
+
+
+		if (IsEventIcon(srcImg)) {
+			double x = Uma::EventIconBound.width * srcImg.size().width;
+			cut = cv::Mat(cut, cv::Rect(x, 0, cut.size().width - x, cut.size().height));
+		}
 
 		ResizeBest(cut, rsImg, srcImg.size().height);
 		//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
@@ -456,6 +387,41 @@ void Uma::ResizeBest(cv::Mat& src, cv::Mat& dest, int height)
 	cv::resize(src, dest, cv::Size(), ratio, ratio, cv::INTER_CUBIC);
 }
 
+bool Uma::IsEventIcon(const cv::Mat& img)
+{
+	cv::Mat icon = cv::Mat(img, cv::Rect(
+		Uma::EventIconBound.x * img.size().width,
+		Uma::EventIconBound.y * img.size().height,
+		Uma::EventIconBound.width * img.size().width,
+		Uma::EventIconBound.height * img.size().height
+	));
+	cv::Mat gray, bin;
+
+	cv::cvtColor(icon, gray, cv::COLOR_RGB2GRAY);
+	cv::threshold(gray, bin, 140, 255, cv::THRESH_BINARY);
+
+	std::vector<std::vector<cv::Point>> contours;
+	std::vector<cv::Vec4i> hierarchy;
+	cv::Point ret;
+
+	cv::findContours(bin, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+	if (contours.size() > 0) {
+		for (auto& contour : contours) {
+			std::vector<cv::Point> approx;
+			double arc_len = cv::arcLength(contour, true);
+			cv::approxPolyDP(contour, approx, arc_len * 0.02, true);
+
+			if (cv::isContourConvex(approx)) {
+				cv::Rect rect = cv::boundingRect(approx);
+				return std::abs(rect.width - rect.height) <= 2 && (double)rect.width / bin.size().width >= 0.75;
+			}
+		}
+	}
+
+	return false;
+}
+
 uint64 Uma::GetImageHash(const cv::Mat& img)
 {
 	cv::Mat resize;
@@ -611,14 +577,14 @@ std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& src
 	if (!text.empty()) {
 		ChangeCollectedText(text);
 		auto event = EventLib.CharaEvent.RetrieveOption(text, CurrentCharacter);
-		return event;
+		if (event) return event;
 	}
 
 	text = GetTextFromImage(gray);
 	if (!text.empty()) {
 		ChangeCollectedText(text);
 		auto event = EventLib.CharaEvent.RetrieveOption(text, CurrentCharacter);
-		return event;
+		if (event) return event;
 	}
 
 	return nullptr;
@@ -673,9 +639,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		if (pHash) *pHash = hash;
 
 		auto event = GetCardEvent(events);
-		auto eventOption = GetEventByBottomOption(srcImg);
-		if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
-		return eventOption ? eventOption.get() : event.get();
+		if (!event) event = GetEventByBottomOption(srcImg);
+		return event.get();
 	}
 
 	if (CurrentCharacter) {
@@ -686,9 +651,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 			if (pHash) *pHash = hash;
 
 			auto event = GetCharaEvent(events);
-			auto eventOption = GetCharaEventByBottomOption(srcImg);
-			if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
-			return eventOption ? eventOption.get() : event.get();
+			if (!event) event = GetCharaEventByBottomOption(srcImg);
+			return event.get();
 		}
 	}
 
@@ -699,9 +663,8 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		if (pHash) *pHash = hash;
 
 		auto event = GetScenarioEvent(events);
-		auto eventOption = GetScenarioEventByBottomOption(srcImg);
-		if (event && eventOption && eventOption != event) LOG_WARNING << L"異なる識別結果(イベント=" << event->Name << L", 選択肢=" << eventOption->Name << L")";
-		return eventOption ? eventOption.get() : event.get();
+		if (!event) event = GetScenarioEventByBottomOption(srcImg);
+		return event.get();
 	}
 
 	return nullptr;

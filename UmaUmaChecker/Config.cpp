@@ -43,7 +43,7 @@ bool Config::Load()
 		EnableCheckUpdate = config.value("EnableCheckUpdate", true);
 		OcrPoolSize = config.value("OcrPoolSize", 2);
 		Theme = config.value("Theme", 0);
-		CaptureMode = config.value("CaptureMode", 0);
+		CaptureMode = (::CaptureMode)config.value("CaptureMode", 0);
 	}
 	catch (json::exception& ex) {
 		return false;
@@ -77,7 +77,7 @@ void Config::Save()
 	config["EnableCheckUpdate"] = EnableCheckUpdate;
 	config["OcrPoolSize"] = OcrPoolSize;
 	config["Theme"] = Theme;
-	config["CaptureMode"] = CaptureMode;
+	config["CaptureMode"] = (int)CaptureMode;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

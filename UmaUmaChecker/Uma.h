@@ -24,9 +24,6 @@ public:
 
 	void Init();
 
-	HWND GetUmaWindow();
-	Gdiplus::Bitmap* ScreenShot();
-
 	bool Start();
 	void Stop();
 
@@ -84,6 +81,7 @@ private:
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 	void UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k);
 	void ResizeBest(cv::Mat& src, cv::Mat& dest, int height);
+	bool IsEventIcon(const cv::Mat& img);
 
 	// ハッシュ関数
 	uint64 GetImageHash(const cv::Mat& img);
@@ -101,6 +99,7 @@ public:
 	static const cv::Rect2d ScenarioChoiseBound;
 	static const cv::Rect2d TrainingCharaAliasNameBound;
 	static const cv::Rect2d TrainingCharaNameBound;
+	static const cv::Rect2d EventIconBound;
 	static const cv::Rect2d StatusBounds[5];
 
 public:
@@ -121,9 +120,6 @@ private:
 
 	// for event
 	wxFrame* frame;
-
-	// windows graphics capture
-	struct GraphicsCapture* capture;
 
 private:
 	static const double ResizeRatio;

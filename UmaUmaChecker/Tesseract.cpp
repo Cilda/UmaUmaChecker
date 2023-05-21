@@ -16,7 +16,7 @@ void Tesseract::Initialize()
 	for (int i = 0; i < pool_size; i++) {
 		tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
 		api->Init(utility::to_string(utility::GetExeDirectory() + L"\\tessdata").c_str(), "jpn");
-		api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
+		api->SetPageSegMode(tesseract::PSM_RAW_LINE);
 
 		tess_pool.join_manage_resource(api);
 	}

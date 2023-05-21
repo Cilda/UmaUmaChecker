@@ -243,6 +243,7 @@
     <ClCompile Include="Theme\StdRenderer.cpp" />
     <ClCompile Include="Theme\ThemeManager.cpp" />
     <ClCompile Include="UmaTripRecognizer.cpp" />
+    <ClCompile Include="UmaWindowCapture.cpp" />
     <ClCompile Include="UpdateManager.cpp" />
     <ClCompile Include="wxComboBoxPopup.cpp" />
     <ClCompile Include="Config.cpp" />
@@ -261,6 +262,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDialog.h" />
+    <ClInclude Include="CaptureMode.h" />
     <ClInclude Include="CheckUpdateDialog.h" />
     <ClInclude Include="CombineImage.h" />
     <ClInclude Include="EventData.h" />
@@ -269,7 +271,6 @@
     <ClInclude Include="Log.h" />
     <ClInclude Include="object_pool.hpp" />
     <ClInclude Include="ScenarioData.h" />
-    <ClInclude Include="Singleton.h" />
     <ClInclude Include="Tesseract.h" />
     <ClInclude Include="ThemeWrapper.h" />
     <ClInclude Include="Theme\BaseRenderer.h" />
@@ -277,6 +278,7 @@
     <ClInclude Include="Theme\StdRenderer.h" />
     <ClInclude Include="Theme\ThemeManager.h" />
     <ClInclude Include="UmaTripRecognizer.h" />
+    <ClInclude Include="UmaWindowCapture.h" />
     <ClInclude Include="UpdateManager.h" />
     <ClInclude Include="wxComboBoxPopup.h" />
     <ClInclude Include="Config.h" />

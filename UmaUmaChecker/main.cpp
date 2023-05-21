@@ -20,6 +20,7 @@
 #include "version.h"
 #include "Tesseract.h"
 #include "EventLibrary.h"
+#include "UmaWindowCapture.h"
 
 typedef HRESULT(_stdcall* SetThreadDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef BOOL(*SetProcessDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
@@ -77,6 +78,7 @@ public:
 
 		Gdiplus::GdiplusShutdown(token);
 		Tesseract::Uninitialize();
+		UmaWindowCapture::Uninitilize();
 
 		return 0;
 	}

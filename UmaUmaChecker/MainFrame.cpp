@@ -26,6 +26,7 @@
 #include "Theme/DarkThemeRenderer.h"
 
 #include "Log.h"
+#include "UmaWindowCapture.h"
 
 #pragma comment(lib, "gdiplus.lib")
 
@@ -236,7 +237,7 @@ void MainFrame::OnClickStart(wxCommandEvent& event)
 
 void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 {
-	Gdiplus::Bitmap* image = umaMgr->ScreenShot();
+	Gdiplus::Bitmap* image = UmaWindowCapture::ScreenShot();
 	if (image) {
 		CLSID clsid;
 		Config* config = Config::GetInstance();
