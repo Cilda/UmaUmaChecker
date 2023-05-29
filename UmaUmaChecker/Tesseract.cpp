@@ -45,3 +45,25 @@ std::wstring Tesseract::Recognize(const cv::Mat& image)
 	tess_pool.release(api);
 	return text;
 }
+
+int Tesseract::RecognizeAsNumber(const cv::Mat& image)
+{
+	if (!bInitialized) return -1;
+
+	auto api = tess_pool.get();
+
+	std::string variable;
+
+	api->GetVariableAsString("tessedit_char_whitelist", &variable);
+	api->SetVariable("tessedit_char_whitelist", "0123456789");
+	api->SetImage(image.data, image.size().width, image.size().height, image.channels(), image.step1());
+	api->Recognize(NULL);
+	api->SetVariable("tessedit_char_whitelist", variable.c_str());
+
+	const std::unique_ptr<const char[]> utf8_text(api->GetUTF8Text());
+	std::wstring text = utility::from_u8string(utf8_text.get());
+	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
+
+	tess_pool.release(api);
+	return std::stoi(text);
+}

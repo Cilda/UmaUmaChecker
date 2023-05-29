@@ -15,6 +15,7 @@ public:
 	static void Uninitialize();
 
 	static std::wstring Recognize(const cv::Mat& image);
+	static int RecognizeAsNumber(const cv::Mat& image);
 
 private:
 	static bool bInitialized;

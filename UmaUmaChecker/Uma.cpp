@@ -288,10 +288,9 @@ std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 
 int Uma::GetNumericFromImage(const cv::Mat& img)
 {
-	std::wstring value = Tesseract::Recognize(img);
-	if (value.empty()) return 0;
+	int value = Tesseract::RecognizeAsNumber(img);
 
-	return std::stoi(value);
+	return value;
 }
 
 void Uma::AsyncFunction(std::vector<std::wstring>& strs, const cv::Mat& img)
@@ -515,7 +514,7 @@ bool Uma::DetectCharaStatus(const cv::Mat& src)
 
 		double ratio = (double)cv::countNonZero(bin) / bin.size().area();
 
-		//int status = GetNumericFromImage(bin);
+		int status = GetNumericFromImage(bin);
 		//int status2 = GetNumericFromImage(gray);
 	}
 
