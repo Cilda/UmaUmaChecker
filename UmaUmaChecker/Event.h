@@ -27,3 +27,9 @@ public:
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> OptionMap;
 };
 
+
+class BaseData {
+public:
+	virtual std::shared_ptr<EventSource> RetrieveTitle(const std::wstring& title, EventRoot* root = nullptr) = 0;
+	virtual std::shared_ptr<EventSource> RetrieveOption(const std::wstring& option, EventRoot* root = nullptr) = 0;
+};
