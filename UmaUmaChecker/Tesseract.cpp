@@ -29,7 +29,7 @@ void Tesseract::Uninitialize()
 	tess_pool.clear();
 }
 
-std::wstring Tesseract::Recognize(const cv::Mat& image)
+std::wstring Tesseract::RecognizeAsRaw(const cv::Mat& image)
 {
 	if (!bInitialized) return L"";
 
@@ -42,6 +42,25 @@ std::wstring Tesseract::Recognize(const cv::Mat& image)
 	std::wstring text = utility::from_u8string(utf8_text.get());
 	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
+	tess_pool.release(api);
+	return text;
+}
+
+std::wstring Tesseract::Recognize(const cv::Mat& image)
+{
+	if (!bInitialized) return L"";
+
+	auto api = tess_pool.get();
+
+	api->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
+	api->SetImage(image.data, image.size().width, image.size().height, image.channels(), image.step1());
+	api->Recognize(NULL);
+
+	const std::unique_ptr<const char[]> utf8_text(api->GetUTF8Text());
+	std::wstring text = utility::from_u8string(utf8_text.get());
+	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
+
+	api->SetPageSegMode(tesseract::PSM_RAW_LINE);
 	tess_pool.release(api);
 	return text;
 }

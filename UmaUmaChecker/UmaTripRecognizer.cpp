@@ -67,7 +67,7 @@ bool UmaTripRecognizer::Detect(cv::Mat& src, std::vector<std::wstring>& vec)
 		double black_ratio = (bin.size().area() - cv::countNonZero(bin)) / (double)bin.size().area();
 
 		if (black_ratio > 0.01) {
-			std::wstring name = Tesseract::Recognize(bin);
+			std::wstring name = Tesseract::RecognizeAsRaw(bin);
 			vec.push_back(name);
 		}
 	}

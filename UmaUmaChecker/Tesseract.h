@@ -14,6 +14,7 @@ public:
 	static void Initialize();
 	static void Uninitialize();
 
+	static std::wstring RecognizeAsRaw(const cv::Mat& image);
 	static std::wstring Recognize(const cv::Mat& image);
 
 private:
