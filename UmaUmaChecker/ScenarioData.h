@@ -11,7 +11,7 @@ namespace simstring {
 	class reader;
 }
 
-class ScenarioData
+class ScenarioData : public BaseData
 {
 public:
 	ScenarioData();
@@ -19,8 +19,8 @@ public:
 
 	bool Load(const std::wstring& path);
 
-	std::shared_ptr<EventSource> RetrieveTitle(const std::wstring& title, EventRoot* root = nullptr);
-	std::shared_ptr<EventSource> RetrieveOption(const std::wstring& option);
+	std::shared_ptr<EventSource> RetrieveTitle(const std::wstring& title, EventRoot* root = nullptr) override;
+	std::shared_ptr<EventSource> RetrieveOption(const std::wstring& option, EventRoot* root = nullptr) override;
 
 private:
 	void InitDB(const std::filesystem::path& path);
