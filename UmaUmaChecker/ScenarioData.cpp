@@ -82,21 +82,13 @@ std::shared_ptr<EventSource> ScenarioData::RetrieveTitle(const std::wstring& tit
 
 	std::wstring match = xstrs.front();
 
-	if (root) {
-		auto event = root->Events.find(match);
-		if (event == root->Events.end()) return nullptr;
+	auto event = EventMap.find(match);
+	if (event == EventMap.end()) return nullptr;
 
-		return event->second;
-	}
-	else {
-		auto event = EventMap.find(match);
-		if (event == EventMap.end()) return nullptr;
-
-		return event->second;
-	}
+	return event->second;
 }
 
-std::shared_ptr<EventSource> ScenarioData::RetrieveOption(const std::wstring& option)
+std::shared_ptr<EventSource> ScenarioData::RetrieveOption(const std::wstring& option, EventRoot* root)
 {
 	std::vector<std::wstring> xstrs;
 

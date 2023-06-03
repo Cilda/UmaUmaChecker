@@ -283,12 +283,12 @@ bool Uma::IsBottomOption(const cv::Mat& srcImg)
 
 std::wstring Uma::GetTextFromImage(const cv::Mat& img)
 {
-	return Tesseract::Recognize(img);
+	return Tesseract::RecognizeAsRaw(img);
 }
 
 int Uma::GetNumericFromImage(const cv::Mat& img)
 {
-	std::wstring value = Tesseract::Recognize(img);
+	std::wstring value = Tesseract::RecognizeAsRaw(img);
 	if (value.empty()) return 0;
 
 	return std::stoi(value);
@@ -524,104 +524,19 @@ bool Uma::DetectCharaStatus(const cv::Mat& src)
 
 std::shared_ptr<EventSource> Uma::GetEventByBottomOption(const cv::Mat& srcImg)
 {
-	cv::Mat rsImg, gray, bin;
-	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
-		Uma::BottomChoiseBound.x * srcImg.size().width,
-		Uma::BottomChoiseBound.y * srcImg.size().height,
-		Uma::BottomChoiseBound.width * srcImg.size().width,
-		Uma::BottomChoiseBound.height * srcImg.size().height
-	));
-
-	if (!IsBottomOption(cut)) return nullptr;
-
-	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	ResizeBest(cut, rsImg, srcImg.size().height);
-	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
-
-	std::wstring text = GetTextFromImage(bin);
-	if (!text.empty()) {
-		ChangeCollectedText(text);
-		auto event = EventLib.CardEvent.RetrieveOption(text);
-		if (event) return event;
-	}
-
-	text = GetTextFromImage(gray);
-	if (!text.empty()) {
-		ChangeCollectedText(text);
-		auto event = EventLib.CardEvent.RetrieveOption(text);
-		if (event) return event;
-	}
-
-	return nullptr;
+	return RecognizeBottomOption(srcImg, &EventLib.CardEvent);
 }
 
 std::shared_ptr<EventSource> Uma::GetCharaEventByBottomOption(const cv::Mat& srcImg)
 {
-	cv::Mat rsImg, gray, bin;
-	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
-		Uma::BottomChoiseBound.x * srcImg.size().width,
-		Uma::BottomChoiseBound.y * srcImg.size().height,
-		Uma::BottomChoiseBound.width * srcImg.size().width,
-		Uma::BottomChoiseBound.height * srcImg.size().height
-	));
 
-	if (!IsBottomOption(cut)) return nullptr;
-
-	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	ResizeBest(cut, rsImg, srcImg.size().height);
-	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
-
-	std::wstring text = GetTextFromImage(bin);
-	if (!text.empty()) {
-		ChangeCollectedText(text);
-		auto event = EventLib.CharaEvent.RetrieveOption(text, CurrentCharacter);
-		if (event) return event;
-	}
-
-	text = GetTextFromImage(gray);
-	if (!text.empty()) {
-		ChangeCollectedText(text);
-		auto event = EventLib.CharaEvent.RetrieveOption(text, CurrentCharacter);
-		if (event) return event;
-	}
-
-	return nullptr;
+	return RecognizeBottomOption(srcImg, &EventLib.CharaEvent, CurrentCharacter);
 }
 
 std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& srcImg)
 {
-	cv::Mat rsImg, gray, bin;
-	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
-		Uma::BottomChoiseBound.x * srcImg.size().width,
-		Uma::BottomChoiseBound.y * srcImg.size().height,
-		Uma::BottomChoiseBound.width * srcImg.size().width,
-		Uma::BottomChoiseBound.height * srcImg.size().height
-	));
 
-	if (!IsBottomOption(cut)) return nullptr;
-
-	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-	ResizeBest(cut, rsImg, srcImg.size().height);
-	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
-
-	std::wstring text = GetTextFromImage(bin);
-	if (!text.empty()) {
-		ChangeCollectedText(text);
-		auto event = EventLib.ScenarioEvent.RetrieveOption(text);
-		if (event) return event;
-	}
-
-	text = GetTextFromImage(gray);
-	if (!text.empty()) {
-		ChangeCollectedText(text);
-		auto event = EventLib.ScenarioEvent.RetrieveOption(text);
-		if (event) return event;
-	}
-
-	return nullptr;
+	return RecognizeBottomOption(srcImg, &EventLib.ScenarioEvent);
 }
 
 EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<std::wstring>* pEvents, bool* bScaned)
@@ -755,6 +670,17 @@ EventRoot* Uma::DetectTrainingCharaName(const cv::Mat& srcImg)
 	return nullptr;
 }
 
+bool Uma::Reload()
+{
+	CurrentCharacter = nullptr;
+	CurrentEvent = nullptr;
+
+	EventLib.Clear();
+	EventLib.Load();
+
+	return true;
+}
+
 std::shared_ptr<EventSource> Uma::GetCardEvent(const std::vector<std::wstring>& text_list)
 {
 	double best_rate = 0.0;
@@ -814,16 +740,47 @@ std::shared_ptr<EventSource> Uma::GetScenarioEvent(const std::vector<std::wstrin
 	return best_rate > 0.0 ? rvalue : nullptr;
 }
 
-bool Uma::Reload()
+std::shared_ptr<EventSource> Uma::RecognizeBottomOption(const cv::Mat& srcImg, BaseData* data, EventRoot* root)
 {
-	CurrentCharacter = nullptr;
-	CurrentEvent = nullptr;
+	cv::Mat rsImg, gray, bin;
+	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
+		Uma::BottomChoiseBound.x * srcImg.size().width,
+		Uma::BottomChoiseBound.y * srcImg.size().height,
+		Uma::BottomChoiseBound.width * srcImg.size().width,
+		Uma::BottomChoiseBound.height * srcImg.size().height
+	));
 
-	EventLib.Clear();
-	EventLib.Load();
+	if (!IsBottomOption(cut)) return nullptr;
 
-	return true;
+	ResizeBest(cut, rsImg, srcImg.size().height);
+	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+	cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
+
+	std::wstring text = Tesseract::Recognize(bin);
+	if (!text.empty()) {
+		ChangeCollectedText(text);
+		auto event = data->RetrieveOption(text, root);
+		if (event) return event;
+	}
+
+	text = Tesseract::RecognizeAsRaw(bin);
+	if (!text.empty()) {
+		ChangeCollectedText(text);
+		auto event = data->RetrieveOption(text, root);
+		if (event) return event;
+	}
+
+	text = Tesseract::Recognize(gray);
+	if (!text.empty()) {
+		ChangeCollectedText(text);
+		auto event = data->RetrieveOption(text, root);
+		if (event) return event;
+	}
+
+	return nullptr;
 }
+
+
 
 std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg, uint64* pHash)
 {

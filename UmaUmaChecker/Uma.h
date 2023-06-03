@@ -56,6 +56,8 @@ private:
 	std::shared_ptr<EventSource> GetCardEvent(const std::vector<std::wstring>& text_list);
 	std::shared_ptr<EventSource> GetCharaEvent(const std::vector<std::wstring>& text_list);
 	std::shared_ptr<EventSource> GetScenarioEvent(const std::vector<std::wstring>& text_list);
+
+	std::shared_ptr<EventSource> RecognizeBottomOption(const cv::Mat& srcImg, BaseData* data, EventRoot* root = nullptr);
 	std::shared_ptr<EventSource> GetEventByBottomOption(const cv::Mat& srcImg);
 	std::shared_ptr<EventSource> GetCharaEventByBottomOption(const cv::Mat& srcImg);
 	std::shared_ptr<EventSource> GetScenarioEventByBottomOption(const cv::Mat& srcImg);
