@@ -21,6 +21,7 @@
 #include "AboutDialog.h"
 #include "GrandLiveMusicListFrame.h"
 #include "DebugFrame.h"
+#include "DebugImageCombineFrame.h"
 
 #include "Theme/StdRenderer.h"
 #include "Theme/DarkThemeRenderer.h"
@@ -195,6 +196,9 @@ void MainFrame::Init()
 	new wxLogWindow(this, wxT("ログ"));
 	DebugFrame* debug = new DebugFrame(this);
 	debug->Show();
+
+	DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
+	debug2->Show();
 #endif
 }
 

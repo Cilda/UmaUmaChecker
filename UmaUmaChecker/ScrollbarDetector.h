@@ -11,6 +11,9 @@ public:
 	~ScrollbarDetector();
 
 	int GetPos() const;
+	int GetTotalLength() const;
+	int GetBarLength() const;
+	int GetBarLengthRatio() const;
 	bool IsBegin() const;
 	bool IsEnd() const;
 
@@ -20,5 +23,7 @@ private:
 private:
 	int TotalLength;
 	int Length;
+	int StartY;
+	int EndY;
 };
 
