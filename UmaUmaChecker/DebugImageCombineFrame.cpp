@@ -6,6 +6,8 @@
 #include <Windows.h>
 #include <gdiplus.h>
 
+#include <thread>
+
 #include "CombineImage.h"
 #include "ScrollbarDetector.h"
 #include "UmaWindowCapture.h"
@@ -27,10 +29,15 @@ DebugImageCombineFrame::DebugImageCombineFrame(wxWindow* parent) : wxFrame(paren
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
+	text = new wxStaticText(this, wxID_ANY, wxT(""));
 	auto button = new wxButton(this, ID_StartCapture, wxT("Start Capture"));
 
+	sizer->Add(text);
 	sizer->Add(button);
 	this->SetSizer(sizer);
+
+	timer.Bind(wxEVT_TIMER, &DebugImageCombineFrame::OnTimer, this);
+	timer.Start(10);
 
 }
 
@@ -65,6 +72,25 @@ void DebugImageCombineFrame::OnClickStartCapture(wxCommandEvent& event)
 		combine.EndCapture();
 	}
 	else {
-		combine.StartCapture();
+		std::thread thread([&] {
+			combine.StartCapture();
+		});
+
+		while (thread.joinable()) {
+			wxYield();
+		}
+
+		thread.join();
+	}
+}
+
+void DebugImageCombineFrame::OnTimer(wxTimerEvent& event)
+{
+	if (!combine.IsCapturing()) {
+		text->SetLabel(wxT("キャプチャしていません。"));
+	}
+	else {
+		int msec = combine.GetProgressTime();
+		if (msec >= 10) text->SetLabel(wxString::Format(wxT("処理時間:%d"), msec));
 	}
 }

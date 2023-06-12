@@ -1,8 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <thread>
-
 #include <opencv2/opencv.hpp>
 
 struct CombineImageInfo {
@@ -21,7 +19,9 @@ public:
 	CombineImage();
 	~CombineImage();
 
-	bool IsCapturing() const { return thread.joinable(); };
+	int GetProgressTime() const { return msec; }
+
+	bool IsCapturing() const { return IsCapture; }
 	void StartCapture();
 	void EndCapture();
 
@@ -38,12 +38,13 @@ private:
 	bool IsCapture;
 	bool IsScanStarted;
 	bool IsFirstScan;
+
 	cv::Mat TemplateImage;
 	cv::Mat PrevImage;
 	int CurrentScrollPos;
 	int DetectedY;
-	std::thread thread;
 	int BarLength;
+	int msec;
 
 	std::vector<CombineImageInfo> DetectedYLines;
 	std::vector<cv::Mat> Images;

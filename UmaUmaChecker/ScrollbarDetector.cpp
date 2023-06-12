@@ -51,7 +51,7 @@ void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 	StartY = EndY = -1;
 
 	cv::Mat scr;
-	cv::inRange(img, cv::Scalar(140, 121, 123), cv::Scalar(168, 154, 156), scr);
+	cv::inRange(img, cv::Scalar(140, 121, 123), cv::Scalar(180, 179, 189), scr);
 
 	for (int y = 0; y < scr.size().height; y++) {
 		cv::uint8_t c = scr.at<cv::uint8_t>(y, 2);

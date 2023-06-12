@@ -2,6 +2,7 @@
 
 #include <wx/frame.h>
 #include <wx/timer.h>
+#include <wx/stattext.h>
 
 #include "CombineImage.h"
 
@@ -24,11 +25,13 @@ private:
 private:
 	void OnDropFiles(wxDropFilesEvent& event);
 	void OnClickStartCapture(wxCommandEvent& event);
+	void OnTimer(wxTimerEvent& event);
 
 	DECLARE_EVENT_TABLE()
 
 private:
 	wxTimer timer;
 	CombineImage combine;
+	wxStaticText* text;
 };
 

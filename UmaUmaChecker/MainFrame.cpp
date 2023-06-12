@@ -6,7 +6,6 @@
 
 #include <sstream>
 #include <fstream>
-#include <chrono>
 #include <regex>
 #include <nlohmann/json.hpp>
 
@@ -197,9 +196,11 @@ void MainFrame::Init()
 	DebugFrame* debug = new DebugFrame(this);
 	debug->Show();
 
+	
+#endif
+
 	DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
 	debug2->Show();
-#endif
 }
 
 bool MainFrame::LoadSkills()
@@ -251,13 +252,7 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 			directory = utility::GetExeDirectory() + L"\\Screenshots\\";
 		}
 
-		tm lt;
-		time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-
-		localtime_s(&lt, &now);
-		std::wstring time = static_cast<std::wostringstream&&>(std::wostringstream() << std::put_time(&lt, L"%Y-%m-%d_%H-%M-%S")).str();
-
-		std::wstring filename = L"screenshot_" + time;
+		std::wstring filename = L"screenshot_" + utility::GetDateTimeString();
 		std::wstring savename = directory + filename + config->GetImageExtension();
 
 		utility::GetEncoderClsid(config->GetImageMimeType().c_str(), &clsid);

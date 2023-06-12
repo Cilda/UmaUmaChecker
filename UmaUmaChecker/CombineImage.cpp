@@ -4,6 +4,11 @@
 #include <gdiplus.h>
 
 #include <numeric>
+#include <opencv2/core/types_c.h>
+#include <wx/imagbmp.h>
+
+#include "Config.h"
+#include"utility.h"
 
 #include "ScrollbarDetector.h"
 #include "UmaWindowCapture.h"
@@ -23,12 +28,13 @@ cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image)
 }
 
 
-CombineImage::CombineImage() : IsCapture(false)
+CombineImage::CombineImage() : IsCapture(false), BarLength(0), CurrentScrollPos(0), msec(0)
 {
 }
 
 CombineImage::~CombineImage()
 {
+	if (IsCapture) EndCapture();
 }
 
 void CombineImage::StartCapture()
@@ -47,25 +53,27 @@ void CombineImage::StartCapture()
 	DetectedYLines.clear();
 	BarLength = 0;
 
-	thread = std::thread([&] {
-		while (IsCapture) {
-			auto start = std::chrono::system_clock::now();
-			Capture();
-			auto end = std::chrono::system_clock::now();
-			auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	while (IsCapture) {
+		auto start = std::chrono::system_clock::now();
+		Capture();
+		auto end = std::chrono::system_clock::now();
+		msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-			if (16 - msec >= 0) Sleep(16 - msec);
-		}
-	});
+		if (16 - msec >= 0) Sleep(16 - msec);
+	}
+
+	IsCapture = false;
+	TemplateImage = cv::Mat();
+	PrevImage = cv::Mat();
+	Images.clear();
+	DetectedYLines.clear();
 }
 
 void CombineImage::EndCapture()
 {
-	if (!thread.joinable()) return;
+	if (!IsCapture) return;
 
 	_EndCapture();
-
-	thread.join();
 }
 
 bool CombineImage::Combine()
@@ -85,7 +93,24 @@ bool CombineImage::Combine()
 		}
 	}
 
-	return true;
+	if (!concat.empty()) {
+		Config* config = Config::GetInstance();
+
+		std::wstring directory = config->ScreenshotSavePath + L"\\";
+		if (config->ScreenshotSavePath.empty()) {
+			directory = utility::GetExeDirectory() + L"\\Screenshots\\";
+		}
+
+		std::wstring filename = L"combine_" + utility::GetDateTimeString();
+		std::wstring savename = directory + filename + config->GetImageExtension();
+
+		cv::cvtColor(concat, concat, cv::COLOR_BGR2RGB);
+		IplImage img = cvIplImage(concat);
+		wxImage img1 = wxImage(img.width, img.height, (unsigned char*)img.imageData, true);
+		return img1.SaveFile(savename.c_str(), wxBITMAP_TYPE_PNG);
+	}
+
+	return false;
 }
 
 void CombineImage::_EndCapture()
@@ -100,7 +125,10 @@ void CombineImage::Capture()
 	if (!IsCapture) return;
 
 	Gdiplus::Bitmap* image = UmaWindowCapture::ScreenShot();
-	if (!image) return;
+	if (!image) {
+		_EndCapture();
+		return;
+	}
 
 	cv::Mat mat = BitmapToCvMat(image);
 	cv::Mat bar;
@@ -108,7 +136,7 @@ void CombineImage::Capture()
 	CutScrollbar(mat, bar);
 	ScrollbarDetector scroll(bar);
 
-	if (scroll.GetBarLength() == 0) {
+	if (IsScanStarted && scroll.GetBarLength() == 0) {
 		_EndCapture();
 		// 通常キャプチャ
 		delete image;
@@ -119,7 +147,7 @@ void CombineImage::Capture()
 	}
 
 	if (BarLength == 0) BarLength = scroll.GetBarLengthRatio();
-	else if (BarLength != scroll.GetBarLengthRatio()) {
+	else if (std::abs(BarLength - scroll.GetBarLengthRatio()) > 1) {
 		delete image;
 		return;
 	}
@@ -139,14 +167,20 @@ void CombineImage::Capture()
 			cv::minMaxLoc(result, NULL, &MaxVal, NULL, &MaxPt);
 
 			// 検出されなかったとき
-			if (MaxVal < 0.9 || scroll.IsEnd()) {
-				if (DetectedY != -1) {
+			if (MaxVal < 0.95 || scroll.IsEnd()) {
+				if (scroll.IsEnd() || DetectedY != -1) {
 					Images.push_back(scroll.IsEnd() ? mat.clone() : PrevImage);
 					DetectedYLines.emplace_back(scroll.IsEnd() ? MaxPt.y : DetectedY, -1);
 					if (!scroll.IsEnd()) {
 						int y = GetTemplateImage(PrevImage, TemplateImage);
-						DetectedYLines.back().NextDetectedY = y;
-						DetectedY = -1;
+						if (y != -1) {
+							DetectedYLines.back().NextDetectedY = y;
+							DetectedY = -1;
+						}
+					}
+					else {
+						_EndCapture();
+						Combine();
 					}
 				}
 			}
@@ -158,18 +192,22 @@ void CombineImage::Capture()
 
 			PrevImage = mat.clone();
 		}
-		else if (BarLength == scroll.GetBarLengthRatio() && IsFirstScan) {
+		else if (TemplateImage.empty() && std::abs(BarLength - scroll.GetBarLengthRatio()) <= 1) {
 			int y = GetTemplateImage(mat, TemplateImage);
-			Images.push_back(mat.clone());
-			DetectedYLines.emplace_back(0, y);
-			IsFirstScan = false;
+			if (y != -1) {
+				if (IsFirstScan) {
+					Images.push_back(mat.clone());
+					DetectedYLines.emplace_back(0, y);
+					IsFirstScan = false;
+				}
+				else if (DetectedY != -1) {
+					DetectedYLines.back().NextDetectedY = y;
+					DetectedY = -1;
+				}
+			}
 		}
 
 		CurrentScrollPos = scroll.GetPos();
-		
-		if (scroll.IsEnd()) {
-			_EndCapture();
-		}
 	}
 
 	delete image;
@@ -197,21 +235,32 @@ int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
 	cv::Rect rect = cv::boundingRect(max);
 
 	int y = rect.y + rect.height - 1;
-	int start_y = -1;
-	int end_y = -1;
-	UINT8 last_color = bin.at<UINT8>(rect.y + rect.height - 1, rect.x + rect.width / 4);
-	if (last_color == 0) {
-		while (y >= 0 && bin.at<UINT8>(y, rect.x + rect.width / 4) == 0) y--;
-	}
-	else {
-		while (y >= 0 && bin.at<UINT8>(y, rect.x + rect.width / 4) == 255) y--;
-		while (y >= 0 && bin.at<UINT8>(y, rect.x + rect.width / 4) == 0) y--;
-	}
+	int start_y = y;
+	int end_y;
+	int count = 0;
 
-	if (y < 0) return -1;
+	do {
+		end_y = start_y;
 
-	start_y = y;
-	end_y = rect.y + rect.height - 1;
+		UINT8 last_color = bin.at<UINT8>(y, rect.x + rect.width / 4);
+		if (last_color == 0) {
+			while (y >= 0 && bin.at<UINT8>(y, rect.x + rect.width / 4) == 0) y--;
+		}
+		else {
+			while (y >= 0 && bin.at<UINT8>(y, rect.x + rect.width / 4) == 255) y--;
+			while (y >= 0 && bin.at<UINT8>(y, rect.x + rect.width / 4) == 0) y--;
+		}
+
+		if (y < 0) {
+			cut = cv::Mat();
+			return -1;
+		}
+
+		start_y = y;
+		count++;
+	} while (end_y - start_y <= 10 && count <= 1);
+
+	
 
 	// スクロールバーは除外したい
 	cut = cv::Mat(mat, cv::Rect(rect.x, start_y, (int)(0.96544276457883369330453563714903 * mat.size().width) - rect.x, end_y - start_y)).clone();
