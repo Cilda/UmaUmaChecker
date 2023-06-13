@@ -46,6 +46,7 @@ void CombineImage::StartCapture()
 	IsFirstScan = true;
 	CurrentScrollPos = -1;
 	DetectedY = -1;
+	IsManualStop = false;
 
 	TemplateImage = cv::Mat();
 	PrevImage = cv::Mat();
@@ -73,14 +74,17 @@ void CombineImage::EndCapture()
 {
 	if (!IsCapture) return;
 
-	_EndCapture();
+	IsManualStop = true;
+	//_EndCapture();
 }
 
 bool CombineImage::Combine()
 {
 	if (Images.size() == 0) return false;
-
+	
 	cv::Mat concat;
+
+	status = Combining;
 
 	for (int i = 0; i < Images.size(); i++) {
 		auto& info = DetectedYLines[i];
@@ -118,6 +122,7 @@ void CombineImage::_EndCapture()
 	if (!IsCapture) return;
 
 	IsCapture = false;
+	status = Stop;
 }
 
 void CombineImage::Capture()
@@ -136,7 +141,7 @@ void CombineImage::Capture()
 	CutScrollbar(mat, bar);
 	ScrollbarDetector scroll(bar);
 
-	if (IsScanStarted && scroll.GetBarLength() == 0) {
+	if (!IsScanStarted && scroll.GetBarLength() == 0) {
 		_EndCapture();
 		// 通常キャプチャ
 		delete image;
@@ -144,17 +149,27 @@ void CombineImage::Capture()
 	}
 	else if (scroll.IsBegin() && !IsScanStarted) {
 		IsScanStarted = true;
+		status = Scanning;
+	}
+	else if (!scroll.IsBegin() && !IsScanStarted) {
+		status = WaitForMovingScrollbarOnTop;
 	}
 
 	if (BarLength == 0) BarLength = scroll.GetBarLengthRatio();
-	else if (std::abs(BarLength - scroll.GetBarLengthRatio()) > 1) {
+	else if (std::abs(BarLength - scroll.GetBarLengthRatio()) >= 1) {
+		delete image;
+		return;
+	}
+
+	if (!PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)) {
+		_EndCapture();
 		delete image;
 		return;
 	}
 
 	if (IsScanStarted) {
 		// テンプレートマッチを行う画像がある場合
-		if (scroll.GetPos() > CurrentScrollPos && !TemplateImage.empty()) {
+		if (!TemplateImage.empty() && (IsManualStop || scroll.GetPos() > CurrentScrollPos)) {
 			cv::Mat result;
 			cv::Point MaxPt;
 			double MaxVal;
@@ -166,12 +181,16 @@ void CombineImage::Capture()
 			cv::matchTemplate(gray, grayTemp, result, cv::TM_CCOEFF_NORMED);
 			cv::minMaxLoc(result, NULL, &MaxVal, NULL, &MaxPt);
 
+			MaxVal = std::round(MaxVal * 100.0) / 100.0;
+
+			bool IsLast = scroll.IsEnd() || IsManualStop;
 			// 検出されなかったとき
-			if (MaxVal < 0.95 || scroll.IsEnd()) {
-				if (scroll.IsEnd() || DetectedY != -1) {
-					Images.push_back(scroll.IsEnd() ? mat.clone() : PrevImage);
-					DetectedYLines.emplace_back(scroll.IsEnd() ? MaxPt.y : DetectedY, -1);
-					if (!scroll.IsEnd()) {
+			if (MaxVal < 0.95 || IsLast) {
+				if (IsLast || DetectedY != -1) {
+					Images.push_back(IsLast ? mat.clone() : PrevImage);
+					DetectedYLines.emplace_back(IsLast ? MaxPt.y : DetectedY, -1);
+					// スクロールバーが途中かつ手動停止でない場合は次のマッチさせる画像を取得
+					if (!IsLast) {
 						int y = GetTemplateImage(PrevImage, TemplateImage);
 						if (y != -1) {
 							DetectedYLines.back().NextDetectedY = y;
@@ -191,8 +210,9 @@ void CombineImage::Capture()
 			}
 
 			PrevImage = mat.clone();
+			CurrentScrollPos = scroll.GetPos();
 		}
-		else if (TemplateImage.empty() && std::abs(BarLength - scroll.GetBarLengthRatio()) <= 1) {
+		else if (TemplateImage.empty()) {
 			int y = GetTemplateImage(mat, TemplateImage);
 			if (y != -1) {
 				if (IsFirstScan) {
@@ -206,8 +226,6 @@ void CombineImage::Capture()
 				}
 			}
 		}
-
-		CurrentScrollPos = scroll.GetPos();
 	}
 
 	delete image;
@@ -217,8 +235,10 @@ int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
 {
 	cv::Mat bin;
 
+	//CutRecognizeRange(mat, mat2);
 	cv::inRange(mat, cv::Scalar(242, 243, 242), cv::Scalar(242, 243, 242), bin);
 
+	/*
 	std::vector<std::vector<cv::Point>> contours;
 	std::vector<cv::Vec4i> hierarchy;
 	cv::findContours(bin, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
@@ -233,6 +253,11 @@ int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
 	}
 
 	cv::Rect rect = cv::boundingRect(max);
+	*/
+	cv::Rect rect(
+		0.02452830188679245283018867924528 * mat.size().width, (int)(0.46235418875927889713679745493107 * mat.size().height),
+		0.95283018867924528301886792 * mat.size().width, (int)(0.40402969247083775185577942735949 * mat.size().height)
+	);
 
 	int y = rect.y + rect.height - 1;
 	int start_y = y;
@@ -266,6 +291,14 @@ int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
 	cut = cv::Mat(mat, cv::Rect(rect.x, start_y, (int)(0.96544276457883369330453563714903 * mat.size().width) - rect.x, end_y - start_y)).clone();
 
 	return start_y;
+}
+
+void CombineImage::CutRecognizeRange(const cv::Mat& mat, cv::Mat& out)
+{
+	out = cv::Mat(mat, cv::Rect(
+		0.02452830188679245283018867924528 * mat.size().width, std::round(0.46235418875927889713679745493107 * mat.size().height),
+		0.95283018867924528301886792 * mat.size().width, std::round(0.40827147401908801696712619300106 * mat.size().height)
+	));
 }
 
 void CombineImage::CutScrollbar(const cv::Mat& src, cv::Mat& out)

@@ -7,6 +7,7 @@
 #include <gdiplus.h>
 
 #include <thread>
+#include <future>
 
 #include "CombineImage.h"
 #include "ScrollbarDetector.h"
@@ -21,6 +22,7 @@ enum {
 wxBEGIN_EVENT_TABLE(DebugImageCombineFrame, wxFrame)
 	EVT_DROP_FILES(DebugImageCombineFrame::OnDropFiles)
 	EVT_BUTTON(ID_StartCapture, DebugImageCombineFrame::OnClickStartCapture)
+	EVT_CLOSE(DebugImageCombineFrame::OnClose)
 wxEND_EVENT_TABLE()
 
 DebugImageCombineFrame::DebugImageCombineFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("画像結合"))
@@ -72,15 +74,17 @@ void DebugImageCombineFrame::OnClickStartCapture(wxCommandEvent& event)
 		combine.EndCapture();
 	}
 	else {
-		std::thread thread([&] {
+		bRunning = true;
+		thread = std::thread([this] {
 			combine.StartCapture();
+			bRunning = false;
 		});
 
-		while (thread.joinable()) {
+		while (bRunning) {
 			wxYield();
 		}
 
-		thread.join();
+		if (thread.joinable()) thread.join();
 	}
 }
 
@@ -93,4 +97,13 @@ void DebugImageCombineFrame::OnTimer(wxTimerEvent& event)
 		int msec = combine.GetProgressTime();
 		if (msec >= 10) text->SetLabel(wxString::Format(wxT("処理時間:%d"), msec));
 	}
+}
+
+void DebugImageCombineFrame::OnClose(wxCloseEvent& event)
+{
+	if (thread.joinable()) {
+		return;
+	}
+
+	Destroy();
 }

@@ -13,6 +13,13 @@ struct CombineImageInfo {
 	}
 };
 
+enum CombineStatus {
+	Stop = 0, // 停止中
+	WaitForMovingScrollbarOnTop, // スクロールバーが上部に移動するまで待機中
+	Scanning, // スキャン中
+	Combining, // 合成中
+};
+
 class CombineImage
 {
 public:
@@ -32,6 +39,7 @@ private:
 	void Capture();
 
 	int GetTemplateImage(const cv::Mat& mat, cv::Mat& cut);
+	void CutRecognizeRange(const cv::Mat& mat, cv::Mat& out);
 	void CutScrollbar(const cv::Mat& src, cv::Mat& out);
 
 private:
@@ -45,6 +53,8 @@ private:
 	int DetectedY;
 	int BarLength;
 	int msec;
+	CombineStatus status;
+	bool IsManualStop;
 
 	std::vector<CombineImageInfo> DetectedYLines;
 	std::vector<cv::Mat> Images;
