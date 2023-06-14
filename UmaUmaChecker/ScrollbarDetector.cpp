@@ -64,6 +64,10 @@ void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 		}
 	}
 
+	if (StartY == -1 && EndY == -1) {
+		return;
+	}
+
 	if (EndY == -1) EndY = scr.size().height;
 
 	Length = EndY - StartY;
