@@ -2,6 +2,7 @@
 
 #include <wx/sizer.h>
 #include <wx/button.h>
+#include <wx/msgdlg.h>
 
 #include <Windows.h>
 #include <gdiplus.h>
@@ -102,6 +103,7 @@ void DebugImageCombineFrame::OnTimer(wxTimerEvent& event)
 void DebugImageCombineFrame::OnClose(wxCloseEvent& event)
 {
 	if (thread.joinable()) {
+		wxMessageBox(wxT("終了するには結合を停止してください。"));
 		return;
 	}
 

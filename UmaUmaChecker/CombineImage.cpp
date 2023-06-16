@@ -157,6 +157,9 @@ void CombineImage::Capture()
 
 	if (BarLength == 0) BarLength = scroll.GetBarLengthRatio();
 	else if (std::abs(BarLength - scroll.GetBarLengthRatio()) >= 1) {
+		if (IsManualStop) {
+			_EndCapture();
+		}
 		delete image;
 		return;
 	}
@@ -174,8 +177,9 @@ void CombineImage::Capture()
 			cv::Point MaxPt;
 			double MaxVal;
 
-			cv::Mat gray, grayTemp;
-			cv::cvtColor(mat, gray, cv::COLOR_RGB2GRAY);
+			cv::Mat gray, gray2, grayTemp;
+			cv::cvtColor(mat, gray, cv::COLOR_BGR2GRAY);
+			cv::cvtColor(mat, gray2, cv::COLOR_RGB2GRAY);
 			cv::cvtColor(TemplateImage, grayTemp, cv::COLOR_RGB2GRAY);
 
 			cv::matchTemplate(gray, grayTemp, result, cv::TM_CCOEFF_NORMED);
@@ -219,13 +223,14 @@ void CombineImage::Capture()
 					Images.push_back(mat.clone());
 					DetectedYLines.emplace_back(0, y);
 					IsFirstScan = false;
-				}
-				else if (DetectedY != -1) {
-					DetectedYLines.back().NextDetectedY = y;
-					DetectedY = -1;
+					CurrentScrollPos = scroll.GetPos();
 				}
 			}
 		}
+	}
+
+	if (IsManualStop) {
+		_EndCapture();
 	}
 
 	delete image;
@@ -255,11 +260,11 @@ int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
 	cv::Rect rect = cv::boundingRect(max);
 	*/
 	cv::Rect rect(
-		0.02452830188679245283018867924528 * mat.size().width, (int)(0.46235418875927889713679745493107 * mat.size().height),
-		0.95283018867924528301886792 * mat.size().width, (int)(0.40402969247083775185577942735949 * mat.size().height)
+		0.02452830188679245283018867924528 * mat.size().width, std::round(0.46235418875927889713679745493107 * mat.size().height),
+		0.95283018867924528301886792 * mat.size().width, std::round(0.40402969247083775185577942735949 * mat.size().height)
 	);
 
-	int y = rect.y + rect.height - 1;
+	int y = rect.y + rect.height;
 	int start_y = y;
 	int end_y;
 	int count = 0;
@@ -273,6 +278,7 @@ int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
 		}
 		else {
 			while (y >= 0 && bin.at<UINT8>(y, rect.x + rect.width / 4) == 255) y--;
+			end_y = y;
 			while (y >= 0 && bin.at<UINT8>(y, rect.x + rect.width / 4) == 0) y--;
 		}
 
@@ -288,7 +294,7 @@ int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
 	
 
 	// スクロールバーは除外したい
-	cut = cv::Mat(mat, cv::Rect(rect.x, start_y, (int)(0.96544276457883369330453563714903 * mat.size().width) - rect.x, end_y - start_y)).clone();
+	cut = cv::Mat(mat, cv::Rect(rect.x, start_y, rect.width - ((rect.x + rect.width) - (int)(0.96544276457883369330453563714903 * mat.size().width) + 1), end_y - start_y)).clone();
 
 	return start_y;
 }

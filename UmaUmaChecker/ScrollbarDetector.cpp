@@ -30,7 +30,7 @@ int ScrollbarDetector::GetBarLength() const
 
 int ScrollbarDetector::GetBarLengthRatio() const
 {
-	return std::round((double)Length / TotalLength * 100);
+	return (double)Length / TotalLength * 100;
 }
 
 bool ScrollbarDetector::IsBegin() const
