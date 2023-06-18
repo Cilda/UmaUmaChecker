@@ -179,8 +179,8 @@ void CombineImage::Capture()
 
 			cv::Mat gray, gray2, grayTemp;
 			cv::cvtColor(mat, gray, cv::COLOR_BGR2GRAY);
-			cv::cvtColor(mat, gray2, cv::COLOR_RGB2GRAY);
-			cv::cvtColor(TemplateImage, grayTemp, cv::COLOR_RGB2GRAY);
+			cv::cvtColor(mat, gray2, cv::COLOR_BGR2GRAY);
+			cv::cvtColor(TemplateImage, grayTemp, cv::COLOR_BGR2GRAY);
 
 			cv::matchTemplate(gray, grayTemp, result, cv::TM_CCOEFF_NORMED);
 			cv::minMaxLoc(result, NULL, &MaxVal, NULL, &MaxPt);
