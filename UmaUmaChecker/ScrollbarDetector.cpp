@@ -51,13 +51,12 @@ void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 	StartY = EndY = -1;
 
 	cv::Mat scr;
-	//cv::inRange(img, cv::Scalar(140, 121, 123), cv::Scalar(180, 179, 189), scr);
-	cv::inRange(img, cv::Scalar(217, 210, 211), cv::Scalar(219, 213, 213), scr);
-	cv::bitwise_not(scr, scr);
+	cv::inRange(img, cv::Scalar(140, 121, 123), cv::Scalar(180, 179, 189), scr);
 
 	for (int y = 0; y < scr.size().height; y++) {
 		cv::uint8_t c = scr.at<cv::uint8_t>(y, 2);
 		if (c == 255 && StartY == -1) {
+			/*
 			bool hasBlack = false;
 			for (int x = 0; x < scr.size().width; x++) {
 				cv::uint8_t bw = scr.at<cv::uint8_t>(y, x);
@@ -67,7 +66,8 @@ void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 				}
 			}
 
-			if (!hasBlack) StartY = y;
+			if (!hasBlack) */
+			StartY = y;
 		}
 		else if (c == 0 && StartY != -1 && EndY == -1) {
 			EndY = y - 1;
