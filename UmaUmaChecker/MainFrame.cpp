@@ -305,7 +305,6 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 {
 	if (combine.IsCapturing()) {
 		combine.EndCapture();
-		m_buttonCombine->SetBitmap(wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
 	}
 	else {
 		m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
