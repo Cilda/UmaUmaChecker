@@ -171,8 +171,10 @@ void CombineImage::Capture()
 	}
 
 	if (IsScanStarted) {
+		bool IsLast = scroll.IsEnd() || IsManualStop;
+
 		// テンプレートマッチを行う画像がある場合
-		if (!TemplateImage.empty() && (IsManualStop || scroll.GetPos() > CurrentScrollPos)) {
+		if (!TemplateImage.empty() && (IsLast || scroll.GetPos() > CurrentScrollPos)) {
 			cv::Mat result;
 			cv::Point MaxPt;
 			double MaxVal;
@@ -187,7 +189,6 @@ void CombineImage::Capture()
 
 			MaxVal = std::round(MaxVal * 100.0) / 100.0;
 
-			bool IsLast = scroll.IsEnd() || IsManualStop;
 			// 検出されなかったとき
 			if (MaxVal < 0.95 || IsLast) {
 				if (IsLast || DetectedY != -1) {
