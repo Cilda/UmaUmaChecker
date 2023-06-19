@@ -141,6 +141,8 @@ void CombineImage::Capture()
 	CutScrollbar(mat, bar);
 	ScrollbarDetector scroll(bar);
 
+	if (BarLength == 0 && scroll.GetBarLength() > 0) BarLength = scroll.GetBarLength();
+
 	if (!IsScanStarted && scroll.GetBarLength() == 0) {
 		_EndCapture();
 		// 通常キャプチャ
@@ -155,8 +157,7 @@ void CombineImage::Capture()
 		status = WaitForMovingScrollbarOnTop;
 	}
 
-	if (BarLength == 0) BarLength = scroll.GetBarLengthRatio();
-	else if (std::abs(BarLength - scroll.GetBarLengthRatio()) >= 1) {
+	if (BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) {
 		if (IsManualStop) {
 			_EndCapture();
 		}
@@ -190,7 +191,7 @@ void CombineImage::Capture()
 			MaxVal = std::round(MaxVal * 100.0) / 100.0;
 
 			// 検出されなかったとき
-			if (MaxVal < 0.95 || IsLast) {
+			if (MaxVal < 0.98 || IsLast) {
 				if (IsLast || DetectedY != -1) {
 					Images.push_back(IsLast ? mat.clone() : PrevImage);
 					DetectedYLines.emplace_back(IsLast ? MaxPt.y : DetectedY, -1);
@@ -312,6 +313,6 @@ void CombineImage::CutScrollbar(const cv::Mat& src, cv::Mat& out)
 {
 	out = cv::Mat(src, cv::Rect(
 		0.96544276457883369330453563714903 * src.size().width, std::round(0.47515151515151515151515151515152 * src.size().height),
-		0.00862068965517241379310344827586 * src.size().width, std::round(0.38060606060606060606060606060606 * src.size().height)
+		0.00862068965517241379310344827586 * src.size().width, std::round(0.38125 * src.size().height) + 1
 	));
 }
