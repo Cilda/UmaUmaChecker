@@ -237,6 +237,15 @@
     <Image Include="app.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
+    <Image Include="screenshot.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="StopRecord.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="StartRecord.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="version.txt">

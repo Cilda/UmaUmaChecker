@@ -39,6 +39,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	this->SetIcon(wxICON(AppIcon));
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
+	this->SetDoubleBuffered(true);
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 
@@ -50,8 +51,13 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	m_toggleBtnStart = new ThemedButtonWrapper<wxToggleButton>(this, wxID_ANY, wxT("スタート"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
 
-	m_buttonScreenshot = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("スクリーンショット"), wxDefaultPosition, wxDefaultSize, 0);
-	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL, 5);
+	m_buttonScreenshot = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("ScreenShot"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+	m_buttonScreenshot->SetToolTip(wxT("スクリーンショットを撮ります。"));
+	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL & ~wxRIGHT, 5);
+
+	m_buttonCombine = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+	m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影します。"));
+	bSizerButtons->Add(m_buttonCombine, 0, wxALL & ~wxLEFT, 5);
 
 	m_buttonPreview = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("プレビュー表示"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonPreview, 0, wxALL, 5);
@@ -134,9 +140,11 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->Centre(wxBOTH);
 
 	// イベントバインド
+	this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this);
 	m_toggleBtnStart->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnClickStart, this);
 	m_buttonScreenshot->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickScreenShot, this);
 	m_buttonScreenshot->Bind(wxEVT_RIGHT_DOWN, &MainFrame::OnRightClickScreenShot, this);
+	m_buttonCombine->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickCombine, this);
 	m_buttonPreview->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickPreview, this);
 	m_buttonSetting->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickSetting, this);
 	m_comboBoxUma->Bind(wxEVT_COMMAND_COMBOBOX_SELECTED, &MainFrame::OnSelectedUma, this);
@@ -196,11 +204,10 @@ void MainFrame::Init()
 	DebugFrame* debug = new DebugFrame(this);
 	debug->Show();
 
-	
-#endif
-
 	DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
 	debug2->Show();
+	
+#endif
 }
 
 bool MainFrame::LoadSkills()
@@ -226,6 +233,16 @@ bool MainFrame::LoadSkills()
 	}
 
 	return false;
+}
+
+void MainFrame::OnClose(wxCloseEvent& event)
+{
+	if (thread.joinable()) {
+		wxMessageBox(wxT("終了するには結合を停止してください。"), wxT("エラー"), wxICON_ERROR);
+		return;
+	}
+
+	Destroy();
 }
 
 void MainFrame::OnClickStart(wxCommandEvent& event)
@@ -284,6 +301,30 @@ void MainFrame::OnRightClickScreenShot(wxMouseEvent& event)
 	wxExecute(command, wxEXEC_ASYNC, NULL);
 }
 
+void MainFrame::OnClickCombine(wxCommandEvent& event)
+{
+	if (combine.IsCapturing()) {
+		combine.EndCapture();
+		m_buttonCombine->SetBitmap(wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+	}
+	else {
+		m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+
+		bool bRunning = true;
+		thread = std::thread([&] {
+			combine.StartCapture();
+			bRunning = false;
+		});
+
+		while (bRunning) {
+			wxYield();
+		}
+
+		if (thread.joinable()) thread.join();
+		m_buttonCombine->SetBitmap(wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+	}
+}
+
 void MainFrame::OnClickPreview(wxCommandEvent& event)
 {
 	if (m_PreviewWindow && m_PreviewWindow->IsShown()) return;
@@ -337,6 +378,7 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 		}
 		Layout();
 		Fit();
+		Refresh();
 	}
 
 	if (frame.IsUpdated()) {

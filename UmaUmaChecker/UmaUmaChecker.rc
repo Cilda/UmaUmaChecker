@@ -52,7 +52,13 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
+STOPRECORD              ICON                    "StopRecord.ico"
+
+SCREENSHOT              ICON                    "screenshot.ico"
+
 APPICON                 ICON                    "app.ico"
+
+STARTRECORD             ICON                    "StartRecord.ico"
 
 #endif    // “ú–{Œê (“ú–{) resources
 /////////////////////////////////////////////////////////////////////////////

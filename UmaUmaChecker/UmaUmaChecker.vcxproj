@@ -306,6 +306,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="app.ico" />
+    <Image Include="screenshot.ico" />
+    <Image Include="StartRecord.ico" />
+    <Image Include="StopRecord.ico" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="version.txt" />
