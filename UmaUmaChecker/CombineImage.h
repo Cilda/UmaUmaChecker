@@ -47,8 +47,10 @@ private:
 	bool IsScanStarted;
 	bool IsFirstScan;
 
+	cv::Point RecognizePoint;
 	cv::Mat TemplateImage;
 	cv::Mat PrevImage;
+
 	int CurrentScrollPos;
 	int DetectedY;
 	int BarLength;

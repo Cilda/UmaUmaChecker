@@ -47,6 +47,7 @@ void CombineImage::StartCapture()
 	CurrentScrollPos = -1;
 	DetectedY = -1;
 	IsManualStop = false;
+	RecognizePoint = cv::Point();
 
 	TemplateImage = cv::Mat();
 	PrevImage = cv::Mat();
@@ -89,7 +90,7 @@ bool CombineImage::Combine()
 	for (int i = 0; i < Images.size(); i++) {
 		auto& info = DetectedYLines[i];
 
-		if (info.StartY == 0) {
+		if (i == 0) {
 			cv::vconcat(cv::Mat(Images[i], cv::Rect(0, 0, Images[i].size().width, info.NextDetectedY)), concat);
 		}
 		else {
@@ -171,6 +172,11 @@ void CombineImage::Capture()
 		return;
 	}
 
+	if (RecognizePoint.x == 0 && RecognizePoint.y == 0) {
+		RecognizePoint.x = 0.02452830188679245283018867924528 * mat.size().width;
+		RecognizePoint.y = std::round(0.46235418875927889713679745493107 * mat.size().height);
+	}
+
 	if (IsScanStarted) {
 		bool IsLast = scroll.IsEnd() || IsManualStop;
 
@@ -178,11 +184,10 @@ void CombineImage::Capture()
 		if (!TemplateImage.empty() && (IsLast || scroll.GetPos() > CurrentScrollPos)) {
 			cv::Mat result;
 			cv::Point MaxPt;
-			double MaxVal;
+			double MaxVal = 0;
 
-			cv::Mat gray, gray2, grayTemp;
+			cv::Mat gray, grayTemp;
 			cv::cvtColor(mat, gray, cv::COLOR_BGR2GRAY);
-			cv::cvtColor(mat, gray2, cv::COLOR_BGR2GRAY);
 			cv::cvtColor(TemplateImage, grayTemp, cv::COLOR_BGR2GRAY);
 
 			cv::matchTemplate(gray, grayTemp, result, cv::TM_CCOEFF_NORMED);
@@ -191,7 +196,7 @@ void CombineImage::Capture()
 			MaxVal = std::round(MaxVal * 100.0) / 100.0;
 
 			// 検出されなかったとき
-			if (MaxVal < 0.98 || IsLast) {
+			if (IsLast || MaxVal < 0.90 || MaxPt.y < RecognizePoint.y) {
 				if (IsLast || DetectedY != -1) {
 					Images.push_back(IsLast ? mat.clone() : PrevImage);
 					DetectedYLines.emplace_back(IsLast ? MaxPt.y : DetectedY, -1);
@@ -296,7 +301,7 @@ int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
 	
 
 	// スクロールバーは除外したい
-	cut = cv::Mat(mat, cv::Rect(rect.x, start_y, rect.width - ((rect.x + rect.width) - (int)(0.96544276457883369330453563714903 * mat.size().width) + 1), end_y - start_y)).clone();
+	cut = cv::Mat(mat, cv::Rect(rect.x, start_y + 1, rect.width - ((rect.x + rect.width) - (int)(0.96544276457883369330453563714903 * mat.size().width) + 1), end_y - start_y)).clone();
 
 	return start_y;
 }
