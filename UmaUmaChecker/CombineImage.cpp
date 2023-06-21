@@ -206,7 +206,7 @@ void CombineImage::Capture()
 
 			double RoundedMaxVal = std::round(MaxVal * 100.0) / 100.0;
 
-			LOG_DEBUG << L"[CombineImage::Capture] matchTemplate結果: MaxVal=" << MaxVal << L", RoundedMaxVal=" << RoundedMaxVal;
+			LOG_DEBUG << L"[CombineImage::Capture] matchTemplate結果: MaxVal=" << MaxVal << L", RoundedMaxVal=" << RoundedMaxVal << L", IsLast=" << IsLast << L", IsOutOfRange=" << (MaxPt.y < RecognizePoint.y);
 
 			// 検出されなかったとき
 			if (IsLast || RoundedMaxVal < 0.90 || MaxPt.y < RecognizePoint.y) {
