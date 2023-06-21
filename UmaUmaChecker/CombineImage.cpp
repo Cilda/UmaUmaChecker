@@ -9,6 +9,7 @@
 
 #include "Config.h"
 #include"utility.h"
+#include "Log.h"
 
 #include "ScrollbarDetector.h"
 #include "UmaWindowCapture.h"
@@ -55,6 +56,8 @@ void CombineImage::StartCapture()
 	DetectedYLines.clear();
 	BarLength = 0;
 
+	LOG_DEBUG << L"[CombineImage::StartCapture] ウマ娘詳細結合開始";
+
 	while (IsCapture) {
 		auto start = std::chrono::system_clock::now();
 		Capture();
@@ -63,6 +66,8 @@ void CombineImage::StartCapture()
 
 		if (16 - msec >= 0) Sleep(16 - msec);
 	}
+
+	LOG_DEBUG << L"[CombineImage::StartCapture] ウマ娘詳細結合終了";
 
 	IsCapture = false;
 	TemplateImage = cv::Mat();
@@ -77,10 +82,14 @@ void CombineImage::EndCapture()
 
 	IsManualStop = true;
 	//_EndCapture();
+
+	LOG_DEBUG << L"[CombineImage::EndCapture] 結合停止";
 }
 
 bool CombineImage::Combine()
 {
+	LOG_DEBUG << L"[CombineImage::Combine] 結合数=" << Images.size();
+
 	if (Images.size() == 0) return false;
 	
 	cv::Mat concat;
@@ -160,6 +169,7 @@ void CombineImage::Capture()
 
 	if (BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) {
 		if (IsManualStop) {
+			LOG_DEBUG << L"[CombineImage::Capture] 停止, BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) && IsManualStop";
 			_EndCapture();
 		}
 		delete image;
@@ -167,6 +177,7 @@ void CombineImage::Capture()
 	}
 
 	if (!PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)) {
+		LOG_DEBUG << L"[CombineImage::Capture] 停止, !PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)";
 		_EndCapture();
 		delete image;
 		return;
@@ -193,10 +204,12 @@ void CombineImage::Capture()
 			cv::matchTemplate(gray, grayTemp, result, cv::TM_CCOEFF_NORMED);
 			cv::minMaxLoc(result, NULL, &MaxVal, NULL, &MaxPt);
 
-			MaxVal = std::round(MaxVal * 100.0) / 100.0;
+			double RoundedMaxVal = std::round(MaxVal * 100.0) / 100.0;
+
+			LOG_DEBUG << L"[CombineImage::Capture] matchTemplate結果: MaxVal=" << MaxVal << L", RoundedMaxVal=" << RoundedMaxVal;
 
 			// 検出されなかったとき
-			if (IsLast || MaxVal < 0.90 || MaxPt.y < RecognizePoint.y) {
+			if (IsLast || RoundedMaxVal < 0.90 || MaxPt.y < RecognizePoint.y) {
 				if (IsLast || DetectedY != -1) {
 					Images.push_back(IsLast ? mat.clone() : PrevImage);
 					DetectedYLines.emplace_back(IsLast ? MaxPt.y : DetectedY, -1);
@@ -237,6 +250,7 @@ void CombineImage::Capture()
 	}
 
 	if (IsManualStop) {
+		LOG_DEBUG << L"[CombineImage::Capture] 停止, IsManualStop";
 		_EndCapture();
 	}
 

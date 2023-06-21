@@ -204,8 +204,8 @@ void MainFrame::Init()
 	DebugFrame* debug = new DebugFrame(this);
 	debug->Show();
 
-	DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
-	debug2->Show();
+	//DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
+	//debug2->Show();
 	
 #endif
 }
