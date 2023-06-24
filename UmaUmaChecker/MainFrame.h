@@ -60,6 +60,7 @@ private:
 	void OnClickAbout(wxCommandEvent& event);
 	void OnPreviewDragFile(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
+	void OnCombineTimer(wxTimerEvent& event);
 	// コンボボックスのオートコンプリート用
 	void OnComboTextUpdate(wxCommandEvent& event);
 	void OnSelectedListBoxItem(wxCommandEvent& event);
@@ -101,6 +102,7 @@ private:
 	Uma* umaMgr;
 	std::unordered_map<std::wstring, std::wstring> SkillMap; // スキル名 -> 説明
 
+	wxTimer CombineTimer;
 	CombineImage combine;
 	std::thread thread;
 };

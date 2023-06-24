@@ -52,11 +52,11 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
 
 	m_buttonScreenshot = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("ScreenShot"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-	m_buttonScreenshot->SetToolTip(wxT("スクリーンショットを撮ります。"));
+	m_buttonScreenshot->SetToolTip(wxT("スクリーンショットを撮ります"));
 	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL & ~wxRIGHT, 5);
 
 	m_buttonCombine = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-	m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影します。"));
+	m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を開始します"));
 	bSizerButtons->Add(m_buttonCombine, 0, wxALL & ~wxLEFT, 5);
 
 	m_buttonPreview = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("プレビュー表示"), wxDefaultPosition, wxDefaultSize, 0);
@@ -129,9 +129,6 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	m_statusBar->PushStatusText(wxT("MEM: 0.0 MB"), 1);
 	this->SetStatusBar(m_statusBar);
 
-	if (!config->IsShowStatusBar) m_statusBar->Hide();
-	else timer.Start(1000);
-
 	m_comboPopup = new wxComboBoxPopup(this);
 
 	this->SetSizer(bSizerTop);
@@ -154,17 +151,21 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	}
 	this->Bind(wxEVT_THREAD, &MainFrame::OnUmaThreadEvent, this);
 	m_buttonAbout->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickAbout, this);
-	this->Bind(wxEVT_TIMER, &MainFrame::OnTimer, this);
+	timer.Bind(wxEVT_TIMER, &MainFrame::OnTimer, this);
 	this->Bind(wxEVT_DPI_CHANGED, &MainFrame::OnDPIChanged, this);
 
 	// コンボボックスポップアップ用
 	m_comboBoxUma->Bind(wxEVT_COMMAND_TEXT_UPDATED, &MainFrame::OnComboTextUpdate, this);
 	m_comboPopup->Bind(wxEVT_HIDE, &MainFrame::OnSelectedListBoxItem, this);
 	m_comboBoxUma->Bind(wxEVT_KEY_DOWN, &MainFrame::OnComboKeyDown, this);
+	CombineTimer.Bind(wxEVT_TIMER, &MainFrame::OnCombineTimer, this);
 
 	if (config->WindowX != 0 || config->WindowY != 0) {
 		this->Move(config->WindowX, config->WindowY);
 	}
+
+	if (!config->IsShowStatusBar) m_statusBar->Hide();
+	else timer.Start(1000);
 
 	Init();
 }
@@ -313,6 +314,8 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 	}
 	else {
 		m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+		m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を停止します"));
+		CombineTimer.Start(100);
 
 		bool bRunning = true;
 		thread = std::thread([&] {
@@ -326,6 +329,9 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 
 		if (thread.joinable()) thread.join();
 		m_buttonCombine->SetBitmap(wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+		m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を開始します"));
+		CombineTimer.Stop();
+		this->SetTitle(app_title);
 	}
 }
 
@@ -504,6 +510,24 @@ void MainFrame::OnTimer(wxTimerEvent& event)
 
 	m_statusBar->SetStatusText(wxString::Format(wxT("CPU: %.1lf%%"), cpu_usage));
 	m_statusBar->SetStatusText(wxString::Format(wxT("MEM: %0.1f MB"), memory_usage / 1024.0 / 1024.0), 1);
+}
+
+void MainFrame::OnCombineTimer(wxTimerEvent& event)
+{
+	CombineStatus status = combine.GetStatus();
+	switch (status) {
+		case Stop:
+			break;
+		case WaitForMovingScrollbarOnTop:
+			//this->SetTitle(wxString::Format(wxT("%s [上部までスクロールしてください]"), app_title));
+			break;
+		case Scanning:
+			//this->SetTitle(wxString::Format(wxT("%s [スキャン中]"), app_title));
+			break;
+		case Combining:
+			//this->SetTitle(wxString::Format(wxT("%s [結合中]"), app_title));
+			break;
+	}
 }
 
 void MainFrame::OnComboTextUpdate(wxCommandEvent& event)

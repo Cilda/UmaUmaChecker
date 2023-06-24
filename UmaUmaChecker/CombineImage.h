@@ -27,6 +27,7 @@ public:
 	~CombineImage();
 
 	int GetProgressTime() const { return msec; }
+	CombineStatus GetStatus() const { return status; }
 
 	bool IsCapturing() const { return IsCapture; }
 	void StartCapture();
