@@ -303,6 +303,11 @@ void MainFrame::OnRightClickScreenShot(wxMouseEvent& event)
 
 void MainFrame::OnClickCombine(wxCommandEvent& event)
 {
+	if (!UmaWindowCapture::GetUmaWindow()) {
+		wxMessageBox(wxT("ウマ娘のウィンドウが見つかりません。"), app_name, wxICON_ERROR);
+		return;
+	}
+
 	if (combine.IsCapturing()) {
 		combine.EndCapture();
 	}
