@@ -145,6 +145,7 @@ void CombineImage::Capture()
 
 	Gdiplus::Bitmap* image = UmaWindowCapture::ScreenShot();
 	if (!image) {
+		LOG_DEBUG << L"[CombineImage::Capture] 停止, !image";
 		_EndCapture();
 		return;
 	}
@@ -158,6 +159,7 @@ void CombineImage::Capture()
 	if (BarLength == 0 && scroll.GetBarLength() > 0) BarLength = scroll.GetBarLength();
 
 	if (!IsScanStarted && scroll.GetBarLength() == 0) {
+		LOG_DEBUG << L"[CombineImage::Capture] 停止, !IsScanStarted && scroll.GetBarLength() == 0";
 		_EndCapture();
 		// 通常キャプチャ
 		delete image;
