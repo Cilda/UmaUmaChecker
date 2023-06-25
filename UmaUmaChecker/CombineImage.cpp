@@ -49,6 +49,7 @@ void CombineImage::StartCapture()
 	DetectedY = -1;
 	IsManualStop = false;
 	RecognizePoint = cv::Point();
+	IsSavedImage = false;
 
 	TemplateImage = cv::Mat();
 	PrevImage = cv::Mat();
@@ -62,9 +63,11 @@ void CombineImage::StartCapture()
 		auto start = std::chrono::system_clock::now();
 		Capture();
 		auto end = std::chrono::system_clock::now();
-		msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+		int progress_msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-		if (16 - msec >= 0) Sleep(16 - msec);
+		if (16 - progress_msec > 0) Sleep(16 - progress_msec);
+
+		msec = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
 	}
 
 	LOG_DEBUG << L"[CombineImage::StartCapture] ウマ娘詳細結合終了";
@@ -121,6 +124,7 @@ bool CombineImage::Combine()
 		cv::cvtColor(concat, concat, cv::COLOR_BGR2RGB);
 		IplImage img = cvIplImage(concat);
 		wxImage img1 = wxImage(img.width, img.height, (unsigned char*)img.imageData, true);
+		IsSavedImage = true;
 		return img1.SaveFile(savename.c_str(), wxBITMAP_TYPE_PNG);
 	}
 

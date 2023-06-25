@@ -7,6 +7,7 @@
 #include <sstream>
 #include <fstream>
 #include <regex>
+#include <mutex>
 #include <nlohmann/json.hpp>
 
 #include <wx/msgdlg.h>
@@ -52,7 +53,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
 
 	m_buttonScreenshot = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("ScreenShot"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-	m_buttonScreenshot->SetToolTip(wxT("スクリーンショットを撮ります"));
+	m_buttonScreenshot->SetToolTip(wxT("スクリーンショットを撮ります\n右クリックをすると保存先フォルダを開きます"));
 	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL & ~wxRIGHT, 5);
 
 	m_buttonCombine = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
@@ -313,7 +314,7 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 		combine.EndCapture();
 	}
 	else {
-		m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+		m_buttonCombine->SetBitmap(wxIcon(wxT("WaitRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
 		m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を停止します"));
 		CombineTimer.Start(100);
 
@@ -323,7 +324,14 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 			bRunning = false;
 		});
 
+		std::once_flag once;
+
 		while (bRunning) {
+			if (combine.GetStatus() == Scanning) {
+				std::call_once(once, [this] {
+					m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+				});
+			}
 			wxYield();
 		}
 
@@ -332,6 +340,9 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 		m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を開始します"));
 		CombineTimer.Stop();
 		this->SetTitle(app_title);
+		if (!combine.IsImageSaved()) {
+			wxMessageBox(wxT("キャプチャに失敗しました。"), app_title, wxICON_ERROR);
+		}
 	}
 }
 
@@ -519,13 +530,9 @@ void MainFrame::OnCombineTimer(wxTimerEvent& event)
 		case Stop:
 			break;
 		case WaitForMovingScrollbarOnTop:
-			//this->SetTitle(wxString::Format(wxT("%s [上部までスクロールしてください]"), app_title));
-			break;
 		case Scanning:
-			//this->SetTitle(wxString::Format(wxT("%s [スキャン中]"), app_title));
-			break;
 		case Combining:
-			//this->SetTitle(wxString::Format(wxT("%s [結合中]"), app_title));
+			this->SetTitle(wxString::Format(wxT("%s [%d fps]"), app_title, 1000 / combine.GetProgressTime()));
 			break;
 	}
 }

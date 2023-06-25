@@ -309,6 +309,7 @@
     <Image Include="screenshot.ico" />
     <Image Include="StartRecord.ico" />
     <Image Include="StopRecord.ico" />
+    <Image Include="WaitingRecord.ico" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="version.txt" />

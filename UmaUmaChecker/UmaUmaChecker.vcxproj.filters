@@ -246,6 +246,9 @@
     <Image Include="StartRecord.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
+    <Image Include="WaitingRecord.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="version.txt">

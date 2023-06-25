@@ -28,6 +28,7 @@ public:
 
 	int GetProgressTime() const { return msec; }
 	CombineStatus GetStatus() const { return status; }
+	bool IsImageSaved() const { return IsSavedImage; }
 
 	bool IsCapturing() const { return IsCapture; }
 	void StartCapture();
@@ -58,6 +59,7 @@ private:
 	int msec;
 	CombineStatus status;
 	bool IsManualStop;
+	bool IsSavedImage;
 
 	std::vector<CombineImageInfo> DetectedYLines;
 	std::vector<cv::Mat> Images;
