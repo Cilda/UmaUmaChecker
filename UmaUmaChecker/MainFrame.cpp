@@ -7,7 +7,6 @@
 #include <sstream>
 #include <fstream>
 #include <regex>
-#include <mutex>
 #include <nlohmann/json.hpp>
 
 #include <wx/msgdlg.h>
@@ -314,8 +313,6 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 		combine.EndCapture();
 	}
 	else {
-		m_buttonCombine->SetBitmap(wxIcon(wxT("WaitRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-		m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を停止します"));
 		CombineTimer.Start(100);
 
 		bool bRunning = true;
@@ -324,14 +321,19 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 			bRunning = false;
 		});
 
-		std::once_flag once;
+		CombineStatus PrevStatus = Stop;
 
 		while (bRunning) {
-			if (combine.GetStatus() == Scanning) {
-				std::call_once(once, [this] {
-					m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-				});
+			if (PrevStatus != WaitForMovingScrollbarOnTop && combine.GetStatus() == WaitForMovingScrollbarOnTop) {
+				m_buttonCombine->SetBitmap(wxIcon(wxT("WaitRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+				m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を停止します"));
 			}
+			else if (PrevStatus != Scanning && combine.GetStatus() == Scanning) {
+				m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+				m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を停止します"));
+			}
+
+			PrevStatus = combine.GetStatus();
 			wxYield();
 		}
 
