@@ -21,6 +21,8 @@ env:
 
   VCPKG_INSTALL_PATH: C:\vcpkg
 
+  VCPKG_BINARY_SOURCES: 'clear;default,${{ github.home }}\AppData\Local\vcpkg\archives'
+
 permissions:
   contents: read
 
