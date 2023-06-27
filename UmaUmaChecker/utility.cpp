@@ -6,6 +6,10 @@
 #include <gdiplus.h>
 #include <vector>
 #include <algorithm>
+#include <chrono>
+#include <sstream>
+#include <fstream>
+#include <iomanip>
 
 namespace utility
 {
@@ -92,5 +96,13 @@ namespace utility
 
 		free(pImageCodecInfo);
 		return -1;
+	}
+	std::wstring GetDateTimeString()
+	{
+		tm lt;
+		time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+		localtime_s(&lt, &now);
+		return static_cast<std::wostringstream&&>(std::wostringstream() << std::put_time(&lt, L"%Y-%m-%d_%H-%M-%S")).str();
 	}
 }

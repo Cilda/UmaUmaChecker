@@ -21,6 +21,8 @@ env:
 
   VCPKG_INSTALL_PATH: C:\vcpkg
 
+  VCPKG_BINARY_SOURCES: clear;files,C:\vcpkg_caches,readwrite
+
 permissions:
   contents: read
 
@@ -84,7 +86,7 @@ jobs:
     - name: Restore vcpkg caches
       uses: actions/cache@v3.2.3
       with:
-        path: ${{ github.home }}\AppData\Local\vcpkg\archives
+        path: C:\vcpkg_caches
         key: vcpkg-${{hashFiles('./vcpkg.json')}}
         restore-keys: |
           vcpkg-${{hashFiles('./vcpkg.json')}}

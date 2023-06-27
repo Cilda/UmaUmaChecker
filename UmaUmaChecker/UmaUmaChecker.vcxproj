@@ -231,11 +231,13 @@
     <ClCompile Include="AboutDialog.cpp" />
     <ClCompile Include="CheckUpdateDialog.cpp" />
     <ClCompile Include="CombineImage.cpp" />
+    <ClCompile Include="DebugImageCombineFrame.cpp" />
     <ClCompile Include="EventData.cpp" />
     <ClCompile Include="FontComboBox.cpp" />
     <ClCompile Include="GrandLiveMusicListFrame.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="ScenarioData.cpp" />
+    <ClCompile Include="ScrollbarDetector.cpp" />
     <ClCompile Include="Tesseract.cpp" />
     <ClCompile Include="ThemeWrapper.cpp" />
     <ClCompile Include="Theme\BaseRenderer.cpp" />
@@ -265,12 +267,14 @@
     <ClInclude Include="CaptureMode.h" />
     <ClInclude Include="CheckUpdateDialog.h" />
     <ClInclude Include="CombineImage.h" />
+    <ClInclude Include="DebugImageCombineFrame.h" />
     <ClInclude Include="EventData.h" />
     <ClInclude Include="FontComboBox.h" />
     <ClInclude Include="GrandLiveMusicListFrame.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="object_pool.hpp" />
     <ClInclude Include="ScenarioData.h" />
+    <ClInclude Include="ScrollbarDetector.h" />
     <ClInclude Include="Tesseract.h" />
     <ClInclude Include="ThemeWrapper.h" />
     <ClInclude Include="Theme\BaseRenderer.h" />
@@ -302,6 +306,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="app.ico" />
+    <Image Include="screenshot.ico" />
+    <Image Include="StartRecord.ico" />
+    <Image Include="StopRecord.ico" />
+    <Image Include="WaitingRecord.ico" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="version.txt" />
