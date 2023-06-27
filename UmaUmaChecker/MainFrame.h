@@ -5,6 +5,7 @@
 #include <wx/tglbtn.h>
 #include <wx/string.h>
 #include <wx/bitmap.h>
+#include <wx/bmpbuttn.h>
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/gdicmn.h>
@@ -20,13 +21,17 @@
 #include <wx/statbox.h>
 #include <wx/frame.h>
 
+#include <thread>
+
 #include "wxTextPopupCtrl.h"
 #include "wxUmaTextCtrl.h"
 #include "wxComboBoxPopup.h"
 #include "ThemeWrapper.h"
+#include "CombineImage.h"
 
 #include "PreviewFrame.h"
 #include "DebugFrame.h"
+
 
 #include "Uma.h"
 #include "version.h"
@@ -41,9 +46,11 @@ private:
 	void Init();
 	bool LoadSkills();
 
+	void OnClose(wxCloseEvent& event);
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
 	void OnRightClickScreenShot(wxMouseEvent& event);
+	void OnClickCombine(wxCommandEvent& event);
 	void OnClickPreview(wxCommandEvent& event);
 	void OnClickSetting(wxCommandEvent& event);
 	void OnSelectedUma(wxCommandEvent& event);
@@ -53,6 +60,7 @@ private:
 	void OnClickAbout(wxCommandEvent& event);
 	void OnPreviewDragFile(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
+	void OnCombineTimer(wxTimerEvent& event);
 	// コンボボックスのオートコンプリート用
 	void OnComboTextUpdate(wxCommandEvent& event);
 	void OnSelectedListBoxItem(wxCommandEvent& event);
@@ -74,7 +82,8 @@ private:
 
 private:
 	wxToggleButton* m_toggleBtnStart;
-	wxButton* m_buttonScreenshot;
+	wxBitmapButton* m_buttonScreenshot;
+	wxBitmapButton* m_buttonCombine;
 	wxButton* m_buttonPreview;
 	wxButton* m_buttonSetting;
 	wxButton* m_buttonAbout;
@@ -92,4 +101,8 @@ private:
 
 	Uma* umaMgr;
 	std::unordered_map<std::wstring, std::wstring> SkillMap; // スキル名 -> 説明
+
+	wxTimer CombineTimer;
+	CombineImage combine;
+	std::thread thread;
 };
