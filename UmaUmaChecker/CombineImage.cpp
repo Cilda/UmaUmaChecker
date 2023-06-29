@@ -125,7 +125,7 @@ bool CombineImage::Combine()
 		IplImage img = cvIplImage(concat);
 		wxImage img1 = wxImage(img.width, img.height, (unsigned char*)img.imageData, true);
 		IsSavedImage = true;
-		return img1.SaveFile(savename.c_str(), wxBITMAP_TYPE_PNG);
+		return img1.SaveFile(savename.c_str(), config->GetImageMimeType());
 	}
 
 	return false;
