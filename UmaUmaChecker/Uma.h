@@ -47,6 +47,9 @@ public:
 private:
 	void MonitorThread();
 
+	void ProcessEventAndCharacter(Gdiplus::Bitmap* image, const cv::Mat& srcImage);
+	void ProcessStatus(Gdiplus::Bitmap* image, const cv::Mat& srcImage);
+
 	// イベント名認識
 	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg, uint64* pHash);
 	std::vector<std::wstring> RecognizeCardEventText(const cv::Mat& srcImg, uint64* pHash);

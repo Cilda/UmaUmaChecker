@@ -129,65 +129,78 @@ void Uma::MonitorThread()
 		Gdiplus::Bitmap* image = UmaWindowCapture::ScreenShot();
 		if (image) {
 			cv::Mat srcImage = BitmapToCvMat(image);
-			bool bScaned = false;
-
-			auto start1 = std::chrono::system_clock::now();
-
-			uint64 hash = 0;
-			std::vector<std::wstring> events;
-
-			EventSource* event = DetectEvent(srcImage, &hash, &events, &bScaned);
-			if (event) {
-				if (event != CurrentEvent) {
-					CurrentEvent = event;
-
-					HBITMAP hBmp;
-
-					image->GetHBITMAP(Gdiplus::Color(0, 0, 0), &hBmp);
-
-					wxThreadEvent event(wxEVT_THREAD);
-					event.SetId(1);
-					event.SetPayload(hBmp);
-					wxQueueEvent(frame, event.Clone());
-				}
+			{
+				auto future1 = std::async(std::launch::async, [&] { ProcessEventAndCharacter(image, srcImage); });
+				auto future2 = std::async(std::launch::async, [&] { ProcessStatus(image, srcImage); });
 			}
-			else if (!events.empty()) {
-				OutputMissingEventInfo(image, hash, events);
-			}
-
-			auto end1 = std::chrono::system_clock::now();
-			auto msec1 = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - start1).count();
-
-			wxLogDebug(wxT("DetectEvent(): %lld msec"), msec1);
-
-			if (!bScaned) {
-				auto start2 = std::chrono::system_clock::now();
-
-				EventRoot* root = DetectTrainingCharaName(srcImage);
-				if (root) {
-					wxThreadEvent event(wxEVT_THREAD);
-					event.SetId(2);
-					event.SetString(root->Name);
-					wxQueueEvent(frame, event.Clone());
-				}
-
-				auto end2 = std::chrono::system_clock::now();
-				auto msec2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2).count();
-
-				wxLogDebug(wxT("DetectTrainingCharaName(): %lld msec"), msec2);
-			}
-
+			
 			delete image;
 		}
 
 		auto end = std::chrono::system_clock::now();
 		auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-		//LOG_DEBUG << wxString::Format(wxT("MonitorThread() ループ処理時間: %lld msec"), msec);
-		//OutputDebugStringW(wxString::Format(wxT("MonitorThread() ループ処理時間: %lld msec"), msec).wx_str());
+		wxLogDebug(wxT("Thread Loop: %lld msec"), msec);
 
 		if (msec < 1000) SleepEx(1000 - msec, TRUE);
 	}
+}
+
+void Uma::ProcessEventAndCharacter(Gdiplus::Bitmap* image, const cv::Mat& srcImage)
+{
+	
+	bool bScaned = false;
+
+	auto start1 = std::chrono::system_clock::now();
+
+	uint64 hash = 0;
+	std::vector<std::wstring> events;
+
+	EventSource* event = DetectEvent(srcImage, &hash, &events, &bScaned);
+	if (event) {
+		if (event != CurrentEvent) {
+			CurrentEvent = event;
+
+			HBITMAP hBmp;
+
+			image->GetHBITMAP(Gdiplus::Color(0, 0, 0), &hBmp);
+
+			wxThreadEvent event(wxEVT_THREAD);
+			event.SetId(1);
+			event.SetPayload(hBmp);
+			wxQueueEvent(frame, event.Clone());
+		}
+	}
+	else if (!events.empty()) {
+		OutputMissingEventInfo(image, hash, events);
+	}
+
+	auto end1 = std::chrono::system_clock::now();
+	auto msec1 = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - start1).count();
+
+	wxLogDebug(wxT("DetectEvent(): %lld msec"), msec1);
+
+	if (!bScaned) {
+		auto start2 = std::chrono::system_clock::now();
+
+		EventRoot* root = DetectTrainingCharaName(srcImage);
+		if (root) {
+			wxThreadEvent event(wxEVT_THREAD);
+			event.SetId(2);
+			event.SetString(root->Name);
+			wxQueueEvent(frame, event.Clone());
+		}
+
+		auto end2 = std::chrono::system_clock::now();
+		auto msec2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2).count();
+
+		wxLogDebug(wxT("DetectTrainingCharaName(): %lld msec"), msec2);
+	}
+}
+
+void Uma::ProcessStatus(Gdiplus::Bitmap* image, const cv::Mat& srcImage)
+{
+	DetectCharaStatus(srcImage);
 }
 
 bool Uma::IsCharaEvent(const cv::Mat& srcImg)
@@ -510,12 +523,13 @@ bool Uma::DetectCharaStatus(const cv::Mat& src)
 
 		cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
 		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-		cv::threshold(gray, bin, 120, 255, cv::THRESH_BINARY);
+		cv::threshold(gray, bin, 180, 255, cv::THRESH_BINARY);
 
 		double ratio = (double)cv::countNonZero(bin) / bin.size().area();
 
 		int status = GetNumericFromImage(bin);
 		//int status2 = GetNumericFromImage(gray);
+		wxLogDebug(wxT("%d = %d"), i, status);
 	}
 
 	return false;

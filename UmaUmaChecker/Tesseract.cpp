@@ -84,5 +84,5 @@ int Tesseract::RecognizeAsNumber(const cv::Mat& image)
 	text.erase(std::remove_if(text.begin(), text.end(), iswspace), text.end());
 
 	tess_pool.release(api);
-	return std::stoi(text);
+	return text.length() == 0 ? -1 : std::stoi(text);
 }
