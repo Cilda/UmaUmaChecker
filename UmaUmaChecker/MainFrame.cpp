@@ -33,7 +33,7 @@
 using json = nlohmann::json;
 
 
-MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : ThemedWindowWrapper<wxFrame>(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL), timer(this)
+MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, long style) : ThemedWindowWrapper<wxFrame>(parent, wxID_ANY, app_title, pos, size, style), umaMgr(new Uma(this)), m_PreviewWindow(NULL)
 {
 	Config* config = Config::GetInstance();
 
@@ -375,6 +375,7 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 		}
 		else if (!timer.IsRunning()) {
 			m_statusBar->Show();
+			PositionStatusBar();
 			timer.Start(1000);
 		}
 
@@ -399,8 +400,9 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 		for (auto ctrl : m_textCtrlEventOptions) {
 			ctrl->SetHeightByLine(config->OptionMaxLine);
 		}
-		Layout();
+
 		Fit();
+		Layout();
 		Refresh();
 	}
 
