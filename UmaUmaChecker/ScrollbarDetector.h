@@ -19,11 +19,16 @@ public:
 
 private:
 	void InitScrollInfo(cv::Mat& img);
+	
 
 private:
 	int TotalLength;
 	int Length;
-	int StartY;
-	int EndY;
+
+	int ScrollBarStartY;
+	int ScrollBarEndY;
+
+	int MinY;
+	int MaxY;
 };
 

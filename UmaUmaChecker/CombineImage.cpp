@@ -173,18 +173,17 @@ void CombineImage::Capture()
 		status = WaitForMovingScrollbarOnTop;
 	}
 
-	if (BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) {
+	if (!PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)) {
+		LOG_DEBUG << L"[CombineImage::Capture] 停止, !PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)";
+		_EndCapture();
+		delete image;
+		return;
+	}
+	else if (BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) {
 		if (IsManualStop) {
 			LOG_DEBUG << L"[CombineImage::Capture] 停止, BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) && IsManualStop";
 			_EndCapture();
 		}
-		delete image;
-		return;
-	}
-
-	if (!PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)) {
-		LOG_DEBUG << L"[CombineImage::Capture] 停止, !PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)";
-		_EndCapture();
 		delete image;
 		return;
 	}

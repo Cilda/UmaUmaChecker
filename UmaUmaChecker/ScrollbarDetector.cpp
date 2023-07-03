@@ -15,7 +15,7 @@ ScrollbarDetector::~ScrollbarDetector()
 
 int ScrollbarDetector::GetPos() const
 {
-	return StartY;
+	return ScrollBarStartY;
 }
 
 int ScrollbarDetector::GetTotalLength() const
@@ -35,51 +35,58 @@ int ScrollbarDetector::GetBarLengthRatio() const
 
 bool ScrollbarDetector::IsBegin() const
 {
-	return StartY == 0;
+	return ScrollBarStartY == MinY;
 }
 
 bool ScrollbarDetector::IsEnd() const
 {
-	return EndY + 1 == TotalLength;
+	return ScrollBarEndY == MaxY;
 }
 
 void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 {
-	TotalLength = img.size().height;
+	TotalLength = 0;
 	Length = 0;
 
-	StartY = EndY = -1;
+	ScrollBarStartY = ScrollBarEndY = -1;
 
-	cv::Mat scr;
-	cv::inRange(img, cv::Scalar(140, 121, 123), cv::Scalar(180, 179, 189), scr);
+	cv::Mat bar, scr;
+	cv::inRange(img, cv::Scalar(140, 121, 123), cv::Scalar(180, 179, 189), bar);
+	cv::inRange(img, cv::Scalar(140, 121, 123), cv::Scalar(217, 210, 211), scr);
 
+	MinY = -1;
+	MaxY = -1;
 	for (int y = 0; y < scr.size().height; y++) {
-		cv::uint8_t c = scr.at<cv::uint8_t>(y, 2);
-		if (c == 255 && StartY == -1) {
-			/*
-			bool hasBlack = false;
-			for (int x = 0; x < scr.size().width; x++) {
-				cv::uint8_t bw = scr.at<cv::uint8_t>(y, x);
-				if (bw == 0) {
-					hasBlack = true;
-					break;
-				}
+		for (int x = 0; x < scr.size().width; x++) {
+			cv::uint8_t b = scr.at<cv::uint8_t>(y, x);
+			if (b == 255) {
+				if (MinY == -1) MinY = y;
+				if (y > MaxY) MaxY = y;
 			}
-
-			if (!hasBlack) */
-			StartY = y;
 		}
-		else if (c == 0 && StartY != -1 && EndY == -1) {
-			EndY = y - 1;
+	}
+
+	TotalLength = MaxY - MinY;
+
+	for (int y = MinY; y < MaxY; y++) {
+		cv::uint8_t c = 0;
+
+		for (int x = 0; x < bar.size().width && c != 255; x++) c = bar.at<cv::uint8_t>(y, x);
+
+		if (c == 255 && ScrollBarStartY == -1) {
+			ScrollBarStartY = y;
+		}
+		else if (c == 0 && ScrollBarStartY != -1 && ScrollBarEndY == -1) {
+			ScrollBarEndY = y - 1;
 			break;
 		}
 	}
 
-	if (StartY == -1 && EndY == -1) {
+	if (ScrollBarStartY == -1 && ScrollBarEndY == -1) {
 		return;
 	}
 
-	if (EndY == -1) EndY = scr.size().height - 1;
+	if (ScrollBarEndY == -1) ScrollBarEndY = MaxY;
 
-	Length = EndY - StartY;
+	Length = ScrollBarEndY - ScrollBarStartY;
 }
