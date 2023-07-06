@@ -66,9 +66,11 @@ void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 		}
 	}
 
+	if (MinY == -1 || MaxY == -1) return;
+
 	TotalLength = MaxY - MinY;
 
-	for (int y = MinY; y < MaxY; y++) {
+	for (int y = MinY; y <= MaxY; y++) {
 		cv::uint8_t c = 0;
 
 		for (int x = 0; x < bar.size().width && c != 255; x++) c = bar.at<cv::uint8_t>(y, x);
@@ -77,7 +79,7 @@ void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 			ScrollBarStartY = y;
 		}
 		else if (c == 0 && ScrollBarStartY != -1 && ScrollBarEndY == -1) {
-			ScrollBarEndY = y - 1;
+			ScrollBarEndY = y;
 			break;
 		}
 	}
