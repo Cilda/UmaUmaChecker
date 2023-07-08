@@ -39,7 +39,7 @@
 class MainFrame : public ThemedWindowWrapper<wxFrame>
 {
 public:
-	MainFrame(wxWindow* parent, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION | wxCLOSE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU);
+	MainFrame(wxWindow* parent, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION | wxCLOSE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER);
 	virtual ~MainFrame();
 
 private:
@@ -47,6 +47,8 @@ private:
 	bool LoadSkills();
 
 	void OnClose(wxCloseEvent& event);
+	void OnSize(wxSizeEvent& event);
+	void OnSizing(wxSizeEvent& event);
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
 	void OnRightClickScreenShot(wxMouseEvent& event);

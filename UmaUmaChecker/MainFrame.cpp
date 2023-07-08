@@ -41,8 +41,6 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->SetDoubleBuffered(true);
 
-	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
-
 	ChangeTheme();
 
 	wxBoxSizer* bSizerTop = new wxBoxSizer(wxVERTICAL);
@@ -136,6 +134,9 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->Layout();
 	this->Centre(wxBOTH);
 
+	this->SetSizeHints(wxSize(-1, this->GetSize().y), wxSize(-1, this->GetSize().y));
+	this->SetSize(config->WindowWidth, this->GetSize().y);
+
 	// イベントバインド
 	this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this);
 	m_toggleBtnStart->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnClickStart, this);
@@ -179,6 +180,7 @@ MainFrame::~MainFrame()
 
 	config->WindowX = x;
 	config->WindowY = y;
+	config->WindowWidth = GetSize().x;
 
 	delete umaMgr;
 }
@@ -396,6 +398,8 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 
 		ChangeTheme();
 
+		this->SetSizeHints(wxSize(this->GetSize().x, -1), wxDefaultSize);
+
 		SetFontAllChildren(this, wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 		for (auto ctrl : m_textCtrlEventOptions) {
 			ctrl->SetHeightByLine(config->OptionMaxLine);
@@ -404,6 +408,8 @@ void MainFrame::OnClickSetting(wxCommandEvent& event)
 		Fit();
 		Layout();
 		Refresh();
+
+		this->SetSizeHints(wxSize(-1, this->GetSize().y), wxSize(-1, this->GetSize().y));
 	}
 
 	if (frame.IsUpdated()) {
@@ -622,6 +628,8 @@ void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
 {
 	LOG_INFO << "DPI was changed (NEW DPI -> " << event.GetNewDPI().x << ")";
 
+	this->SetSizeHints(wxSize(this->GetSize().x, -1), wxDefaultSize);
+
 	for (auto ctrl : m_textCtrlEventOptions) {
 		ctrl->SetHeightByLine(Config::GetInstance()->OptionMaxLine);
 		ctrl->Layout();
@@ -629,6 +637,8 @@ void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
 
 	this->Fit();
 	this->Layout();
+
+	this->SetSizeHints(wxSize(-1, this->GetSize().y), wxSize(-1, this->GetSize().y));
 }
 
 void MainFrame::ChangeEventOptions(EventSource* event)

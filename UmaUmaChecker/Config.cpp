@@ -29,6 +29,8 @@ bool Config::Load()
 
 		WindowX = config.value("WindowX", 0);
 		WindowY = config.value("WindowY", 0);
+		WindowWidth = config.value("WindowWidth", -1);
+		if (WindowWidth == 0) WindowWidth = -1;
 		EnableDebug = config.value("Debug", false);
 		SaveMissingEvent = config.value("SaveMissingEventName", false);
 		ScreenshotSavePath = utility::from_u8string(config.value("ScreenshotSavePath", ""));
@@ -65,6 +67,7 @@ void Config::Save()
 
 	config["WindowX"] = WindowX;
 	config["WindowY"] = WindowY;
+	config["WindowWidth"] = WindowWidth;
 	config["Debug"] = EnableDebug;
 	config["SaveMissingEventName"] = SaveMissingEvent;
 	config["ScreenshotSavePath"] = std::filesystem::path(ScreenshotSavePath.begin(), ScreenshotSavePath.end()).u8string();
