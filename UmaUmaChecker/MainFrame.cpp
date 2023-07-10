@@ -342,7 +342,9 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 		CombineTimer.Stop();
 		this->SetTitle(app_title);
 		if (!combine.IsImageSaved()) {
-			wxMessageBox(wxT("キャプチャに失敗しました。"), app_title, wxICON_ERROR);
+			std::wstring error = combine.GetError();
+			if (!error.empty()) wxMessageBox(error, app_title, wxICON_ERROR);
+			else wxMessageBox(wxT("キャプチャに失敗しました。"), app_title, wxICON_ERROR);
 		}
 	}
 }

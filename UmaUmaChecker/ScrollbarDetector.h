@@ -10,6 +10,7 @@ public:
 	ScrollbarDetector(cv::Mat& img);
 	~ScrollbarDetector();
 
+	bool IsValid() const;
 	int GetPos() const;
 	int GetTotalLength() const;
 	int GetBarLength() const;
@@ -22,6 +23,8 @@ private:
 	
 
 private:
+	bool valid;
+
 	int TotalLength;
 	int Length;
 

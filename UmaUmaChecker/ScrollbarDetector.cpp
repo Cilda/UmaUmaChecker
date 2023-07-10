@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 
 
-ScrollbarDetector::ScrollbarDetector(cv::Mat& img)
+ScrollbarDetector::ScrollbarDetector(cv::Mat& img) : valid(false)
 {
 	InitScrollInfo(img);
 }
@@ -13,34 +13,39 @@ ScrollbarDetector::~ScrollbarDetector()
 {
 }
 
+bool ScrollbarDetector::IsValid() const
+{
+	return valid;
+}
+
 int ScrollbarDetector::GetPos() const
 {
-	return ScrollBarStartY;
+	return valid ? ScrollBarStartY : 0;
 }
 
 int ScrollbarDetector::GetTotalLength() const
 {
-	return TotalLength;
+	return valid ? TotalLength : 0;
 }
 
 int ScrollbarDetector::GetBarLength() const
 {
-	return Length;
+	return valid ? Length : 0;
 }
 
 int ScrollbarDetector::GetBarLengthRatio() const
 {
-	return (double)Length / TotalLength * 100;
+	return valid ? (double)Length / TotalLength * 100 : 0;
 }
 
 bool ScrollbarDetector::IsBegin() const
 {
-	return ScrollBarStartY == MinY;
+	return valid && ScrollBarStartY == MinY;
 }
 
 bool ScrollbarDetector::IsEnd() const
 {
-	return ScrollBarEndY == MaxY;
+	return valid && ScrollBarEndY == MaxY;
 }
 
 void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
@@ -91,4 +96,5 @@ void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 	if (ScrollBarEndY == -1) ScrollBarEndY = MaxY;
 
 	Length = ScrollBarEndY - ScrollBarStartY;
+	valid = true;
 }

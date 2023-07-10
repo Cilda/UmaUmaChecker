@@ -56,6 +56,7 @@ void CombineImage::StartCapture()
 	Images.clear();
 	DetectedYLines.clear();
 	BarLength = 0;
+	Error = L"";
 
 	LOG_DEBUG << L"[CombineImage::StartCapture] ウマ娘詳細結合開始";
 
@@ -131,10 +132,11 @@ bool CombineImage::Combine()
 	return false;
 }
 
-void CombineImage::_EndCapture()
+void CombineImage::_EndCapture(const std::wstring& error)
 {
 	if (!IsCapture) return;
 
+	Error = error;
 	IsCapture = false;
 	status = Stop;
 }
@@ -158,9 +160,9 @@ void CombineImage::Capture()
 
 	if (BarLength == 0 && scroll.GetBarLength() > 0) BarLength = scroll.GetBarLength();
 
-	if (!IsScanStarted && scroll.GetBarLength() == 0) {
+	if (!IsScanStarted && (!scroll.IsValid() || scroll.GetBarLength() == 0)) {
 		LOG_DEBUG << L"[CombineImage::Capture] 停止, !IsScanStarted && scroll.GetBarLength() == 0";
-		_EndCapture();
+		_EndCapture(L"スクロールバーを検出できませんでした。");
 		// 通常キャプチャ
 		delete image;
 		return;
@@ -175,14 +177,14 @@ void CombineImage::Capture()
 
 	if (!PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)) {
 		LOG_DEBUG << L"[CombineImage::Capture] 停止, !PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)";
-		_EndCapture();
+		_EndCapture(L"ウィンドウサイズが変更されました。");
 		delete image;
 		return;
 	}
 	else if (BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) {
 		if (IsManualStop) {
 			LOG_DEBUG << L"[CombineImage::Capture] 停止, BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) && IsManualStop";
-			_EndCapture();
+			_EndCapture(L"スクロールバーの大きさが変わっています。");
 		}
 		delete image;
 		return;
@@ -249,6 +251,7 @@ void CombineImage::Capture()
 					DetectedYLines.emplace_back(0, y);
 					IsFirstScan = false;
 					CurrentScrollPos = scroll.GetPos();
+					PrevImage = mat.clone();
 				}
 			}
 		}
