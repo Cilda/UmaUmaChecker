@@ -1,8 +1,12 @@
 #include "ScrollbarDetector.h"
 
+#include <mutex>
 
 #include <opencv2/opencv.hpp>
 
+
+Point<double> ScrollbarDetector::Start(0.967, 0.08);
+Point<double> ScrollbarDetector::End(0.967, 1.0 - 0.08);
 
 ScrollbarDetector::ScrollbarDetector(cv::Mat& img) : valid(false)
 {
@@ -84,7 +88,7 @@ void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 			ScrollBarStartY = y;
 		}
 		else if (c == 0 && ScrollBarStartY != -1 && ScrollBarEndY == -1) {
-			ScrollBarEndY = y;
+			ScrollBarEndY = y - 1;
 			break;
 		}
 	}
@@ -97,4 +101,40 @@ void ScrollbarDetector::InitScrollInfo(cv::Mat& img)
 
 	Length = ScrollBarEndY - ScrollBarStartY;
 	valid = true;
+}
+
+std::list<Point<int>> ScrollbarDetector::GetMargin(cv::Mat& img)
+{
+	auto start = Point<int>(img.size().width * Start.x(), img.size().height * Start.y());
+	auto end = Point<int>(img.size().width * End.x(), img.size().height * End.y());
+
+	cv::Mat scr;
+	cv::inRange(img, cv::Scalar(140, 121, 123), cv::Scalar(217, 210, 211), scr);
+
+	cv::Mat test;
+	cv::inRange(img, cv::Scalar(170, 151, 153), cv::Scalar(255, 255, 255), scr);
+	cv::inRange(img, cv::Scalar(170, 151, 153), cv::Scalar(255, 255, 255), scr);
+
+	std::once_flag once_start;
+	Point<int> pos_start;
+	Point<int> pos_end;
+
+	for (int y = start.y(); y < end.y(); y++) {
+		auto c = scr.at<cv::uint8_t>(y, start.x());
+		if (c == 255) {
+			std::call_once(once_start, [&] {
+				pos_start.x(start.x());
+				pos_start.y(y);
+				});
+			pos_end.x(start.x());
+			pos_end.y(y);
+		}
+		else
+			break;
+	}
+
+	return {
+		pos_start,
+		pos_end
+	};
 }

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <list>
+
+#include "Point.h"
+
 namespace cv {
 	class Mat;
 }
@@ -20,7 +24,12 @@ public:
 
 private:
 	void InitScrollInfo(cv::Mat& img);
+
+	std::list<Point<int>> GetMargin(cv::Mat& img);
 	
+private:
+	static Point<double> Start;
+	static Point<double> End;
 
 private:
 	bool valid;
