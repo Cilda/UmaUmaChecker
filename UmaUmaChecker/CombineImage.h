@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include <string>
 
 struct CombineImageInfo {
 	int StartY;
@@ -29,6 +30,7 @@ public:
 	int GetProgressTime() const { return msec; }
 	CombineStatus GetStatus() const { return status; }
 	bool IsImageSaved() const { return IsSavedImage; }
+	std::wstring GetError() const { return Error; }
 
 	bool IsCapturing() const { return IsCapture; }
 	void StartCapture();
@@ -37,7 +39,7 @@ public:
 	bool Combine();
 
 private:
-	void _EndCapture();
+	void _EndCapture(const std::wstring& error = L"");
 	void Capture();
 
 	int GetTemplateImage(const cv::Mat& mat, cv::Mat& cut);
@@ -60,6 +62,8 @@ private:
 	CombineStatus status;
 	bool IsManualStop;
 	bool IsSavedImage;
+
+	std::wstring Error;
 
 	std::vector<CombineImageInfo> DetectedYLines;
 	std::vector<cv::Mat> Images;
