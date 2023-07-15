@@ -273,6 +273,7 @@
     <ClInclude Include="GrandLiveMusicListFrame.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="object_pool.hpp" />
+    <ClInclude Include="Point.h" />
     <ClInclude Include="ScenarioData.h" />
     <ClInclude Include="ScrollbarDetector.h" />
     <ClInclude Include="Tesseract.h" />

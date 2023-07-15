@@ -131,11 +131,6 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	m_comboPopup = new wxComboBoxPopup(this);
 
-	this->SetSizer(bSizerTop);
-	this->Fit();
-	this->Layout();
-	this->Centre(wxBOTH);
-
 	// イベントバインド
 	this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this);
 	m_toggleBtnStart->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnClickStart, this);
@@ -166,6 +161,10 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	if (!config->IsShowStatusBar) m_statusBar->Hide();
 	else timer.Start(1000);
+
+	this->SetSizer(bSizerTop);
+	this->Fit();
+	this->Layout();
 
 	Init();
 }
@@ -343,7 +342,9 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 		CombineTimer.Stop();
 		this->SetTitle(app_title);
 		if (!combine.IsImageSaved()) {
-			wxMessageBox(wxT("キャプチャに失敗しました。"), app_title, wxICON_ERROR);
+			std::wstring error = combine.GetError();
+			if (!error.empty()) wxMessageBox(error, app_title, wxICON_ERROR);
+			else wxMessageBox(wxT("キャプチャに失敗しました。"), app_title, wxICON_ERROR);
 		}
 	}
 }
