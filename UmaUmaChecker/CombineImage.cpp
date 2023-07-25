@@ -153,6 +153,14 @@ void CombineImage::Capture()
 	}
 
 	cv::Mat mat = BitmapToCvMat(image);
+
+	ProcessDetection(mat);
+
+	delete image;
+}
+
+void CombineImage::ProcessDetection(const cv::Mat& mat)
+{
 	cv::Mat bar;
 
 	CutScrollbar(mat, bar);
@@ -163,8 +171,6 @@ void CombineImage::Capture()
 	if (!IsScanStarted && (!scroll.IsValid() || scroll.GetBarLength() == 0)) {
 		LOG_DEBUG << L"[CombineImage::Capture] 停止, !IsScanStarted && scroll.GetBarLength() == 0";
 		_EndCapture(L"スクロールバーを検出できませんでした。");
-		// 通常キャプチャ
-		delete image;
 		return;
 	}
 	else if (scroll.IsBegin() && !IsScanStarted) {
@@ -178,7 +184,6 @@ void CombineImage::Capture()
 	if (!PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)) {
 		LOG_DEBUG << L"[CombineImage::Capture] 停止, !PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)";
 		_EndCapture(L"ウィンドウサイズが変更されました。");
-		delete image;
 		return;
 	}
 	else if (BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) {
@@ -186,7 +191,6 @@ void CombineImage::Capture()
 			LOG_DEBUG << L"[CombineImage::Capture] 停止, BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) && IsManualStop";
 			_EndCapture(L"スクロールバーの大きさが変わっています。");
 		}
-		delete image;
 		return;
 	}
 
@@ -261,8 +265,6 @@ void CombineImage::Capture()
 		LOG_DEBUG << L"[CombineImage::Capture] 停止, IsManualStop";
 		_EndCapture();
 	}
-
-	delete image;
 }
 
 int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
