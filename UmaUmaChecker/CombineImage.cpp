@@ -165,17 +165,19 @@ void CombineImage::ProcessDetection(const cv::Mat& mat)
 
 	if (BarLength == 0 && scroll.GetBarLength() > 0) BarLength = scroll.GetBarLength();
 
-	if (!IsScanStarted && (!scroll.IsValid() || scroll.GetBarLength() == 0)) {
-		LOG_DEBUG << L"[CombineImage::Capture] 停止, !IsScanStarted && scroll.GetBarLength() == 0";
-		_EndCapture(L"スクロールバーを検出できませんでした。");
-		return;
-	}
-	else if (scroll.IsBegin() && !IsScanStarted) {
-		IsScanStarted = true;
-		status = Scanning;
-	}
-	else if (!scroll.IsBegin() && !IsScanStarted) {
-		status = WaitForMovingScrollbarOnTop;
+	if (!IsScanStarted) {
+		if (!scroll.IsValid()) {
+			LOG_DEBUG << L"[CombineImage::Capture] 停止, !scroll.IsValid()";
+			_EndCapture(L"スクロールバーを検出できませんでした。");
+			return;
+		}
+		else if (scroll.IsBegin()) {
+			IsScanStarted = true;
+			status = Scanning;
+		}
+		else if (!scroll.IsBegin()) {
+			status = WaitForMovingScrollbarOnTop;
+		}
 	}
 
 	if (!PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)) {

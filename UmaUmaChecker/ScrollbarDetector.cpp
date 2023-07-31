@@ -90,7 +90,7 @@ std::vector<Point<int>> ScrollbarDetector::GetMargin(const cv::Mat& img)
 	for (int y = start.y(); y < end.y(); y++) {
 		auto& c = img.at<cv::Vec3b>(y, start.x());
 		if (c[0] >= 140 && c[1] >= 121 && c[2] >= 123 &&
-			c[0] <= 220 && c[1] <= 220 && c[2] <= 220) {
+			c[0] <= 217 && c[1] <= 210 && c[2] <= 211) {
 			std::call_once(once_start, [&] {
 				pos_start.y(y);
 			});
