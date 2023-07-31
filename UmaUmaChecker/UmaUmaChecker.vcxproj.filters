@@ -281,4 +281,9 @@
       <Filter>リソース ファイル</Filter>
     </CopyFileToFolders>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\SkillCombine.json">
+      <Filter>リソース ファイル</Filter>
+    </None>
+  </ItemGroup>
 </Project>
