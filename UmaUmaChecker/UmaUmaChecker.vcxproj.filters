@@ -15,103 +15,103 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Config.cpp">
+    <ClCompile Include="src\Config\Config.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Uma.cpp">
+    <ClCompile Include="src\Recognizer\Uma.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="utility.cpp">
+    <ClCompile Include="src\Utils\utility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="EventLibrary.cpp">
+    <ClCompile Include="src\Loader\Event\EventLibrary.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="TextCollector.cpp">
+    <ClCompile Include="src\Loader\Event\TextCollector.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MainFrame.cpp">
+    <ClCompile Include="src\UI\MainFrame.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="SettingDialog.cpp">
+    <ClCompile Include="src\UI\SettingDialog.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="wxTextPopupCtrl.cpp">
+    <ClCompile Include="src\UI\wxTextPopupCtrl.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="wxUmaTextCtrl.cpp">
+    <ClCompile Include="src\UI\wxUmaTextCtrl.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="AboutDialog.cpp">
+    <ClCompile Include="src\UI\AboutDialog.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PreviewFrame.cpp">
+    <ClCompile Include="src\UI\PreviewFrame.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="SystemUsage.cpp">
+    <ClCompile Include="src\System\SystemUsage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DebugFrame.cpp">
+    <ClCompile Include="src\UI\DebugFrame.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="wxComboBoxPopup.cpp">
+    <ClCompile Include="src\UI\wxComboBoxPopup.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GrandLiveMusicListFrame.cpp">
+    <ClCompile Include="src\UI\GrandLiveMusicListFrame.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="CheckUpdateDialog.cpp">
+    <ClCompile Include="src\UI\CheckUpdateDialog.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="UpdateManager.cpp">
+    <ClCompile Include="src\Update\UpdateManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Theme\StdRenderer.cpp">
+    <ClCompile Include="src\UI\Theme\StdRenderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Theme\BaseRenderer.cpp">
+    <ClCompile Include="src\UI\Theme\BaseRenderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Theme\DarkThemeRenderer.cpp">
+    <ClCompile Include="src\UI\Theme\DarkThemeRenderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Theme\ThemeManager.cpp">
+    <ClCompile Include="src\UI\Theme\ThemeManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ThemeWrapper.cpp">
+    <ClCompile Include="src\UI\Theme\ThemeWrapper.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="FontComboBox.cpp">
+    <ClCompile Include="src\UI\FontComboBox.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="EventData.cpp">
+    <ClCompile Include="src\Loader\Event\EventData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Log.cpp">
+    <ClCompile Include="src\Log\Log.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="CombineImage.cpp">
+    <ClCompile Include="src\Recognizer\CombineImage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="UmaTripRecognizer.cpp">
+    <ClCompile Include="src\Recognizer\UmaTripRecognizer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Tesseract.cpp">
+    <ClCompile Include="src\Tesseract\Tesseract.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ScenarioData.cpp">
+    <ClCompile Include="src\Loader\Event\ScenarioData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="UmaWindowCapture.cpp">
+    <ClCompile Include="src\Capture\UmaWindowCapture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ScrollbarDetector.cpp">
+    <ClCompile Include="src\Recognizer\ScrollbarDetector.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DebugImageCombineFrame.cpp">
+    <ClCompile Include="src\UI\DebugImageCombineFrame.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,112 +119,139 @@
     <ClInclude Include="resource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
+    <ClInclude Include="src\Config\Config.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Uma.h">
+    <ClInclude Include="src\Recognizer\Uma.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="utility.h">
+    <ClInclude Include="src\Utils\utility.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="EventLibrary.h">
+    <ClInclude Include="src\Loader\Event\EventLibrary.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Event.h">
+    <ClInclude Include="src\Loader\Event\Event.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="TextCollector.h">
+    <ClInclude Include="src\Loader\Event\TextCollector.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MainFrame.h">
+    <ClInclude Include="src\UI\MainFrame.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="SettingDialog.h">
+    <ClInclude Include="src\UI\SettingDialog.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="wxTextPopupCtrl.h">
+    <ClInclude Include="src\UI\wxTextPopupCtrl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="wxUmaTextCtrl.h">
+    <ClInclude Include="src\UI\wxUmaTextCtrl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="AboutDialog.h">
+    <ClInclude Include="src\UI\AboutDialog.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="version.h">
+    <ClInclude Include="src\version.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PreviewFrame.h">
+    <ClInclude Include="src\UI\PreviewFrame.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="SystemUsage.h">
+    <ClInclude Include="src\System\SystemUsage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DebugFrame.h">
+    <ClInclude Include="src\UI\DebugFrame.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="wxComboBoxPopup.h">
+    <ClInclude Include="src\UI\wxComboBoxPopup.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GrandLiveMusicListFrame.h">
+    <ClInclude Include="src\UI\GrandLiveMusicListFrame.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="CheckUpdateDialog.h">
+    <ClInclude Include="src\UI\CheckUpdateDialog.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="UpdateManager.h">
+    <ClInclude Include="src\Update\UpdateManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="object_pool.hpp">
+    <ClInclude Include="src\object_pool.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ThemeWrapper.h">
+    <ClInclude Include="src\UI\Theme\ThemeWrapper.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Theme\StdRenderer.h">
+    <ClInclude Include="src\UI\Theme\StdRenderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Theme\BaseRenderer.h">
+    <ClInclude Include="src\UI\Theme\BaseRenderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Theme\DarkThemeRenderer.h">
+    <ClInclude Include="src\UI\Theme\DarkThemeRenderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Theme\ThemeManager.h">
+    <ClInclude Include="src\UI\Theme\ThemeManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="FontComboBox.h">
+    <ClInclude Include="src\UI\FontComboBox.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="EventData.h">
+    <ClInclude Include="src\Loader\Event\EventData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Log.h">
+    <ClInclude Include="src\Log\Log.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="CombineImage.h">
+    <ClInclude Include="src\Recognizer\CombineImage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="UmaTripRecognizer.h">
+    <ClInclude Include="src\Recognizer\UmaTripRecognizer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Tesseract.h">
+    <ClInclude Include="src\Tesseract\Tesseract.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ScenarioData.h">
+    <ClInclude Include="src\Loader\Event\ScenarioData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="UmaWindowCapture.h">
+    <ClInclude Include="src\Capture\UmaWindowCapture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="CaptureMode.h">
+    <ClInclude Include="src\Capture\CaptureMode.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ScrollbarDetector.h">
+    <ClInclude Include="src\Recognizer\ScrollbarDetector.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DebugImageCombineFrame.h">
+    <ClInclude Include="src\UI\DebugImageCombineFrame.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Point.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\simstring\cdbpp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\simstring\measure.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\simstring\memory_mapped_file.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\simstring\memory_mapped_file_posix.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\simstring\memory_mapped_file_win32.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\simstring\ngram.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\simstring\simstring.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Range.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
