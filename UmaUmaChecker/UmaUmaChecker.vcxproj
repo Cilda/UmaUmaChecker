@@ -70,6 +70,18 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(ProjectDir)\src;$(ProjectDir)\3rdparty;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(ProjectDir)\src;$(ProjectDir)\3rdparty;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(ProjectDir)\src;$(ProjectDir)\3rdparty;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(ProjectDir)\src;$(ProjectDir)\3rdparty;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <VcpkgUseStatic>true</VcpkgUseStatic>
     <VcpkgTriplet>
@@ -228,80 +240,87 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AboutDialog.cpp" />
-    <ClCompile Include="CheckUpdateDialog.cpp" />
-    <ClCompile Include="CombineImage.cpp" />
-    <ClCompile Include="DebugImageCombineFrame.cpp" />
-    <ClCompile Include="EventData.cpp" />
-    <ClCompile Include="FontComboBox.cpp" />
-    <ClCompile Include="GrandLiveMusicListFrame.cpp" />
-    <ClCompile Include="Log.cpp" />
-    <ClCompile Include="ScenarioData.cpp" />
-    <ClCompile Include="ScrollbarDetector.cpp" />
-    <ClCompile Include="Tesseract.cpp" />
-    <ClCompile Include="ThemeWrapper.cpp" />
-    <ClCompile Include="Theme\BaseRenderer.cpp" />
-    <ClCompile Include="Theme\DarkThemeRenderer.cpp" />
-    <ClCompile Include="Theme\StdRenderer.cpp" />
-    <ClCompile Include="Theme\ThemeManager.cpp" />
-    <ClCompile Include="UmaTripRecognizer.cpp" />
-    <ClCompile Include="UmaWindowCapture.cpp" />
-    <ClCompile Include="UpdateManager.cpp" />
-    <ClCompile Include="wxComboBoxPopup.cpp" />
-    <ClCompile Include="Config.cpp" />
-    <ClCompile Include="DebugFrame.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="PreviewFrame.cpp" />
-    <ClCompile Include="SettingDialog.cpp" />
-    <ClCompile Include="SystemUsage.cpp" />
-    <ClCompile Include="TextCollector.cpp" />
-    <ClCompile Include="Uma.cpp" />
-    <ClCompile Include="EventLibrary.cpp" />
-    <ClCompile Include="MainFrame.cpp" />
-    <ClCompile Include="utility.cpp" />
-    <ClCompile Include="wxTextPopupCtrl.cpp" />
-    <ClCompile Include="wxUmaTextCtrl.cpp" />
+    <ClCompile Include="src\UI\AboutDialog.cpp" />
+    <ClCompile Include="src\UI\CheckUpdateDialog.cpp" />
+    <ClCompile Include="src\Recognizer\CombineImage.cpp" />
+    <ClCompile Include="src\UI\DebugImageCombineFrame.cpp" />
+    <ClCompile Include="src\Loader\Event\EventData.cpp" />
+    <ClCompile Include="src\UI\FontComboBox.cpp" />
+    <ClCompile Include="src\UI\GrandLiveMusicListFrame.cpp" />
+    <ClCompile Include="src\Log\Log.cpp" />
+    <ClCompile Include="src\Loader\Event\ScenarioData.cpp" />
+    <ClCompile Include="src\Recognizer\ScrollbarDetector.cpp" />
+    <ClCompile Include="src\Tesseract\Tesseract.cpp" />
+    <ClCompile Include="src\UI\Theme\ThemeWrapper.cpp" />
+    <ClCompile Include="src\UI\Theme\BaseRenderer.cpp" />
+    <ClCompile Include="src\UI\Theme\DarkThemeRenderer.cpp" />
+    <ClCompile Include="src\UI\Theme\StdRenderer.cpp" />
+    <ClCompile Include="src\UI\Theme\ThemeManager.cpp" />
+    <ClCompile Include="src\Recognizer\UmaTripRecognizer.cpp" />
+    <ClCompile Include="src\Capture\UmaWindowCapture.cpp" />
+    <ClCompile Include="src\Update\UpdateManager.cpp" />
+    <ClCompile Include="src\UI\wxComboBoxPopup.cpp" />
+    <ClCompile Include="src\Config\Config.cpp" />
+    <ClCompile Include="src\UI\DebugFrame.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\UI\PreviewFrame.cpp" />
+    <ClCompile Include="src\UI\SettingDialog.cpp" />
+    <ClCompile Include="src\System\SystemUsage.cpp" />
+    <ClCompile Include="src\Loader\Event\TextCollector.cpp" />
+    <ClCompile Include="src\Recognizer\Uma.cpp" />
+    <ClCompile Include="src\Loader\Event\EventLibrary.cpp" />
+    <ClCompile Include="src\UI\MainFrame.cpp" />
+    <ClCompile Include="src\Utils\utility.cpp" />
+    <ClCompile Include="src\UI\wxTextPopupCtrl.cpp" />
+    <ClCompile Include="src\UI\wxUmaTextCtrl.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AboutDialog.h" />
-    <ClInclude Include="CaptureMode.h" />
-    <ClInclude Include="CheckUpdateDialog.h" />
-    <ClInclude Include="CombineImage.h" />
-    <ClInclude Include="DebugImageCombineFrame.h" />
-    <ClInclude Include="EventData.h" />
-    <ClInclude Include="FontComboBox.h" />
-    <ClInclude Include="GrandLiveMusicListFrame.h" />
-    <ClInclude Include="Log.h" />
-    <ClInclude Include="object_pool.hpp" />
-    <ClInclude Include="Point.h" />
-    <ClInclude Include="Range.h" />
-    <ClInclude Include="ScenarioData.h" />
-    <ClInclude Include="ScrollbarDetector.h" />
-    <ClInclude Include="Tesseract.h" />
-    <ClInclude Include="ThemeWrapper.h" />
-    <ClInclude Include="Theme\BaseRenderer.h" />
-    <ClInclude Include="Theme\DarkThemeRenderer.h" />
-    <ClInclude Include="Theme\StdRenderer.h" />
-    <ClInclude Include="Theme\ThemeManager.h" />
-    <ClInclude Include="UmaTripRecognizer.h" />
-    <ClInclude Include="UmaWindowCapture.h" />
-    <ClInclude Include="UpdateManager.h" />
-    <ClInclude Include="wxComboBoxPopup.h" />
-    <ClInclude Include="Config.h" />
-    <ClInclude Include="DebugFrame.h" />
-    <ClInclude Include="PreviewFrame.h" />
+    <ClInclude Include="3rdparty\simstring\cdbpp.h" />
+    <ClInclude Include="3rdparty\simstring\measure.h" />
+    <ClInclude Include="3rdparty\simstring\memory_mapped_file.h" />
+    <ClInclude Include="3rdparty\simstring\memory_mapped_file_posix.h" />
+    <ClInclude Include="3rdparty\simstring\memory_mapped_file_win32.h" />
+    <ClInclude Include="3rdparty\simstring\ngram.h" />
+    <ClInclude Include="3rdparty\simstring\simstring.h" />
+    <ClInclude Include="src\Range.h" />
+    <ClInclude Include="src\UI\AboutDialog.h" />
+    <ClInclude Include="src\Capture\CaptureMode.h" />
+    <ClInclude Include="src\UI\CheckUpdateDialog.h" />
+    <ClInclude Include="src\Recognizer\CombineImage.h" />
+    <ClInclude Include="src\UI\DebugImageCombineFrame.h" />
+    <ClInclude Include="src\Loader\Event\EventData.h" />
+    <ClInclude Include="src\UI\FontComboBox.h" />
+    <ClInclude Include="src\UI\GrandLiveMusicListFrame.h" />
+    <ClInclude Include="src\Log\Log.h" />
+    <ClInclude Include="src\object_pool.hpp" />
+    <ClInclude Include="src\Point.h" />
+    <ClInclude Include="src\Loader\Event\ScenarioData.h" />
+    <ClInclude Include="src\Recognizer\ScrollbarDetector.h" />
+    <ClInclude Include="src\Tesseract\Tesseract.h" />
+    <ClInclude Include="src\UI\Theme\ThemeWrapper.h" />
+    <ClInclude Include="src\UI\Theme\BaseRenderer.h" />
+    <ClInclude Include="src\UI\Theme\DarkThemeRenderer.h" />
+    <ClInclude Include="src\UI\Theme\StdRenderer.h" />
+    <ClInclude Include="src\UI\Theme\ThemeManager.h" />
+    <ClInclude Include="src\Recognizer\UmaTripRecognizer.h" />
+    <ClInclude Include="src\Capture\UmaWindowCapture.h" />
+    <ClInclude Include="src\Update\UpdateManager.h" />
+    <ClInclude Include="src\UI\wxComboBoxPopup.h" />
+    <ClInclude Include="src\Config\Config.h" />
+    <ClInclude Include="src\UI\DebugFrame.h" />
+    <ClInclude Include="src\UI\PreviewFrame.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Event.h" />
-    <ClInclude Include="SettingDialog.h" />
-    <ClInclude Include="SystemUsage.h" />
-    <ClInclude Include="TextCollector.h" />
-    <ClInclude Include="Uma.h" />
-    <ClInclude Include="EventLibrary.h" />
-    <ClInclude Include="MainFrame.h" />
-    <ClInclude Include="utility.h" />
-    <ClInclude Include="version.h" />
-    <ClInclude Include="wxTextPopupCtrl.h" />
-    <ClInclude Include="wxUmaTextCtrl.h" />
+    <ClInclude Include="src\Loader\Event\Event.h" />
+    <ClInclude Include="src\UI\SettingDialog.h" />
+    <ClInclude Include="src\System\SystemUsage.h" />
+    <ClInclude Include="src\Loader\Event\TextCollector.h" />
+    <ClInclude Include="src\Recognizer\Uma.h" />
+    <ClInclude Include="src\Loader\Event\EventLibrary.h" />
+    <ClInclude Include="src\UI\MainFrame.h" />
+    <ClInclude Include="src\Utils\utility.h" />
+    <ClInclude Include="src\version.h" />
+    <ClInclude Include="src\UI\wxTextPopupCtrl.h" />
+    <ClInclude Include="src\UI\wxUmaTextCtrl.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UmaUmaChecker.rc" />
@@ -406,9 +425,6 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\tessdata</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\tessdata</DestinationFolders>
     </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\SkillCombine.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
