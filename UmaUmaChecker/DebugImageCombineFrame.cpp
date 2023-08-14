@@ -41,25 +41,15 @@ DebugImageCombineFrame::DebugImageCombineFrame(wxWindow* parent) : wxFrame(paren
 
 	timer.Bind(wxEVT_TIMER, &DebugImageCombineFrame::OnTimer, this);
 	timer.Start(10);
-
+	
+	FILE* fp;
+	AllocConsole();
+	freopen_s(&fp, "CONOUT$", "w", stdout);
 }
 
 DebugImageCombineFrame::~DebugImageCombineFrame()
 {
-}
-
-cv::Mat DebugImageCombineFrame::BitmapToCvMat(Gdiplus::Bitmap* image)
-{
-	assert(image->GetPixelFormat() == PixelFormat24bppRGB);
-	Gdiplus::Rect rect(0, 0, image->GetWidth(), image->GetHeight());
-	Gdiplus::BitmapData data;
-	image->LockBits(&rect, Gdiplus::ImageLockMode::ImageLockModeRead, image->GetPixelFormat(), &data);
-
-	cv::Mat mat = cv::Mat(image->GetHeight(), image->GetWidth(), CV_8UC3, data.Scan0, data.Stride);
-
-	image->UnlockBits(&data);
-
-	return mat;
+	FreeConsole();
 }
 
 void DebugImageCombineFrame::OnDropFiles(wxDropFilesEvent& event)

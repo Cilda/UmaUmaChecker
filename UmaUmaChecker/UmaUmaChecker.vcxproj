@@ -274,6 +274,7 @@
     <ClInclude Include="Log.h" />
     <ClInclude Include="object_pool.hpp" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="Range.h" />
     <ClInclude Include="ScenarioData.h" />
     <ClInclude Include="ScrollbarDetector.h" />
     <ClInclude Include="Tesseract.h" />
@@ -405,6 +406,9 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\tessdata</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\tessdata</DestinationFolders>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\SkillCombine.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

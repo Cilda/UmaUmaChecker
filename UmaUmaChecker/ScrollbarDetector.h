@@ -1,8 +1,9 @@
 #pragma once
 
-#include <list>
+#include <vector>
 
 #include "Point.h"
+#include "Range.h"
 
 namespace cv {
 	class Mat;
@@ -11,7 +12,7 @@ namespace cv {
 class ScrollbarDetector
 {
 public:
-	ScrollbarDetector(cv::Mat& img);
+	ScrollbarDetector(const cv::Mat& img);
 	~ScrollbarDetector();
 
 	bool IsValid() const;
@@ -23,9 +24,10 @@ public:
 	bool IsEnd() const;
 
 private:
-	void InitScrollInfo(cv::Mat& img);
+	void DetectScrollbar(const cv::Mat& img);
 
-	std::list<Point<int>> GetMargin(cv::Mat& img);
+	std::vector<Point<int>> GetMargin(const cv::Mat& img);
+	std::vector<Point<int>> GetScrollBar(const cv::Mat& img, const Point<int>& start, const Point<int>& end);
 	
 private:
 	static Point<double> Start;
@@ -34,13 +36,10 @@ private:
 private:
 	bool valid;
 
-	int TotalLength;
-	int Length;
+	Point<int> ScrollStart;
+	Point<int> ScrollEnd;
 
-	int ScrollBarStartY;
-	int ScrollBarEndY;
-
-	int MinY;
-	int MaxY;
+	Range<Point<int>> ScrollRange;
+	Range<Point<int>> BarRange;
 };
 

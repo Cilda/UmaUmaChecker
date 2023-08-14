@@ -4,7 +4,7 @@ template<typename T>
 class Point
 {
 public:
-	Point() {}
+	Point() : x_(T()), y_(T()) {}
 	Point(T x, T y) : x_(x), y_(y) {}
 
 	T x() const { return x_; }

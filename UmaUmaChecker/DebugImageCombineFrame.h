@@ -20,9 +20,6 @@ public:
 	~DebugImageCombineFrame();
 
 private:
-	cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image);
-
-private:
 	void OnDropFiles(wxDropFilesEvent& event);
 	void OnClickStartCapture(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);

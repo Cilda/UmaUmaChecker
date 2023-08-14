@@ -230,6 +230,9 @@
     <ClInclude Include="Point.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Range.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UmaUmaChecker.rc">
@@ -277,5 +280,10 @@
     <CopyFileToFolders Include="tessdata\jpn.traineddata">
       <Filter>リソース ファイル</Filter>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\SkillCombine.json">
+      <Filter>リソース ファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>
