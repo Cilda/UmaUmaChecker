@@ -129,7 +129,6 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	m_comboPopup = new wxComboBoxPopup(this);
 
-<<<<<<< HEAD:UmaUmaChecker/MainFrame.cpp
 	this->SetSizer(bSizerTop);
 	this->Fit();
 	this->Layout();
@@ -138,8 +137,6 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->SetSizeHints(wxSize(-1, this->GetSize().y), wxSize(-1, this->GetSize().y));
 	this->SetSize(config->WindowWidth, this->GetSize().y);
 
-=======
->>>>>>> master:UmaUmaChecker/src/UI/MainFrame.cpp
 	// イベントバインド
 	this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this);
 	m_toggleBtnStart->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnClickStart, this);
@@ -170,10 +167,6 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	if (!config->IsShowStatusBar) m_statusBar->Hide();
 	else timer.Start(1000);
-
-	this->SetSizer(bSizerTop);
-	this->Fit();
-	this->Layout();
 
 	Init();
 }
