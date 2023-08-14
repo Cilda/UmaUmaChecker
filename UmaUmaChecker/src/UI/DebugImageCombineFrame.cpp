@@ -38,11 +38,15 @@ DebugImageCombineFrame::DebugImageCombineFrame(wxWindow* parent) : wxFrame(paren
 
 	timer.Bind(wxEVT_TIMER, &DebugImageCombineFrame::OnTimer, this);
 	timer.Start(10);
-
+	
+	FILE* fp;
+	AllocConsole();
+	freopen_s(&fp, "CONOUT$", "w", stdout);
 }
 
 DebugImageCombineFrame::~DebugImageCombineFrame()
 {
+	FreeConsole();
 }
 
 void DebugImageCombineFrame::OnDropFiles(wxDropFilesEvent& event)

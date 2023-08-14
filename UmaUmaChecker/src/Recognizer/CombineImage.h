@@ -41,6 +41,7 @@ public:
 private:
 	void _EndCapture(const std::wstring& error = L"");
 	void Capture();
+	void ProcessDetection(const cv::Mat& mat);
 
 	int GetTemplateImage(const cv::Mat& mat, cv::Mat& cut);
 	void CutRecognizeRange(const cv::Mat& mat, cv::Mat& out);

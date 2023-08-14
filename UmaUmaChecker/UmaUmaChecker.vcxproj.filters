@@ -251,6 +251,9 @@
     <ClInclude Include="3rdparty\simstring\simstring.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="src\Range.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UmaUmaChecker.rc">

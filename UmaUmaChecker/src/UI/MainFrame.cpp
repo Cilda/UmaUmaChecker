@@ -204,8 +204,8 @@ void MainFrame::Init()
 	DebugFrame* debug = new DebugFrame(this);
 	debug->Show();
 
-	//DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
-	//debug2->Show();
+	DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
+	debug2->Show();
 	
 #endif
 }
@@ -537,7 +537,8 @@ void MainFrame::OnCombineTimer(wxTimerEvent& event)
 		case WaitForMovingScrollbarOnTop:
 		case Scanning:
 		case Combining:
-			this->SetTitle(wxString::Format(wxT("%s [%d fps]"), app_title, 1000 / combine.GetProgressTime()));
+			if (combine.GetProgressTime() > 0)
+				this->SetTitle(wxString::Format(wxT("%s [%d fps]"), app_title, 1000 / combine.GetProgressTime()));
 			break;
 	}
 }

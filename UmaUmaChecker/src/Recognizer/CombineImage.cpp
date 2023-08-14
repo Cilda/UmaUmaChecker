@@ -153,32 +153,36 @@ void CombineImage::Capture()
 	}
 
 	cv::Mat mat = BitmapToCvMat(image);
-	cv::Mat bar;
 
-	CutScrollbar(mat, bar);
-	ScrollbarDetector scroll(bar);
+	ProcessDetection(mat);
+
+	delete image;
+}
+
+void CombineImage::ProcessDetection(const cv::Mat& mat)
+{
+	ScrollbarDetector scroll(mat);
 
 	if (BarLength == 0 && scroll.GetBarLength() > 0) BarLength = scroll.GetBarLength();
 
-	if (!IsScanStarted && (!scroll.IsValid() || scroll.GetBarLength() == 0)) {
-		LOG_DEBUG << L"[CombineImage::Capture] 停止, !IsScanStarted && scroll.GetBarLength() == 0";
-		_EndCapture(L"スクロールバーを検出できませんでした。");
-		// 通常キャプチャ
-		delete image;
-		return;
-	}
-	else if (scroll.IsBegin() && !IsScanStarted) {
-		IsScanStarted = true;
-		status = Scanning;
-	}
-	else if (!scroll.IsBegin() && !IsScanStarted) {
-		status = WaitForMovingScrollbarOnTop;
+	if (!IsScanStarted) {
+		if (!scroll.IsValid()) {
+			LOG_DEBUG << L"[CombineImage::Capture] 停止, !scroll.IsValid()";
+			_EndCapture(L"スクロールバーを検出できませんでした。");
+			return;
+		}
+		else if (scroll.IsBegin()) {
+			IsScanStarted = true;
+			status = Scanning;
+		}
+		else if (!scroll.IsBegin()) {
+			status = WaitForMovingScrollbarOnTop;
+		}
 	}
 
 	if (!PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)) {
 		LOG_DEBUG << L"[CombineImage::Capture] 停止, !PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)";
 		_EndCapture(L"ウィンドウサイズが変更されました。");
-		delete image;
 		return;
 	}
 	else if (BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) {
@@ -186,7 +190,6 @@ void CombineImage::Capture()
 			LOG_DEBUG << L"[CombineImage::Capture] 停止, BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) && IsManualStop";
 			_EndCapture(L"スクロールバーの大きさが変わっています。");
 		}
-		delete image;
 		return;
 	}
 
@@ -261,33 +264,14 @@ void CombineImage::Capture()
 		LOG_DEBUG << L"[CombineImage::Capture] 停止, IsManualStop";
 		_EndCapture();
 	}
-
-	delete image;
 }
 
 int CombineImage::GetTemplateImage(const cv::Mat& mat, cv::Mat& cut)
 {
 	cv::Mat bin;
 
-	//CutRecognizeRange(mat, mat2);
 	cv::inRange(mat, cv::Scalar(242, 243, 242), cv::Scalar(242, 243, 242), bin);
 
-	/*
-	std::vector<std::vector<cv::Point>> contours;
-	std::vector<cv::Vec4i> hierarchy;
-	cv::findContours(bin, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-
-	double max_area = 0;
-	std::vector<cv::Point> max;
-	for (auto& contour : contours) {
-		double area = cv::contourArea(contour);
-		if (area > max_area) {
-			max = contour;
-		}
-	}
-
-	cv::Rect rect = cv::boundingRect(max);
-	*/
 	cv::Rect rect(
 		0.02452830188679245283018867924528 * mat.size().width, std::round(0.46235418875927889713679745493107 * mat.size().height),
 		0.95283018867924528301886792 * mat.size().width, std::round(0.40402969247083775185577942735949 * mat.size().height)
