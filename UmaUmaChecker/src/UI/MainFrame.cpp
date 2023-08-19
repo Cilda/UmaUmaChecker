@@ -124,9 +124,10 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	bSizerTop->Add(sbSizerOptions, 1, wxEXPAND | wxALL, 5);
 
 	m_statusBar = new wxStatusBar(this, wxID_ANY);
-	m_statusBar->SetFieldsCount(2);
+	m_statusBar->SetFieldsCount(3);
 	m_statusBar->PushStatusText(wxT("CPU: 0.0%"), 0);
 	m_statusBar->PushStatusText(wxT("MEM: 0.0 MB"), 1);
+	m_statusBar->PushStatusText(wxT("ウマ娘: 未検出"), 2);
 	this->SetStatusBar(m_statusBar);
 
 	m_comboPopup = new wxComboBoxPopup(this);
@@ -526,6 +527,16 @@ void MainFrame::OnTimer(wxTimerEvent& event)
 
 	m_statusBar->SetStatusText(wxString::Format(wxT("CPU: %.1lf%%"), cpu_usage));
 	m_statusBar->SetStatusText(wxString::Format(wxT("MEM: %0.1f MB"), memory_usage / 1024.0 / 1024.0), 1);
+
+	RECT rc;
+
+	if (UmaWindowCapture::GetUmaWindow()) {
+		::GetClientRect(UmaWindowCapture::GetUmaWindow(), &rc);
+		m_statusBar->SetStatusText(wxString::Format(wxT("ウマ娘: %dx%d"), rc.right, rc.bottom), 2);
+	}
+	else {
+		m_statusBar->SetStatusText(wxT("ウマ娘: 未検出"), 2);
+	}
 }
 
 void MainFrame::OnCombineTimer(wxTimerEvent& event)
