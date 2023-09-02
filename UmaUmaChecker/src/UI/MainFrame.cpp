@@ -137,7 +137,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	}
 
 	sbStatus->Add(sizerStatus, 1, wxEXPAND);
-	bSizerTop->Add(sbStatus, 0, wxEXPAND | wxALL, 5);
+	bSizerTop->Add(sbStatus, 0, wxEXPAND | (wxALL & ~wxTOP), 5);
 
 	m_statusBar = new wxStatusBar(this, wxID_ANY);
 	m_statusBar->SetFieldsCount(3);
