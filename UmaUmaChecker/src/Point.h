@@ -17,3 +17,4 @@ private:
 	T x_, y_;
 };
 
+using PointF = Point<float>;
