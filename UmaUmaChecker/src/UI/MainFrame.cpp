@@ -121,6 +121,24 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	bSizerTop->Add(sbSizerOptions, 1, wxEXPAND | wxALL, 5);
 
+	// ステータス
+	wxStaticBoxSizer* sbStatus = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, wxT("ステータス")), wxHORIZONTAL);
+	wxString StatusNames[] = { wxT("スピード"), wxT("スタミナ"), wxT("パワー"), wxT("根性"), wxT("賢さ"), wxT("合計")};
+	wxGridSizer* sizerStatus = new wxGridSizer(1, 6, 5, 5);
+
+	for (int i = 0; i < sizeof(StatusNames) / sizeof(wxString); i++) {
+		wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+		sizer->Add(new ThemedWrapper<wxStaticText>(sbStatus->GetStaticBox(), wxID_ANY, StatusNames[i]));
+		m_Statuses[i] = new ThemedEditWrapper<wxTextCtrl>(sbStatus->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(55, -1)), wxTE_READONLY);
+		sizer->Add(m_Statuses[i], 1, wxEXPAND);
+
+		sizerStatus->Add(sizer, 0, wxEXPAND);
+	}
+
+	sbStatus->Add(sizerStatus, 1, wxEXPAND);
+	bSizerTop->Add(sbStatus, 0, wxEXPAND | wxALL, 5);
+
 	m_statusBar = new wxStatusBar(this, wxID_ANY);
 	m_statusBar->SetFieldsCount(3);
 	m_statusBar->PushStatusText(wxT("CPU: 0.0%"), 0);
