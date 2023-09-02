@@ -21,6 +21,7 @@ public:
 public:
 	int WindowX;
 	int WindowY;
+	int WindowWidth;
 	bool EnableDebug;
 	bool SaveMissingEvent;
 	std::wstring ScreenshotSavePath;
