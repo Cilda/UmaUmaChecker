@@ -130,7 +130,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
 		sizer->Add(new ThemedWrapper<wxStaticText>(sbStatus->GetStaticBox(), wxID_ANY, StatusNames[i]));
-		m_Statuses[i] = new ThemedEditWrapper<wxTextCtrl>(sbStatus->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, FromDIP(wxSize(55, -1)), wxTE_READONLY);
+		m_Statuses[i] = new ThemedEditWrapper<wxTextCtrl>(sbStatus->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 		sizer->Add(m_Statuses[i], 1, wxEXPAND);
 
 		sizerStatus->Add(sizer, 0, wxEXPAND);
