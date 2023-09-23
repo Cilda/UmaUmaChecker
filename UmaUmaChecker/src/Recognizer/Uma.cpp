@@ -19,6 +19,8 @@
 #include "Utils/utility.h"
 #include "Tesseract/Tesseract.h"
 #include "Capture/UmaWindowCapture.h"
+#include "Recognizer/StatusRecognizer.h"
+#include "Config/StatusRecognizerConfig.h"
 
 
 const cv::Rect2d Uma::CharaEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
@@ -131,6 +133,10 @@ void Uma::MonitorThread()
 			{
 				auto future1 = std::async(std::launch::async, [&] { ProcessEventAndCharacter(image, srcImage); });
 				auto future2 = std::async(std::launch::async, [&] { ProcessStatus(image, srcImage); });
+				auto future3 = std::async(std::launch::async, [&] {
+					StatusRecognizer recognizer(srcImage, StatusRecognizerConfig::GetInstance());
+					recognizer.Recognize();
+				});
 			}
 			
 			delete image;

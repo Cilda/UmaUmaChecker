@@ -240,6 +240,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Config\StatusRecognizerConfig.cpp" />
     <ClCompile Include="src\UI\AboutDialog.cpp" />
     <ClCompile Include="src\UI\CheckUpdateDialog.cpp" />
     <ClCompile Include="src\Recognizer\CombineImage.cpp" />
@@ -273,6 +274,7 @@
     <ClCompile Include="src\Utils\utility.cpp" />
     <ClCompile Include="src\UI\wxTextPopupCtrl.cpp" />
     <ClCompile Include="src\UI\wxUmaTextCtrl.cpp" />
+    <ClCompile Include="src\Recognizer\StatusRecognizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdparty\simstring\cdbpp.h" />
@@ -282,7 +284,9 @@
     <ClInclude Include="3rdparty\simstring\memory_mapped_file_win32.h" />
     <ClInclude Include="3rdparty\simstring\ngram.h" />
     <ClInclude Include="3rdparty\simstring\simstring.h" />
+    <ClInclude Include="src\Config\StatusRecognizerConfig.h" />
     <ClInclude Include="src\Range.h" />
+    <ClInclude Include="src\Rect.h" />
     <ClInclude Include="src\UI\AboutDialog.h" />
     <ClInclude Include="src\Capture\CaptureMode.h" />
     <ClInclude Include="src\UI\CheckUpdateDialog.h" />
@@ -321,6 +325,7 @@
     <ClInclude Include="src\version.h" />
     <ClInclude Include="src\UI\wxTextPopupCtrl.h" />
     <ClInclude Include="src\UI\wxUmaTextCtrl.h" />
+    <ClInclude Include="src\Recognizer\StatusRecognizer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UmaUmaChecker.rc" />
@@ -424,6 +429,15 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\tessdata</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\tessdata</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\tessdata</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Assets\StatusRecognizer.json">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\Assets</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\Assets</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\Assets</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\Assets</DestinationFolders>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
