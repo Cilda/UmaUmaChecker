@@ -25,6 +25,8 @@ void StatusRecognizer::Recognize()
 	CutMat(image, Config.GutsBounds, guts);
 	CutMat(image, Config.WisdomBounds, wisdom);
 
+
+
 	{
 		auto future1 = std::async(std::launch::async, [&] { Status.Speed = Tesseract::RecognizeAsNumber(speed); });
 		auto future2 = std::async(std::launch::async, [&] { Status.Stamina = Tesseract::RecognizeAsNumber(stamina); });

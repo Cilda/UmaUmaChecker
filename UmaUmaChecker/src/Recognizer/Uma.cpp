@@ -134,7 +134,7 @@ void Uma::MonitorThread()
 				auto future1 = std::async(std::launch::async, [&] { ProcessEventAndCharacter(image, srcImage); });
 				auto future2 = std::async(std::launch::async, [&] { ProcessStatus(image, srcImage); });
 				auto future3 = std::async(std::launch::async, [&] {
-					StatusRecognizer recognizer(srcImage, StatusRecognizerConfig::GetInstance());
+					StatusRecognizer recognizer(srcImage, StatusRecognizerConfig::Get());
 					recognizer.Recognize();
 				});
 			}

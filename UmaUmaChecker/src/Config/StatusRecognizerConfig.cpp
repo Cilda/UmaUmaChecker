@@ -8,6 +8,8 @@
 
 using json = nlohmann::json;
 
+StatusRecognizerConfig StatusRecognizerConfig::instance;
+
 StatusRecognizerConfig::StatusRecognizerConfig()
 {
 }
@@ -29,12 +31,19 @@ bool StatusRecognizerConfig::Open(const wxString& FileName)
 		json config = json::parse(input, nullptr, false);
 
 		auto StatusBounds = config["StatusBounds"];
+		{
+			SpeedBounds = StatusBounds.value<Rect<double>>("Speed", Rect<double>());
+			StaminaBounds = StatusBounds.value<Rect<double>>("Stamina", Rect<double>());
+			PowerBounds = StatusBounds.value<Rect<double>>("Power", Rect<double>());
+			GutsBounds = StatusBounds.value<Rect<double>>("Guts", Rect<double>());
+			WisdomBounds = StatusBounds.value<Rect<double>>("Wisdom", Rect<double>());
+		}
 
-		SpeedBounds = StatusBounds.value<Rect<double>>("Speed", Rect<double>());
-		StaminaBounds = StatusBounds.value<Rect<double>>("Stamina", Rect<double>());
-		PowerBounds = StatusBounds.value<Rect<double>>("Power", Rect<double>());
-		GutsBounds = StatusBounds.value<Rect<double>>("Guts", Rect<double>());
-		WisdomBounds = StatusBounds.value<Rect<double>>("Wisdom", Rect<double>());
+		auto Detect = config["Detect"];
+		{
+			DetectColor = Detect.value<RGB>("Color", RGB());
+			Threshold = Detect.value("Threshold", 0.0f);
+		}
 
 		return true;
 	}
@@ -43,7 +52,7 @@ bool StatusRecognizerConfig::Open(const wxString& FileName)
 	}
 }
 
-StatusRecognizerConfig& StatusRecognizerConfig::GetInstance()
+StatusRecognizerConfig& StatusRecognizerConfig::Get()
 {
 	//auto st = wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
 	static StatusRecognizerConfig config(wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath() + wxT("\\Assets\\StatusRecognizer.json"));

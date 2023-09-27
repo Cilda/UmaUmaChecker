@@ -3,10 +3,11 @@
 #include <wx/string.h>
 
 #include "Rect.h"
+#include "RGB.h"
 
 class StatusRecognizerConfig
 {
-public:
+private:
 	StatusRecognizerConfig();
 	StatusRecognizerConfig(const wxString& FileName);
 	~StatusRecognizerConfig();
@@ -14,7 +15,8 @@ public:
 	bool Open(const wxString& FileName);
 
 public:
-	static StatusRecognizerConfig& GetInstance();
+	static bool Load();
+	static StatusRecognizerConfig& Get();
 
 public:
 	Rect<double> SpeedBounds;
@@ -22,6 +24,10 @@ public:
 	Rect<double> PowerBounds;
 	Rect<double> GutsBounds;
 	Rect<double> WisdomBounds;
+	RGB DetectColor;
+	float Threshold;
 
+private:
+	static StatusRecognizerConfig instance;
 };
 

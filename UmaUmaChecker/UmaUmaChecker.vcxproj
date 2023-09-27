@@ -287,6 +287,7 @@
     <ClInclude Include="src\Config\StatusRecognizerConfig.h" />
     <ClInclude Include="src\Range.h" />
     <ClInclude Include="src\Rect.h" />
+    <ClInclude Include="src\RGB.h" />
     <ClInclude Include="src\UI\AboutDialog.h" />
     <ClInclude Include="src\Capture\CaptureMode.h" />
     <ClInclude Include="src\UI\CheckUpdateDialog.h" />

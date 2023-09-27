@@ -48,6 +48,8 @@ public:
 			Gdiplus::GdiplusStartup(&token, &input, NULL);
 			wxInitAllImageHandlers();
 
+			if (InitConfig()) return false;
+
 			Config* config = Config::GetInstance();
 			config->Load();
 
@@ -68,6 +70,11 @@ public:
 			LOG_EXCEPTION << ex.what();
 		}
 
+		return true;
+	}
+
+	bool InitConfig()
+	{
 		return true;
 	}
 

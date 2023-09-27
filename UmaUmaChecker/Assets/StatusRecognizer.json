@@ -32,7 +32,11 @@
     }
   },
   "Detect": {
-    "Method": "",
-    "Threshold": 0.1
+    "Color": {
+      "r": 0,
+      "g": 0,
+      "b": 0
+    },
+    "Threshold": 0.3
   }
 }
