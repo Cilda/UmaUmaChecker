@@ -313,5 +313,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\SkillSelectionRange.json" />
+    <None Include="Library\SkillRatings.json" />
   </ItemGroup>
 </Project>
