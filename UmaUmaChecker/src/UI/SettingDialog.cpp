@@ -123,7 +123,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : ThemedWindowWra
 				}
 				gridSizer->Add(s);
 				sizeSystem->Add(gridSizer, 1, wxALL, 5);
-				sizeSystem->Add(new ThemedWrapper<wxStaticText>(sizeSystem->GetStaticBox(), wxID_ANY, wxT("Increase the value then CPU usage and Memory increase.\nDecrease the value then CPU usage and Memory decrease but be slowly recognize event.")), 0, wxLEFT | wxRIGHT | wxBOTTOM, 5);
+				sizeSystem->Add(new ThemedWrapper<wxStaticText>(sizeSystem->GetStaticBox(), wxID_ANY, _("Increase the value then CPU usage and Memory increase.\nDecrease the value then CPU usage and Memory decrease but be slowly recognize event.")), 0, wxLEFT | wxRIGHT | wxBOTTOM, 5);
 			}
 
 			wxBoxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
