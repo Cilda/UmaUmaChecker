@@ -46,24 +46,24 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	wxBoxSizer* bSizerTop = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
 
-	m_toggleBtnStart = new ThemedButtonWrapper<wxToggleButton>(this, wxID_ANY, wxT("スタート"), wxDefaultPosition, wxDefaultSize, 0);
+	m_toggleBtnStart = new ThemedButtonWrapper<wxToggleButton>(this, wxID_ANY, _("Start"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
 
 	m_buttonScreenshot = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("ScreenShot"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-	m_buttonScreenshot->SetToolTip(wxT("スクリーンショットを撮ります\n右クリックをすると保存先フォルダを開きます"));
+	m_buttonScreenshot->SetToolTip(_("Capture Umamusume window.\nClick the right button to open save location."));
 	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL & ~wxRIGHT, 5);
 
 	m_buttonCombine = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-	m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を開始します"));
+	m_buttonCombine->SetToolTip(_("Merge umamusume skill tab as an image."));
 	bSizerButtons->Add(m_buttonCombine, 0, wxALL & ~wxLEFT, 5);
 
-	m_buttonPreview = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("プレビュー表示"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonPreview = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("Preview"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonPreview, 0, wxALL, 5);
 
-	m_buttonSetting = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("設定"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonSetting = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("Setting"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonSetting, 0, wxALL, 5);
 
-	m_buttonAbout = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxDefaultSize, 0);
+	m_buttonAbout = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("About"), wxDefaultPosition, wxDefaultSize, 0);
 	bSizerButtons->Add(m_buttonAbout, 0, wxALL, 5);
 
 	bSizerTop->Add(bSizerButtons, 0, wxEXPAND | wxFIXED_MINSIZE | wxRIGHT | wxLEFT | wxBOTTOM, 5);
@@ -71,7 +71,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	wxFlexGridSizer* sizerEventInfo = new wxFlexGridSizer(2, 2, 9, 9);
 
 	// 育成ウマ娘
-	m_staticTextCharaName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, wxT("育成ウマ娘"));
+	m_staticTextCharaName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, _("Training Umamusume"));
 	m_staticTextCharaName->Wrap(-1);
 	sizerEventInfo->Add(m_staticTextCharaName, 0, wxALIGN_CENTER_VERTICAL);
 
@@ -79,7 +79,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	sizerEventInfo->Add(m_comboBoxUma, 1, wxEXPAND);
 
 	// イベント名
-	m_staticTextEventName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, wxT("イベント名"));
+	m_staticTextEventName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, _("Event Name"));
 	m_staticTextEventName->Wrap(-1);
 	sizerEventInfo->Add(m_staticTextEventName, 0, wxALIGN_CENTER_VERTICAL);
 
@@ -90,7 +90,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	bSizerTop->Add(sizerEventInfo, 0, wxEXPAND | wxRIGHT | wxLEFT, 15);
 
 	// 選択肢
-	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, wxT("選択肢")), wxVERTICAL);
+	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, _("Choise")), wxVERTICAL);
 
 	std::vector<wxColour> bgColors = {
 		wxColour(200, 255, 150),
@@ -242,7 +242,7 @@ bool MainFrame::LoadSkills()
 void MainFrame::OnClose(wxCloseEvent& event)
 {
 	if (thread.joinable()) {
-		wxMessageBox(wxT("終了するには結合を停止してください。"), wxT("エラー"), wxICON_ERROR);
+		wxMessageBox(_("Please stop combining image to exit."), _("Error"), wxICON_ERROR);
 		return;
 	}
 
@@ -253,11 +253,11 @@ void MainFrame::OnClickStart(wxCommandEvent& event)
 {
 	if (!m_toggleBtnStart->GetValue()) {
 		umaMgr->Stop();
-		m_toggleBtnStart->SetLabelText(wxT("スタート"));
+		m_toggleBtnStart->SetLabelText(_("Start"));
 	}
 	else {
 		umaMgr->Start();
-		m_toggleBtnStart->SetLabelText(wxT("ストップ"));
+		m_toggleBtnStart->SetLabelText(_("Stop"));
 	}
 }
 
@@ -288,13 +288,13 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 		encoderParameters.Parameter[0].Value = &quality;
 
 		if (image->Save(savename.c_str(), &clsid, &encoderParameters) != Gdiplus::Ok) {
-			wxMessageBox(wxT("保存に失敗しました。"), wxT("ウマウマチェッカー"), wxICON_ERROR);
+			wxMessageBox(_("Failed to save image."), wxT("ウマウマチェッカー"), wxICON_ERROR);
 		}
 
 		delete image;
 	}
 	else {
-		wxMessageBox(wxT("ウマ娘のウィンドウが見つかりません。"), wxT("ウマウマチェッカー"), wxICON_ERROR);
+		wxMessageBox(_("Not found Umamusume window."), wxT("ウマウマチェッカー"), wxICON_ERROR);
 	}
 }
 
@@ -308,7 +308,7 @@ void MainFrame::OnRightClickScreenShot(wxMouseEvent& event)
 void MainFrame::OnClickCombine(wxCommandEvent& event)
 {
 	if (!UmaWindowCapture::GetUmaWindow()) {
-		wxMessageBox(wxT("ウマ娘のウィンドウが見つかりません。"), app_name, wxICON_ERROR);
+		wxMessageBox(_("Not found Umamusume window."), app_name, wxICON_ERROR);
 		return;
 	}
 
@@ -329,11 +329,11 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 		while (bRunning) {
 			if (PrevStatus != WaitForMovingScrollbarOnTop && combine.GetStatus() == WaitForMovingScrollbarOnTop) {
 				m_buttonCombine->SetBitmap(wxIcon(wxT("WaitRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-				m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を停止します"));
+				m_buttonCombine->SetToolTip(_("Stop merge."));
 			}
 			else if (PrevStatus != Scanning && combine.GetStatus() == Scanning) {
 				m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-				m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を停止します"));
+				m_buttonCombine->SetToolTip(_("Stop merge."));
 			}
 
 			PrevStatus = combine.GetStatus();
@@ -342,13 +342,13 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 
 		if (thread.joinable()) thread.join();
 		m_buttonCombine->SetBitmap(wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-		m_buttonCombine->SetToolTip(wxT("ウマ娘詳細を一つの画像として撮影を開始します"));
+		m_buttonCombine->SetToolTip(_("Merge umamusume skill tab as an image."));
 		CombineTimer.Stop();
 		this->SetTitle(app_title);
 		if (!combine.IsImageSaved()) {
 			std::wstring error = combine.GetError();
 			if (!error.empty()) wxMessageBox(error, app_title, wxICON_ERROR);
-			else wxMessageBox(wxT("キャプチャに失敗しました。"), app_title, wxICON_ERROR);
+			else wxMessageBox(_("Failed to capture."), app_title, wxICON_ERROR);
 		}
 	}
 }

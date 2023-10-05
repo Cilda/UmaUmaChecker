@@ -11,7 +11,7 @@
 #include "version.h"
 #include "Update/UpdateManager.h"
 
-AboutDialog::AboutDialog(wxWindow* parent) : ThemedWindowWrapper<wxDialog>(parent, wxID_ANY, wxT("ウマウマチェッカーについて"))
+AboutDialog::AboutDialog(wxWindow* parent) : ThemedWindowWrapper<wxDialog>(parent, wxID_ANY, _("About UmaUmaChecker"))
 {
 	Config* config = Config::GetInstance();
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
@@ -42,7 +42,7 @@ AboutDialog::AboutDialog(wxWindow* parent) : ThemedWindowWrapper<wxDialog>(paren
 	sizerTop->Add(sizerInfo, 0, wxALL, 20);
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	wxStaticText* text = new ThemedWrapper<wxStaticText>(this, wxID_ANY, wxT("以下のライブラリを含んでいます:"));
+	wxStaticText* text = new ThemedWrapper<wxStaticText>(this, wxID_ANY, _("Contain the following libraries:"));
 	sizer->Add(text, 0);
 
 	wxListBox* listBox = new ThemedWrapper<wxListBox>(this, wxID_ANY);
@@ -65,7 +65,7 @@ AboutDialog::AboutDialog(wxWindow* parent) : ThemedWindowWrapper<wxDialog>(paren
 	m_buttonOk = new ThemedButtonWrapper<wxButton>(this, wxID_OK);
 	bSizerButtons->Add(m_buttonOk, 0, wxLEFT | wxRIGHT, 5);
 
-	m_buttonUpdateCheck = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, wxT("更新の確認"));
+	m_buttonUpdateCheck = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("Check Update"));
 	bSizerButtons->Add(m_buttonUpdateCheck, 0, wxLEFT | wxRIGHT, 5);
 
 	sizerTop->Add(bSizerButtons, 0, wxALL | wxCENTER, 5);
