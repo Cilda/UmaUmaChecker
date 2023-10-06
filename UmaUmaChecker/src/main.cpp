@@ -1,14 +1,17 @@
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include <winsock2.h>
+#include <gdiplus.h>
+#include <VersionHelpers.h>
 
 #include <wx/app.h>
 #include <wx/log.h>
 #include <wx/debugrpt.h>
 #include <wx/ffile.h>
-
-#include <gdiplus.h>
-#include <VersionHelpers.h>
+#include <wx/translation.h>
+#include <wx/uilocale.h>
+#include <wx/stdpaths.h>
+#include <wx/filename.h>
 
 #include "Update/UpdateManager.h"
 
@@ -51,6 +54,8 @@ public:
 			Config* config = Config::GetInstance();
 			config->Load();
 
+			InitLanguageSupport();
+
 #ifndef _DEBUG
 			UpdateManager::GetInstance().UpdateEvents();
 #endif
@@ -69,6 +74,28 @@ public:
 		}
 
 		return true;
+	}
+
+	void InitLanguageSupport()
+	{
+		if (!wxUILocale::UseDefault()) {
+			wxLogWarning(wxT("Failed to initialize the default system locale."));
+		}
+
+		wxFileName path(wxStandardPaths::Get().GetExecutablePath());
+		path.AppendDir(wxT("Languages"));
+		path.SetFullName(wxT(""));
+
+		wxFileTranslationsLoader::AddCatalogLookupPathPrefix(path.GetFullPath());
+
+		wxTranslations* trans = new wxTranslations();
+		wxTranslations::Set(trans);
+
+		trans->AddStdCatalog();
+
+		if (!trans->AddCatalog(wxT("UmaUmaChecker"))) {
+			wxLogError(wxT("Couldn't load catalog."));
+		}
 	}
 
 	virtual int OnExit()

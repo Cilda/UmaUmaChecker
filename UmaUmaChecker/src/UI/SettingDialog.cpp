@@ -9,6 +9,7 @@
 #include <wx/valgen.h>
 #include <wx/valtext.h>
 #include <wx/valnum.h>
+#include <wx/translation.h>
 
 #include "Update/UpdateManager.h"
 
@@ -32,7 +33,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : ThemedWindowWra
 	{
 		wxStaticBoxSizer* sizeS1 = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, _("General")), wxVERTICAL);
 		{
-			wxFlexGridSizer* gridSizer = new wxFlexGridSizer(4, 2, 3, 0);
+			wxFlexGridSizer* gridSizer = new wxFlexGridSizer(5, 2, 3, 0);
 			{
 				// 更新
 				m_staticTextUpdate = new ThemedWrapper<wxStaticText>(sizeS1->GetStaticBox(), wxID_ANY, _("Update Event Data"));
@@ -86,6 +87,16 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : ThemedWindowWra
 				m_comboTheme->AppendString(_("Dark"));
 				gridSizer->Add(themeText, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 				gridSizer->Add(m_comboTheme, 0);
+
+				gridSizer->Add(new ThemedWrapper<wxStaticText>(sizeS1->GetStaticBox(), wxID_ANY, _("Language")));
+				m_comboLanguage = new ThemedComboBoxWrapper<wxComboBox>(sizeS1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+				m_comboLanguage->AppendString(_("System Language"));
+				auto locales = wxTranslations::Get()->GetAvailableTranslations(wxT("UmaUmaChecker"));
+				for (auto& locale : locales) {
+					const wxLanguageInfo* info = wxLocale::FindLanguageInfo(locale);
+					if (info) m_comboLanguage->AppendString(info->DescriptionNative);
+				}
+				gridSizer->Add(m_comboLanguage, 0);
 
 				sizeS1->Add(gridSizer, 1, wxLEFT | wxBOTTOM, 5);
 			}

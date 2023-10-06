@@ -51,6 +51,7 @@ private:
 	wxSpinCtrl* m_spinCtrlMaxLine;
 	wxComboBox* m_comboOcrPoolSize;
 	wxComboBox* m_comboTheme;
+	wxComboBox* m_comboLanguage;
 	FontComboBox* m_comboFontList;
 	wxComboBox* m_comboFontSizeList;
 	wxComboBox* m_comboCaptureMode;

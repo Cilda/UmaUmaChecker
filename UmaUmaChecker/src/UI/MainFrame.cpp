@@ -242,7 +242,7 @@ bool MainFrame::LoadSkills()
 void MainFrame::OnClose(wxCloseEvent& event)
 {
 	if (thread.joinable()) {
-		wxMessageBox(_("Please stop combining image to exit."), _("Error"), wxICON_ERROR);
+		wxMessageBox(_("Please stop merging image to exit."), _("Error"), wxICON_ERROR);
 		return;
 	}
 
