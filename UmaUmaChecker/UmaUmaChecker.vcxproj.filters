@@ -302,4 +302,8 @@
       <Filter>リソース ファイル</Filter>
     </CopyFileToFolders>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="locale\UmaUmaChecker.pot" />
+    <None Include="locale\ja.po" />
+  </ItemGroup>
 </Project>

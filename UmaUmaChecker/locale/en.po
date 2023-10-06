@@ -1,0 +1,256 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4\n"
+
+#: src\ui\settingdialog.cpp:133
+msgid "*Need to restart application."
+msgstr "*Need to restart application."
+
+#: src\ui\checkupdatedialog.cpp:30
+#, c-format
+msgid "<h1>Available update %s</h1><h2>Update history</h2>"
+msgstr "<h1>Available update %s</h1><h2>Update history</h2>"
+
+#: src\ui\mainframe.cpp:66
+msgid "About"
+msgstr "About"
+
+#: src\ui\aboutdialog.cpp:14
+msgid "About UmaUmaChecker"
+msgstr "About UmaUmaChecker"
+
+#: src\ui\settingdialog.cpp:146
+msgid "BitBlt"
+msgstr "BitBlt"
+
+#: src\ui\settingdialog.cpp:170
+msgid "Browse"
+msgstr "Browse"
+
+#: src\ui\settingdialog.cpp:204
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src\ui\settingdialog.cpp:142
+msgid "Capture Type"
+msgstr "Capture Type"
+
+#: src\ui\mainframe.cpp:53
+msgid ""
+"Capture Umamusume window.\n"
+"Click the right button to open save location."
+msgstr ""
+"Capture Umamusume window.\n"
+"Click the right button to open save location."
+
+#: src\ui\settingdialog.cpp:192
+msgid "Capture screen if event is not recognized"
+msgstr "Capture screen if event is not recognized"
+
+#: src\ui\aboutdialog.cpp:68
+msgid "Check Update"
+msgstr "Check Update"
+
+#: src\ui\mainframe.cpp:93
+msgid "Choise"
+msgstr "Choise"
+
+#: src\ui\aboutdialog.cpp:45
+msgid "Contain the following libraries:"
+msgstr "Contain the following libraries:"
+
+#: src\ui\settingdialog.cpp:87
+msgid "Dark"
+msgstr "Dark"
+
+#: src\ui\settingdialog.cpp:189
+msgid "Debug Mode"
+msgstr "Debug Mode"
+
+#: src\ui\checkupdatedialog.cpp:39
+msgid "Do not check on startup."
+msgstr "Do not check on startup."
+
+#: src\ui\settingdialog.cpp:109
+msgid "Enable Status Bar"
+msgstr "Enable Status Bar"
+
+#: src\ui\mainframe.cpp:245
+msgid "Error"
+msgstr "Error"
+
+#: src\ui\mainframe.cpp:82
+msgid "Event Name"
+msgstr "Event Name"
+
+#: src\ui\mainframe.cpp:351
+msgid "Failed to capture."
+msgstr "Failed to capture."
+
+#: src\ui\mainframe.cpp:291
+msgid "Failed to save image."
+msgstr "Failed to save image."
+
+#: src\ui\settingdialog.cpp:175
+msgid "File Type"
+msgstr "File Type"
+
+#: src\ui\settingdialog.cpp:34
+msgid "General"
+msgstr "General"
+
+#: src\ui\settingdialog.cpp:105
+msgid "Hide \"no choise\" event"
+msgstr "Hide \"no choise\" event"
+
+#: src\ui\settingdialog.cpp:137
+msgid ""
+"Increase the value then CPU usage and Memory increase.\n"
+"Decrease the value then CPU usage and Memory decrease but be slowly "
+"recognize event."
+msgstr ""
+"Increase the value then CPU usage and Memory increase.\n"
+"Decrease the value then CPU usage and Memory decrease but be slowly "
+"recognize event."
+
+#: src\ui\settingdialog.cpp:91
+msgid "Language"
+msgstr "Language"
+
+#: src\ui\settingdialog.cpp:86
+msgid "Light"
+msgstr "Light"
+
+#: src\ui\settingdialog.cpp:162
+msgid "Location"
+msgstr "Location"
+
+#: src\ui\settingdialog.cpp:77
+msgid "Max number of effect line"
+msgstr "Max number of effect line"
+
+#: src\ui\mainframe.cpp:57
+#: src\ui\mainframe.cpp:345
+msgid "Merge umamusume skill tab as an image."
+msgstr "Merge umamusume skill tab as an image."
+
+#: src\ui\settingdialog.cpp:252
+msgid "No available update."
+msgstr "No available update."
+
+#: src\ui\mainframe.cpp:297
+#: src\ui\mainframe.cpp:311
+msgid "Not found Umamusume window."
+msgstr "Not found Umamusume window."
+
+#: src\ui\settingdialog.cpp:113
+msgid "Notice on startup if there is available update"
+msgstr "Notice on startup if there is available update"
+
+#: src\ui\settingdialog.cpp:124
+msgid "Number of OCR"
+msgstr "Number of OCR"
+
+#: src\ui\settingdialog.cpp:120
+msgid "OCR Setting"
+msgstr "OCR Setting"
+
+#: src\ui\mainframe.cpp:245
+msgid "Please stop merging image to exit."
+msgstr "Please stop merging image to exit."
+
+#: src\ui\mainframe.cpp:60
+#: src\ui\previewframe.cpp:14
+msgid "Preview"
+msgstr "Preview"
+
+#: src\ui\previewframe.cpp:29
+#: src\ui\previewframe.cpp:108
+msgid "Save an image"
+msgstr "Save an image"
+
+#: src\ui\settingdialog.cpp:157
+msgid "Screenshot"
+msgstr "Screenshot"
+
+#: src\ui\settingdialog.cpp:257
+msgid "Select screenshot save location"
+msgstr "Select screenshot save location"
+
+#: src\ui\mainframe.cpp:63
+#: src\ui\settingdialog.cpp:20
+msgid "Setting"
+msgstr "Setting"
+
+#: src\ui\checkupdatedialog.cpp:45
+msgid "Skip"
+msgstr "Skip"
+
+#: src\ui\mainframe.cpp:49
+#: src\ui\mainframe.cpp:256
+msgid "Start"
+msgstr "Start"
+
+#: src\ui\mainframe.cpp:260
+msgid "Stop"
+msgstr "Stop"
+
+#: src\ui\mainframe.cpp:332
+#: src\ui\mainframe.cpp:336
+msgid "Stop merge."
+msgstr "Stop merge."
+
+#: src\ui\settingdialog.cpp:93
+msgid "System Language"
+msgstr "System Language"
+
+#: src\ui\settingdialog.cpp:84
+msgid "Theme"
+msgstr "Theme"
+
+#: src\ui\mainframe.cpp:74
+msgid "Training Umamusume"
+msgstr "Training Umamusume"
+
+#: src\ui\settingdialog.cpp:247
+#: src\ui\settingdialog.cpp:252
+msgid "UmaUmaChecker"
+msgstr "UmaUmaChecker"
+
+#: src\ui\checkupdatedialog.cpp:48
+#: src\ui\settingdialog.cpp:40
+msgid "Update"
+msgstr "Update"
+
+#: src\ui\settingdialog.cpp:39
+msgid "Update Event Data"
+msgstr "Update Event Data"
+
+#: src\ui\checkupdatedialog.cpp:20
+msgid "Update UmaUmaChecker"
+msgstr "Update UmaUmaChecker"
+
+#: src\ui\settingdialog.cpp:247
+msgid "Update completed."
+msgstr "Update completed."
+
+#: src\ui\settingdialog.cpp:46
+msgid "Window Font"
+msgstr "Window Font"
+
+#: src\ui\settingdialog.cpp:147
+msgid "Windows 10 (above 1903)"
+msgstr "Windows 10 (above 1903)"
+
+#: src\ui\settingdialog.cpp:191
+msgid "Write debug log in output.log"
+msgstr "Write debug log in output.log"
