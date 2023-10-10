@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Loader/Event/EventLibrary.h"
-#include "Loader/Event/TextCollector.h"
+#include "Data/EventLibrary.h"
+#include "Data/TextCollector.h"
 
 #include <wx/frame.h>
 

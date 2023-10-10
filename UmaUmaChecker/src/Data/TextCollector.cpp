@@ -23,12 +23,8 @@ void TextCollector::Load()
 {
 	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\ReplaceText.json");
 	if (stream.good()) {
-		std::stringstream text;
-
-		text << stream.rdbuf();
-
 		try {
-			json replaces = json::parse(text.str());
+			json replaces = json::parse(stream);
 
 			for (auto& arr : replaces["replaces"]) {
 				collections.emplace_back(
