@@ -194,15 +194,6 @@ void MainFrame::Init()
 
 	SetTrainingCharaComboBox();
 
-	if (!LoadSkills()) wxMessageBox(wxT("Skills.json を読み込めませんでした。"), app_name, wxICON_ERROR);
-
-	/*
-	if (Config::GetInstance()->EnableDebug) {
-		m_DebugFrame = new DebugFrame(this);
-		m_DebugFrame->Show();
-	}
-	*/
-
 #ifdef _DEBUG
 	new wxLogWindow(this, wxT("ログ"));
 	DebugFrame* debug = new DebugFrame(this);
@@ -212,31 +203,6 @@ void MainFrame::Init()
 	debug2->Show();
 	
 #endif
-}
-
-bool MainFrame::LoadSkills()
-{
-	std::fstream stream(utility::GetExeDirectory() + L"\\Library\\Skills.json");
-	if (stream.good()) {
-		std::stringstream text;
-
-		text << stream.rdbuf();
-
-		try {
-			json skills = json::parse(text.str());
-
-			for (auto skill : skills) {
-				SkillMap[utility::from_u8string(skill["Name"].get<std::string>())] = utility::from_u8string(skill["Description"].get<std::string>());
-			}
-		}
-		catch (json::exception& ex) {
-			return false;
-		}
-
-		return true;
-	}
-
-	return false;
 }
 
 void MainFrame::OnClose(wxCloseEvent& event)
@@ -704,9 +670,9 @@ std::wstring MainFrame::GetSkillDescFromOption(const std::wstring& option)
 		begin = match[0].second;
 		auto name = match[1].str();
 
-		if (SkillSet.find(name) == SkillSet.end() && SkillMap.find(name) != SkillMap.end()) {
+		if (SkillSet.find(name) == SkillSet.end() && EventLib.SkillMap.find(name) != EventLib.SkillMap.end()) {
 			if (!desc.empty()) desc += L"\n\n";
-			desc += L"《" + match[1].str() + L"》\n" + SkillMap.at(name);
+			desc += L"《" + match[1].str() + L"》\n" + EventLib.SkillMap.at(name);
 			SkillSet.insert(name);
 		}
 	}

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <thread>
+
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/tglbtn.h>
@@ -20,8 +22,6 @@
 #include <wx/richtext/richtextctrl.h>
 #include <wx/statbox.h>
 #include <wx/frame.h>
-
-#include <thread>
 
 #include "wxTextPopupCtrl.h"
 #include "wxUmaTextCtrl.h"
@@ -44,7 +44,6 @@ public:
 
 private:
 	void Init();
-	bool LoadSkills();
 
 	void OnClose(wxCloseEvent& event);
 	void OnSize(wxSizeEvent& event);
@@ -102,7 +101,6 @@ private:
 	wxComboBoxPopup* m_comboPopup = NULL;
 
 	Uma* umaMgr;
-	std::unordered_map<std::wstring, std::wstring> SkillMap; // スキル名 -> 説明
 
 	wxTimer CombineTimer;
 	CombineImage combine;

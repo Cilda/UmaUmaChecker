@@ -21,11 +21,13 @@ public:
 
 private:
 	void DeleteDBFiles();
+	bool LoadSkills();
 
 public:
 	EventData CardEvent;
 	EventData CharaEvent;
 	ScenarioData ScenarioEvent;
+	std::unordered_map<std::wstring, std::wstring> SkillMap; // スキル名 -> 説明
 
 private:
 	std::string DBPath;

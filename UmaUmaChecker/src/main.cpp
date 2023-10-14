@@ -19,7 +19,7 @@
 #include "Log/Log.h"
 #include "version.h"
 #include "Tesseract/Tesseract.h"
-#include "Loader/Event/EventLibrary.h"
+#include "Data/EventLibrary.h"
 #include "Capture/UmaWindowCapture.h"
 
 typedef HRESULT(_stdcall* SetThreadDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
@@ -45,18 +45,20 @@ public:
 			LOG_INFO << "/------------------------------------------------------------------------------------------/";
 			LOG_INFO << app_name << L" " << app_version;
 
+#ifndef _DEBUG
+			UpdateManager::GetInstance().UpdateEvents();
+#endif
+			if (!EventLib.Load()) {
+				return false;
+			}
+
+			Tesseract::Initialize();
+
 			Gdiplus::GdiplusStartup(&token, &input, NULL);
 			wxInitAllImageHandlers();
 
 			Config* config = Config::GetInstance();
 			config->Load();
-
-#ifndef _DEBUG
-			UpdateManager::GetInstance().UpdateEvents();
-#endif
-			Tesseract::Initialize();
-
-			EventLib.Load();
 
 			MainFrame* frame = new MainFrame(NULL);
 			frame->Show(true);
