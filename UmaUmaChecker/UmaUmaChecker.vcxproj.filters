@@ -24,10 +24,10 @@
     <ClCompile Include="src\Utils\utility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\Loader\Event\EventLibrary.cpp">
+    <ClCompile Include="src\Data\EventLibrary.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\Loader\Event\TextCollector.cpp">
+    <ClCompile Include="src\Data\TextCollector.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -87,7 +87,7 @@
     <ClCompile Include="src\UI\FontComboBox.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\Loader\Event\EventData.cpp">
+    <ClCompile Include="src\Data\EventData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="src\Log\Log.cpp">
@@ -102,7 +102,7 @@
     <ClCompile Include="src\Tesseract\Tesseract.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\Loader\Event\ScenarioData.cpp">
+    <ClCompile Include="src\Data\ScenarioData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="src\Capture\UmaWindowCapture.cpp">
@@ -128,13 +128,13 @@
     <ClInclude Include="src\Utils\utility.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="src\Loader\Event\EventLibrary.h">
+    <ClInclude Include="src\Data\EventLibrary.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="src\Loader\Event\Event.h">
+    <ClInclude Include="src\Data\Event.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="src\Loader\Event\TextCollector.h">
+    <ClInclude Include="src\Data\TextCollector.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="src\UI\MainFrame.h">
@@ -197,7 +197,7 @@
     <ClInclude Include="src\UI\FontComboBox.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="src\Loader\Event\EventData.h">
+    <ClInclude Include="src\Data\EventData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="src\Log\Log.h">
@@ -212,7 +212,7 @@
     <ClInclude Include="src\Tesseract\Tesseract.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="src\Loader\Event\ScenarioData.h">
+    <ClInclude Include="src\Data\ScenarioData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="src\Capture\UmaWindowCapture.h">
