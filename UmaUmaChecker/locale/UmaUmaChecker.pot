@@ -69,7 +69,7 @@ msgstr ""
 msgid "Enable Status Bar"
 msgstr ""
 
-#: src\ui\mainframe.cpp:245
+#: src\ui\mainframe.cpp:211
 msgid "Error"
 msgstr ""
 
@@ -77,11 +77,27 @@ msgstr ""
 msgid "Event Name"
 msgstr ""
 
-#: src\ui\mainframe.cpp:351
+#: src\ui\mainframe.cpp:317
 msgid "Failed to capture."
 msgstr ""
 
-#: src\ui\mainframe.cpp:291
+#: src\data\eventlibrary.cpp:57
+msgid "Failed to load Scenario Event Data."
+msgstr ""
+
+#: src\data\eventlibrary.cpp:61
+msgid "Failed to load Skill Data."
+msgstr ""
+
+#: src\data\eventlibrary.cpp:49
+msgid "Failed to load SupportCard Event Data."
+msgstr ""
+
+#: src\data\eventlibrary.cpp:53
+msgid "Failed to load Umamusume Event Data."
+msgstr ""
+
+#: src\ui\mainframe.cpp:257
 msgid "Failed to save image."
 msgstr ""
 
@@ -120,7 +136,7 @@ msgid "Max number of effect line"
 msgstr ""
 
 #: src\ui\mainframe.cpp:57
-#: src\ui\mainframe.cpp:345
+#: src\ui\mainframe.cpp:311
 msgid "Merge umamusume skill tab as an image."
 msgstr ""
 
@@ -128,8 +144,8 @@ msgstr ""
 msgid "No available update."
 msgstr ""
 
-#: src\ui\mainframe.cpp:297
-#: src\ui\mainframe.cpp:311
+#: src\ui\mainframe.cpp:263
+#: src\ui\mainframe.cpp:277
 msgid "Not found Umamusume window."
 msgstr ""
 
@@ -145,7 +161,7 @@ msgstr ""
 msgid "OCR Setting"
 msgstr ""
 
-#: src\ui\mainframe.cpp:245
+#: src\ui\mainframe.cpp:211
 msgid "Please stop merging image to exit."
 msgstr ""
 
@@ -177,16 +193,16 @@ msgid "Skip"
 msgstr ""
 
 #: src\ui\mainframe.cpp:49
-#: src\ui\mainframe.cpp:256
+#: src\ui\mainframe.cpp:222
 msgid "Start"
 msgstr ""
 
-#: src\ui\mainframe.cpp:260
+#: src\ui\mainframe.cpp:226
 msgid "Stop"
 msgstr ""
 
-#: src\ui\mainframe.cpp:332
-#: src\ui\mainframe.cpp:336
+#: src\ui\mainframe.cpp:298
+#: src\ui\mainframe.cpp:302
 msgid "Stop merge."
 msgstr ""
 
@@ -202,6 +218,7 @@ msgstr ""
 msgid "Training Umamusume"
 msgstr ""
 
+#: src\version.h:11
 #: src\ui\settingdialog.cpp:247
 #: src\ui\settingdialog.cpp:252
 msgid "UmaUmaChecker"
