@@ -46,6 +46,7 @@ bool Config::Load()
 		OcrPoolSize = config.value("OcrPoolSize", 2);
 		Theme = config.value("Theme", 0);
 		CaptureMode = (::CaptureMode)config.value("CaptureMode", 0);
+		Language = utility::from_u8string(config.value("Language", "System"));
 	}
 	catch (json::exception& ex) {
 		return false;
@@ -81,6 +82,7 @@ void Config::Save()
 	config["OcrPoolSize"] = OcrPoolSize;
 	config["Theme"] = Theme;
 	config["CaptureMode"] = (int)CaptureMode;
+	config["Language"] = std::filesystem::path(Language.begin(), Language.end()).u8string();
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

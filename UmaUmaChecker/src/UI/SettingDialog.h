@@ -31,6 +31,7 @@ private:
 	void OnClickBrowse(wxCommandEvent& event);
 	void OnClickOkButton(wxCommandEvent& event);
 	void OnClickFontSelect(wxCommandEvent& event);
+	void OnSelectedLanguage(wxCommandEvent& event);
 
 private:
 	wxStaticText* m_staticTextUpdate;

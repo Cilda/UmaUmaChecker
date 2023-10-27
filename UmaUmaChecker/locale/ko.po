@@ -5,7 +5,7 @@ msgstr ""
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: Cilda\n"
-"Language: ja_JP\n"
+"Language: ko_KR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,24 +14,24 @@ msgstr ""
 
 #: src\ui\settingdialog.cpp:134
 msgid "*Need to restart application."
-msgstr "※再起動が必要です。"
+msgstr "애플리케이션을 다시 시작해야 합니다."
 
 #: src\ui\checkupdatedialog.cpp:30
 #, c-format
 msgid "<h1>Available update %s</h1><h2>Update history</h2>"
-msgstr "<h1>%s の更新が利用可能です。</h1><h2>更新履歴</h2>"
+msgstr "<h1>%s 업데이트 가능</h1><h2>업데이트 내역</h2>"
 
 #: src\ui\mainframe.cpp:66
 msgid "About"
-msgstr "About"
+msgstr "소개"
 
 #: src\ui\aboutdialog.cpp:14
 msgid "About UmaUmaChecker"
-msgstr "ウマウマチェッカーについて"
+msgstr "UmaUmaChecker 정보"
 
 #: src\ui\settingdialog.cpp:304
 msgid "Apply after restart."
-msgstr "再起動後に適用されます。"
+msgstr "재시작 후 적용합니다."
 
 #: src\ui\settingdialog.cpp:147
 msgid "BitBlt"
@@ -39,99 +39,99 @@ msgstr "BitBlt"
 
 #: src\ui\settingdialog.cpp:171
 msgid "Browse"
-msgstr "参照"
+msgstr "찾아보기"
 
 #: src\ui\settingdialog.cpp:205
 msgid "Cancel"
-msgstr "キャンセル"
+msgstr "취소"
 
 #: src\ui\settingdialog.cpp:143
 msgid "Capture Type"
-msgstr "キャプチャタイプ"
+msgstr "캡처 유형"
 
 #: src\ui\mainframe.cpp:53
 msgid ""
 "Capture Umamusume window.\n"
 "Click the right button to open save location."
 msgstr ""
-"ウマ娘をキャプチャします。\n"
-"右クリックすると保存先が開きます。"
+"우마무스메 창 캡처.\n"
+"오른쪽 버튼을 클릭하여 저장 위치 열기."
 
 #: src\ui\settingdialog.cpp:193
 msgid "Capture screen if event is not recognized"
-msgstr "イベントが認識されなかった場合に画面をキャプチャする"
+msgstr "이벤트를 인식하지 못하면 화면 캡처"
 
 #: src\ui\aboutdialog.cpp:68
 msgid "Check Update"
-msgstr "アップデートを確認"
+msgstr "업데이트 확인"
 
 #: src\ui\mainframe.cpp:93
 msgid "Choise"
-msgstr "選択肢"
+msgstr "선택"
 
 #: src\ui\aboutdialog.cpp:45
 msgid "Contain the following libraries:"
-msgstr "以下のライブラリが含まれます:"
+msgstr "다음 라이브러리 포함:"
 
 #: src\ui\settingdialog.cpp:88
 msgid "Dark"
-msgstr "ダーク"
+msgstr "어두운"
 
 #: src\ui\settingdialog.cpp:190
 msgid "Debug Mode"
-msgstr "デバッグモード"
+msgstr "디버그 모드"
 
 #: src\ui\checkupdatedialog.cpp:39
 msgid "Do not check on startup."
-msgstr "起動時に確認しない。"
+msgstr "시작 시 확인하지 않음."
 
 #: src\ui\settingdialog.cpp:110
 msgid "Enable Status Bar"
-msgstr "ステータスバーを有効にする"
+msgstr "상태 표시줄 사용"
 
 #: src\ui\mainframe.cpp:211
 msgid "Error"
-msgstr "エラー"
+msgstr "오류"
 
 #: src\ui\mainframe.cpp:82
 msgid "Event Name"
-msgstr "イベント名"
+msgstr "이벤트 이름"
 
 #: src\ui\mainframe.cpp:317
 msgid "Failed to capture."
-msgstr "キャプチャに失敗しました。"
+msgstr "캡처 실패."
 
 #: src\data\eventlibrary.cpp:57
 msgid "Failed to load Scenario Event Data."
-msgstr "シナリオイベントデータのロードに失敗しました。"
+msgstr ""
 
 #: src\data\eventlibrary.cpp:61
 msgid "Failed to load Skill Data."
-msgstr "スキルデータのロードに失敗しました。"
+msgstr ""
 
 #: src\data\eventlibrary.cpp:49
 msgid "Failed to load SupportCard Event Data."
-msgstr "サポートカードイベントデータのロードに失敗しました。"
+msgstr ""
 
 #: src\data\eventlibrary.cpp:53
 msgid "Failed to load Umamusume Event Data."
-msgstr "ウマ娘イベントデータの読み込みに失敗しました。"
+msgstr ""
 
 #: src\ui\mainframe.cpp:257
 msgid "Failed to save image."
-msgstr "画像の保存に失敗しました。"
+msgstr "이미지 저장 실패."
 
 #: src\ui\settingdialog.cpp:176
 msgid "File Type"
-msgstr "ファイルタイプ"
+msgstr "파일 유형"
 
 #: src\ui\settingdialog.cpp:35
 msgid "General"
-msgstr "一般"
+msgstr "일반"
 
 #: src\ui\settingdialog.cpp:106
 msgid "Hide \"no choise\" event"
-msgstr "「選択肢なし」のイベントを表示しない"
+msgstr "\"선택 없음\" 이벤트 숨기기"
 
 #: src\ui\settingdialog.cpp:138
 msgid ""
@@ -139,130 +139,130 @@ msgid ""
 "Decrease the value then CPU usage and Memory decrease but be slowly "
 "recognize event."
 msgstr ""
-"値を大きくするとCPU使用率とメモリが増えます。\n"
-"値を小さくするとCPU使用率とメモリは少なくなりますがイベント識別が遅くなりま"
-"す。"
+"값을 증가시키면 CPU 사용량 및 메모리 사용량이 증가합니다.\n"
+"값을 감소시키면 CPU 사용량 및 메모리 사용량이 감소하지만 이벤트 인식이 느려"
+"집니다."
 
 #: src\ui\settingdialog.cpp:92
 msgid "Language"
-msgstr "言語"
+msgstr "언어"
 
 #: src\ui\settingdialog.cpp:87
 msgid "Light"
-msgstr "ライト"
+msgstr "밝은"
 
 #: src\ui\settingdialog.cpp:163
 msgid "Location"
-msgstr "場所"
+msgstr "위치"
 
 #: src\ui\settingdialog.cpp:78
 msgid "Max number of effect line"
-msgstr "最大効果行数"
+msgstr "최대 효과 라인 수"
 
 #: src\ui\mainframe.cpp:57 src\ui\mainframe.cpp:311
 msgid "Merge umamusume skill tab as an image."
-msgstr "ウマ娘のスキルタブを一つの画像として結合します。"
+msgstr "우마무스메 스킬 탭을 이미지로 병합합니다."
 
 #: src\ui\settingdialog.cpp:261
 msgid "No available update."
-msgstr "更新はありません。"
+msgstr "사용 가능한 업데이트 없음."
 
 #: src\ui\mainframe.cpp:263 src\ui\mainframe.cpp:277
 msgid "Not found Umamusume window."
-msgstr "ウマ娘のウィンドウが見つかりませんでした。"
+msgstr "우마무스메 창을 찾을 수 없습니다."
 
 #: src\ui\settingdialog.cpp:114
 msgid "Notice on startup if there is available update"
-msgstr "アップデートが利用可能な場合、起動時に通知を行う"
+msgstr "사용 가능한 업데이트가 있을 경우 시작 시 알림"
 
 #: src\ui\settingdialog.cpp:125
 msgid "Number of OCR"
-msgstr "OCR数"
+msgstr "OCR 수"
 
 #: src\ui\settingdialog.cpp:121
 msgid "OCR Setting"
-msgstr "OCR設定"
+msgstr "OCR 설정"
 
 #: src\ui\mainframe.cpp:211
 msgid "Please stop merging image to exit."
-msgstr "終了するためには結合を停止してください。"
+msgstr "종료하려면 이미지 병합을 중지하세요."
 
 #: src\ui\mainframe.cpp:60 src\ui\previewframe.cpp:14
 msgid "Preview"
-msgstr "プレビュー"
+msgstr "미리보기"
 
 #: src\ui\previewframe.cpp:29 src\ui\previewframe.cpp:108
 msgid "Save an image"
-msgstr "画像を保存"
+msgstr "이미지 저장"
 
 #: src\ui\settingdialog.cpp:158
 msgid "Screenshot"
-msgstr "スクリーンショット"
+msgstr "스크린샷"
 
 #: src\ui\settingdialog.cpp:266
 msgid "Select screenshot save location"
-msgstr "スクリーンショット保存先を指定"
+msgstr "스크린샷 저장 위치 선택"
 
 #: src\ui\mainframe.cpp:63 src\ui\settingdialog.cpp:21
 msgid "Setting"
-msgstr "設定"
+msgstr "설정"
 
 #: src\ui\checkupdatedialog.cpp:45
 msgid "Skip"
-msgstr "スキップ"
+msgstr "건너뛰기"
 
 #: src\ui\mainframe.cpp:49 src\ui\mainframe.cpp:222
 msgid "Start"
-msgstr "スタート"
+msgstr "시작"
 
 #: src\ui\mainframe.cpp:226
 msgid "Stop"
-msgstr "ストップ"
+msgstr "중지"
 
 #: src\ui\mainframe.cpp:298 src\ui\mainframe.cpp:302
 msgid "Stop merge."
-msgstr "結合を停止。"
+msgstr "병합 중지."
 
 #: src\ui\settingdialog.cpp:94
 msgid "System Language"
-msgstr "システム言語"
+msgstr "시스템 언어"
 
 #: src\ui\settingdialog.cpp:85
 msgid "Theme"
-msgstr "テーマ"
+msgstr "테마"
 
 #: src\ui\mainframe.cpp:74
 msgid "Training Umamusume"
-msgstr "育成ウマ娘"
+msgstr "우마무스메 트레이닝"
 
 #: src\version.h:11 src\ui\settingdialog.cpp:256 src\ui\settingdialog.cpp:261
 msgid "UmaUmaChecker"
-msgstr "ウマウマチェッカー"
+msgstr "UmaUmaChecker"
 
 #: src\ui\checkupdatedialog.cpp:48 src\ui\settingdialog.cpp:41
 msgid "Update"
-msgstr "更新"
+msgstr "업데이트"
 
 #: src\ui\settingdialog.cpp:40
 msgid "Update Event Data"
-msgstr "イベントデータを更新"
+msgstr "이벤트 데이터 업데이트"
 
 #: src\ui\checkupdatedialog.cpp:20
 msgid "Update UmaUmaChecker"
-msgstr "ウマウマチェッカーを更新"
+msgstr "UmaUmaChecker 업데이트"
 
 #: src\ui\settingdialog.cpp:256
 msgid "Update completed."
-msgstr "更新が完了しました。"
+msgstr "업데이트 완료."
 
 #: src\ui\settingdialog.cpp:47
 msgid "Window Font"
-msgstr "ウィンドウのフォント"
+msgstr "창 글꼴"
 
 #: src\ui\settingdialog.cpp:148
 msgid "Windows 10 (above 1903)"
-msgstr "Windows 10 (1903以降)"
+msgstr "Windows 10 (버전 1903 이상)"
 
 #: src\ui\settingdialog.cpp:192
 msgid "Write debug log in output.log"
-msgstr "デバッグログをoutput.logに出力する"
+msgstr "디버그 로그를 output.log에 작성"

@@ -46,19 +46,19 @@ bool EventLibrary::Load()
 	DeleteDBFiles();
 
 	if (!CardEvent.Load(path + L"\\Library\\Events.json")) {
-		wxMessageBox(wxT("サポートカードイベントの読み込みに失敗しました。"), app_name, wxICON_ERROR);
+		wxMessageBox(_("Failed to load SupportCard Event Data."), app_name, wxICON_ERROR);
 		return false;
 	}
 	if (!CharaEvent.Load(path + L"\\Library\\Chara.json")) {
-		wxMessageBox(wxT("キャライベントの読み込みに失敗しました。"), app_name, wxICON_ERROR);
+		wxMessageBox(_("Failed to load Umamusume Event Data."), app_name, wxICON_ERROR);
 		return false;
 	}
 	if (!ScenarioEvent.Load(path + L"\\Library\\ScenarioEvents.json")) {
-		wxMessageBox(wxT("シナリオイベントの読み込みに失敗しました。"), app_name, wxICON_ERROR);
+		wxMessageBox(_("Failed to load Scenario Event Data."), app_name, wxICON_ERROR);
 		return false;
 	}
 	if (!LoadSkills()) {
-		wxMessageBox(wxT("スキルデータの読み込みに失敗しました。"), app_name, wxICON_ERROR);
+		wxMessageBox(_("Failed to load Skill Data."), app_name, wxICON_ERROR);
 		return false;
 	}
 

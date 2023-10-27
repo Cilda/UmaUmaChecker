@@ -16,6 +16,7 @@
 #include "Utils/utility.h"
 #include "Config/Config.h"
 #include "../../../libwinrt/winrt_capture.h"
+#include "version.h"
 
 SettingDialog::SettingDialog(wxWindow* parent, Config* config) : ThemedWindowWrapper<wxDialog>(parent, wxID_ANY, _("Setting"), wxDefaultPosition, wxSize(500, -1), wxDEFAULT_DIALOG_STYLE)
 {
@@ -217,6 +218,7 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : ThemedWindowWra
 	this->Bind(wxEVT_INIT_DIALOG, &SettingDialog::OnInitDialog, this);
 	m_buttonUpdate->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SettingDialog::OnClickUpdate, this);
 	m_buttonBrowse->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SettingDialog::OnClickBrowse, this);
+	m_comboLanguage->Bind(wxEVT_COMMAND_COMBOBOX_SELECTED, &SettingDialog::OnSelectedLanguage, this);
 }
 
 SettingDialog::~SettingDialog()
@@ -238,6 +240,13 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 	m_comboFontList->SetStringSelection(config->FontName);
 	m_comboFontSizeList->SetValue(wxString::Format(wxT("%d"), config->FontSize));
 	m_comboCaptureMode->SetSelection((int)config->CaptureMode);
+	if (config->Language == L"System") m_comboLanguage->SetSelection(0);
+	else {
+		auto locales = wxTranslations::Get()->GetAvailableTranslations(wxT("UmaUmaChecker"));
+		int index = locales.Index(config->Language);
+		if (index != wxNOT_FOUND) m_comboLanguage->SetSelection(index + 1);
+		else m_comboLanguage->SetSelection(0);
+	}
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -276,6 +285,11 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 	m_comboOcrPoolSize->GetStringSelection().ToInt(&config->OcrPoolSize);
 	config->Theme = m_comboTheme->GetSelection();
 	config->CaptureMode = (CaptureMode)m_comboCaptureMode->GetSelection();
+	if (m_comboLanguage->GetSelection() == 0) config->Language = L"System";
+	else {
+		auto locales = wxTranslations::Get()->GetAvailableTranslations(wxT("UmaUmaChecker"));
+		config->Language = locales[m_comboLanguage->GetSelection() - 1];
+	}
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);
@@ -283,4 +297,9 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 
 void SettingDialog::OnClickFontSelect(wxCommandEvent& event)
 {
+}
+
+void SettingDialog::OnSelectedLanguage(wxCommandEvent& event)
+{
+	wxMessageBox(_("Apply after restart."), app_name);
 }

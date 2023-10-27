@@ -240,6 +240,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Language\Languages.cpp" />
     <ClCompile Include="src\UI\AboutDialog.cpp" />
     <ClCompile Include="src\UI\CheckUpdateDialog.cpp" />
     <ClCompile Include="src\Recognizer\CombineImage.cpp" />
@@ -282,6 +283,7 @@
     <ClInclude Include="3rdparty\simstring\memory_mapped_file_win32.h" />
     <ClInclude Include="3rdparty\simstring\ngram.h" />
     <ClInclude Include="3rdparty\simstring\simstring.h" />
+    <ClInclude Include="src\Language\Languages.h" />
     <ClInclude Include="src\Range.h" />
     <ClInclude Include="src\UI\AboutDialog.h" />
     <ClInclude Include="src\Capture\CaptureMode.h" />
@@ -427,7 +429,9 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <None Include="locale\en.po" />
     <None Include="locale\ja.po" />
+    <None Include="locale\ko.po" />
     <None Include="locale\UmaUmaChecker.pot" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

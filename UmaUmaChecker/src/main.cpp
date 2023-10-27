@@ -24,6 +24,7 @@
 #include "Tesseract/Tesseract.h"
 #include "Data/EventLibrary.h"
 #include "Capture/UmaWindowCapture.h"
+#include "Language/Languages.h"
 
 typedef HRESULT(_stdcall* SetThreadDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef BOOL(*SetProcessDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
@@ -48,6 +49,11 @@ public:
 			LOG_INFO << "/------------------------------------------------------------------------------------------/";
 			LOG_INFO << app_name << L" " << app_version;
 
+			Config* config = Config::GetInstance();
+			config->Load();
+
+			InitLanguageSupport();
+
 #ifndef _DEBUG
 			UpdateManager::GetInstance().UpdateEvents();
 #endif
@@ -59,9 +65,6 @@ public:
 
 			Gdiplus::GdiplusStartup(&token, &input, NULL);
 			wxInitAllImageHandlers();
-
-			Config* config = Config::GetInstance();
-			config->Load();
 
 			MainFrame* frame = new MainFrame(NULL);
 			frame->Show(true);
@@ -82,20 +85,9 @@ public:
 			wxLogWarning(wxT("Failed to initialize the default system locale."));
 		}
 
-		wxFileName path(wxStandardPaths::Get().GetExecutablePath());
-		path.AppendDir(wxT("Languages"));
-		path.SetFullName(wxT(""));
+		Languages::InitializeLanguages();
 
-		wxFileTranslationsLoader::AddCatalogLookupPathPrefix(path.GetFullPath());
-
-		wxTranslations* trans = new wxTranslations();
-		wxTranslations::Set(trans);
-
-		trans->AddStdCatalog();
-
-		if (!trans->AddCatalog(wxT("UmaUmaChecker"))) {
-			wxLogError(wxT("Couldn't load catalog."));
-		}
+		Languages::SetLang(Config::GetInstance()->Language);
 	}
 
 	virtual int OnExit()
@@ -106,6 +98,7 @@ public:
 		Gdiplus::GdiplusShutdown(token);
 		Tesseract::Uninitialize();
 		UmaWindowCapture::Uninitilize();
+		Languages::UninitializeLanguages();
 
 		return 0;
 	}
