@@ -122,8 +122,9 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	bSizerTop->Add(sbSizerOptions, 1, wxEXPAND | wxALL, 5);
 
 	m_statusBar = new wxStatusBar(this, wxID_ANY);
-	m_statusBar->SetFieldsCount(3);
-	m_statusBar->PushStatusText(wxT("CPU: 0.0%"), 0);
+	int widths[] = { -2, -3, -4 };
+	m_statusBar->SetFieldsCount(3, widths);
+	m_statusBar->PushStatusText(wxT("CPU: 100.0%"), 0);
 	m_statusBar->PushStatusText(wxT("MEM: 0.0 MB"), 1);
 	m_statusBar->PushStatusText(_("umamusume: Not detected"), 2);
 	this->SetStatusBar(m_statusBar);
