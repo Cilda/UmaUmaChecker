@@ -125,7 +125,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	m_statusBar->SetFieldsCount(3);
 	m_statusBar->PushStatusText(wxT("CPU: 0.0%"), 0);
 	m_statusBar->PushStatusText(wxT("MEM: 0.0 MB"), 1);
-	m_statusBar->PushStatusText(wxT("ウマ娘: 未検出"), 2);
+	m_statusBar->PushStatusText(_("umamusume: Not detected"), 2);
 	this->SetStatusBar(m_statusBar);
 
 	m_comboPopup = new wxComboBoxPopup(this);
@@ -254,13 +254,13 @@ void MainFrame::OnClickScreenShot(wxCommandEvent& event)
 		encoderParameters.Parameter[0].Value = &quality;
 
 		if (image->Save(savename.c_str(), &clsid, &encoderParameters) != Gdiplus::Ok) {
-			wxMessageBox(_("Failed to save image."), wxT("ウマウマチェッカー"), wxICON_ERROR);
+			wxMessageBox(_("Failed to save image."), _("UmaUmaChecker"), wxICON_ERROR);
 		}
 
 		delete image;
 	}
 	else {
-		wxMessageBox(_("Not found Umamusume window."), wxT("ウマウマチェッカー"), wxICON_ERROR);
+		wxMessageBox(_("Not found Umamusume window."), _("UmaUmaChecker"), wxICON_ERROR);
 	}
 }
 
@@ -505,10 +505,10 @@ void MainFrame::OnTimer(wxTimerEvent& event)
 
 	if (UmaWindowCapture::GetUmaWindow()) {
 		::GetClientRect(UmaWindowCapture::GetUmaWindow(), &rc);
-		m_statusBar->SetStatusText(wxString::Format(wxT("ウマ娘: %dx%d"), rc.right, rc.bottom), 2);
+		m_statusBar->SetStatusText(wxString::Format(_("umamusume: %dx%d"), rc.right, rc.bottom), 2);
 	}
 	else {
-		m_statusBar->SetStatusText(wxT("ウマ娘: 未検出"), 2);
+		m_statusBar->SetStatusText(_("umamusume: Not detected"), 2);
 	}
 }
 

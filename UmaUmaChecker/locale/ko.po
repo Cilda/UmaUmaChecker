@@ -103,19 +103,19 @@ msgstr "캡처 실패."
 
 #: src\data\eventlibrary.cpp:57
 msgid "Failed to load Scenario Event Data."
-msgstr ""
+msgstr "시나리오 이벤트 데이터를 로드하지 못했습니다."
 
 #: src\data\eventlibrary.cpp:61
 msgid "Failed to load Skill Data."
-msgstr ""
+msgstr "스킬 데이터를 로드하지 못했습니다."
 
 #: src\data\eventlibrary.cpp:49
 msgid "Failed to load SupportCard Event Data."
-msgstr ""
+msgstr "SupportCard 이벤트 데이터를 로드하지 못했습니다."
 
 #: src\data\eventlibrary.cpp:53
 msgid "Failed to load Umamusume Event Data."
-msgstr ""
+msgstr "우마무스메 이벤트 데이터를 로드하지 못했습니다."
 
 #: src\ui\mainframe.cpp:257
 msgid "Failed to save image."
@@ -140,8 +140,8 @@ msgid ""
 "recognize event."
 msgstr ""
 "값을 증가시키면 CPU 사용량 및 메모리 사용량이 증가합니다.\n"
-"값을 감소시키면 CPU 사용량 및 메모리 사용량이 감소하지만 이벤트 인식이 느려"
-"집니다."
+"값을 감소시키면 CPU 사용량 및 메모리 사용량이 감소하지만 이벤트 인식"
+"이 느려집니다."
 
 #: src\ui\settingdialog.cpp:92
 msgid "Language"
@@ -161,7 +161,7 @@ msgstr "최대 효과 라인 수"
 
 #: src\ui\mainframe.cpp:57 src\ui\mainframe.cpp:311
 msgid "Merge umamusume skill tab as an image."
-msgstr "우마무스메 스킬 탭을 이미지로 병합합니다."
+msgstr "umamusume 스킬 탭을 이미지로 병합합니다."
 
 #: src\ui\settingdialog.cpp:261
 msgid "No available update."
@@ -169,7 +169,7 @@ msgstr "사용 가능한 업데이트 없음."
 
 #: src\ui\mainframe.cpp:263 src\ui\mainframe.cpp:277
 msgid "Not found Umamusume window."
-msgstr "우마무스메 창을 찾을 수 없습니다."
+msgstr "umamusume 창을 찾을 수 없습니다."
 
 #: src\ui\settingdialog.cpp:114
 msgid "Notice on startup if there is available update"
@@ -233,9 +233,10 @@ msgstr "테마"
 
 #: src\ui\mainframe.cpp:74
 msgid "Training Umamusume"
-msgstr "우마무스메 트레이닝"
+msgstr "훈련 umamusume"
 
-#: src\version.h:11 src\ui\settingdialog.cpp:256 src\ui\settingdialog.cpp:261
+#: src\version.h:11 src\ui\mainframe.cpp:257 src\ui\mainframe.cpp:263
+#: src\ui\settingdialog.cpp:256 src\ui\settingdialog.cpp:261
 msgid "UmaUmaChecker"
 msgstr "UmaUmaChecker"
 
@@ -266,3 +267,12 @@ msgstr "Windows 10 (버전 1903 이상)"
 #: src\ui\settingdialog.cpp:192
 msgid "Write debug log in output.log"
 msgstr "디버그 로그를 output.log에 작성"
+
+#: src\ui\mainframe.cpp:508
+#, c-format
+msgid "umamusume: %dx%d"
+msgstr "umamusume: %dx%d"
+
+#: src\ui\mainframe.cpp:128 src\ui\mainframe.cpp:511
+msgid "umamusume: Not detected"
+msgstr "umamusume: 미탐지"

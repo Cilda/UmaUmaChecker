@@ -140,8 +140,8 @@ msgid ""
 "recognize event."
 msgstr ""
 "値を大きくするとCPU使用率とメモリが増えます。\n"
-"値を小さくするとCPU使用率とメモリは少なくなりますがイベント識別が遅くなりま"
-"す。"
+"値を小さくするとCPU使用率とメモリは少なくなりますがイベント識別が遅"
+"くなります。"
 
 #: src\ui\settingdialog.cpp:92
 msgid "Language"
@@ -235,7 +235,8 @@ msgstr "テーマ"
 msgid "Training Umamusume"
 msgstr "育成ウマ娘"
 
-#: src\version.h:11 src\ui\settingdialog.cpp:256 src\ui\settingdialog.cpp:261
+#: src\version.h:11 src\ui\mainframe.cpp:257 src\ui\mainframe.cpp:263
+#: src\ui\settingdialog.cpp:256 src\ui\settingdialog.cpp:261
 msgid "UmaUmaChecker"
 msgstr "ウマウマチェッカー"
 
@@ -266,3 +267,12 @@ msgstr "Windows 10 (1903以降)"
 #: src\ui\settingdialog.cpp:192
 msgid "Write debug log in output.log"
 msgstr "デバッグログをoutput.logに出力する"
+
+#: src\ui\mainframe.cpp:508
+#, c-format
+msgid "umamusume: %dx%d"
+msgstr "ウマ娘: %dx%d"
+
+#: src\ui\mainframe.cpp:128 src\ui\mainframe.cpp:511
+msgid "umamusume: Not detected"
+msgstr "ウマ娘: 未検出"

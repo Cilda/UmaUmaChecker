@@ -234,7 +234,8 @@ msgstr "Theme"
 msgid "Training Umamusume"
 msgstr "Training Umamusume"
 
-#: src\version.h:11 src\ui\settingdialog.cpp:256 src\ui\settingdialog.cpp:261
+#: src\version.h:11 src\ui\mainframe.cpp:257 src\ui\mainframe.cpp:263
+#: src\ui\settingdialog.cpp:256 src\ui\settingdialog.cpp:261
 msgid "UmaUmaChecker"
 msgstr "UmaUmaChecker"
 
@@ -265,3 +266,12 @@ msgstr "Windows 10 (above 1903)"
 #: src\ui\settingdialog.cpp:192
 msgid "Write debug log in output.log"
 msgstr "Write debug log in output.log"
+
+#: src\ui\mainframe.cpp:508
+#, c-format
+msgid "umamusume: %dx%d"
+msgstr "umamusume: %dx%d"
+
+#: src\ui\mainframe.cpp:128 src\ui\mainframe.cpp:511
+msgid "umamusume: Not detected"
+msgstr "umamusume: Not detected"
