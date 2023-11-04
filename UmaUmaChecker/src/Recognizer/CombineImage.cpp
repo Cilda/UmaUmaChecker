@@ -58,7 +58,7 @@ void CombineImage::StartCapture()
 	BarLength = 0;
 	Error = L"";
 
-	LOG_DEBUG << L"[CombineImage::StartCapture] ウマ娘詳細結合開始";
+	LOG_DEBUG << L"[" << __FUNCTION__ << L"] ウマ娘詳細結合開始";
 
 	while (IsCapture) {
 		auto start = std::chrono::system_clock::now();
@@ -71,7 +71,7 @@ void CombineImage::StartCapture()
 		msec = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
 	}
 
-	LOG_DEBUG << L"[CombineImage::StartCapture] ウマ娘詳細結合終了";
+	LOG_DEBUG << L"["<< __FUNCTION__ << L"] ウマ娘詳細結合終了";
 
 	IsCapture = false;
 	TemplateImage = cv::Mat();
@@ -87,12 +87,12 @@ void CombineImage::EndCapture()
 	IsManualStop = true;
 	//_EndCapture();
 
-	LOG_DEBUG << L"[CombineImage::EndCapture] 結合停止";
+	LOG_DEBUG << L"[" << __FUNCTION__ << L"] 結合停止";
 }
 
 bool CombineImage::Combine()
 {
-	LOG_DEBUG << L"[CombineImage::Combine] 結合数=" << Images.size();
+	LOG_DEBUG << L"[" << __FUNCTION__ << L"] 結合数=" << Images.size();
 
 	if (Images.size() == 0) return false;
 	
@@ -147,7 +147,7 @@ void CombineImage::Capture()
 
 	Gdiplus::Bitmap* image = UmaWindowCapture::ScreenShot();
 	if (!image) {
-		LOG_DEBUG << L"[CombineImage::Capture] 停止, !image";
+		LOG_DEBUG << L"[" << __FUNCTION__ << L"] 停止, !image";
 		_EndCapture();
 		return;
 	}
@@ -167,7 +167,7 @@ void CombineImage::ProcessDetection(const cv::Mat& mat)
 
 	if (!IsScanStarted) {
 		if (!scroll.IsValid()) {
-			LOG_DEBUG << L"[CombineImage::Capture] 停止, !scroll.IsValid()";
+			LOG_DEBUG << L"[" << __FUNCTION__ << L"] 停止, !scroll.IsValid()";
 			_EndCapture(L"スクロールバーを検出できませんでした。");
 			return;
 		}
@@ -181,13 +181,13 @@ void CombineImage::ProcessDetection(const cv::Mat& mat)
 	}
 
 	if (!PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)) {
-		LOG_DEBUG << L"[CombineImage::Capture] 停止, !PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)";
+		LOG_DEBUG << L"[" << __FUNCTION__ << L"] 停止, !PrevImage.empty() && (PrevImage.size().width != mat.size().width || PrevImage.size().height != mat.size().height)";
 		_EndCapture(L"ウィンドウサイズが変更されました。");
 		return;
 	}
 	else if (BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) {
 		if (IsManualStop) {
-			LOG_DEBUG << L"[CombineImage::Capture] 停止, BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) && IsManualStop";
+			LOG_DEBUG << L"[" << __FUNCTION__ << L"] 停止, BarLength > 0 && std::abs(BarLength - scroll.GetBarLength()) > 1) && IsManualStop";
 			_EndCapture(L"スクロールバーの大きさが変わっています。");
 		}
 		return;
@@ -216,7 +216,7 @@ void CombineImage::ProcessDetection(const cv::Mat& mat)
 
 			double RoundedMaxVal = std::round(MaxVal * 100.0) / 100.0;
 
-			LOG_DEBUG << L"[CombineImage::Capture] matchTemplate結果: MaxVal=" << MaxVal << L", RoundedMaxVal=" << RoundedMaxVal << L", IsLast=" << IsLast << L", IsOutOfRange=" << (MaxPt.y < RecognizePoint.y);
+			LOG_DEBUG << L"[" << __FUNCTION__ << L"] matchTemplate結果: MaxVal=" << MaxVal << L", RoundedMaxVal=" << RoundedMaxVal << L", IsLast=" << IsLast << L", IsOutOfRange=" << (MaxPt.y < RecognizePoint.y);
 
 			// 検出されなかったとき
 			if (IsLast || RoundedMaxVal < 0.90 || MaxPt.y < RecognizePoint.y) {
@@ -261,7 +261,7 @@ void CombineImage::ProcessDetection(const cv::Mat& mat)
 	}
 
 	if (IsManualStop) {
-		LOG_DEBUG << L"[CombineImage::Capture] 停止, IsManualStop";
+		LOG_DEBUG << L"[" << __FUNCTION__ << L"] 停止, IsManualStop";
 		_EndCapture();
 	}
 }
