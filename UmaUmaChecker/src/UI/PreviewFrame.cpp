@@ -11,7 +11,7 @@
 wxDEFINE_EVENT(DROP_IMAGE, wxCommandEvent);
 
 
-PreviewFrame::PreviewFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("プレビュー"), wxDefaultPosition, wxSize(400, 500), wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE)
+PreviewFrame::PreviewFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, _("Preview"), wxDefaultPosition, wxSize(400, 500), wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE)
 {
 	Config* config = Config::GetInstance();
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
@@ -26,7 +26,7 @@ PreviewFrame::PreviewFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("�
 	m_popupMenu = new wxMenu();
 	m_popupMenu->Append(wxID_CLEAR);
 	m_popupMenu->AppendSeparator();
-	m_popupMenu->Append(100, wxT("画像を保存"));
+	m_popupMenu->Append(100, _("Save an image"));
 
 	this->Bind(wxEVT_CLOSE_WINDOW, &PreviewFrame::OnClose, this);
 	this->Bind(wxEVT_DROP_FILES, &PreviewFrame::OnDropFiles, this);
@@ -105,7 +105,7 @@ void PreviewFrame::OnMenuSaveAs(wxCommandEvent& event)
 {
 	if (!image.IsOk()) return;
 
-	wxFileDialog SaveDlg(this, wxT("画像を保存"), wxEmptyString, wxEmptyString, wxT("PNG (*.png)|*.png"), wxFD_SAVE| wxFD_OVERWRITE_PROMPT);
+	wxFileDialog SaveDlg(this, _("Save an image"), wxEmptyString, wxEmptyString, wxT("PNG (*.png)|*.png"), wxFD_SAVE| wxFD_OVERWRITE_PROMPT);
 	if (SaveDlg.ShowModal() == wxID_CANCEL) return;
 
 	image.SaveFile(SaveDlg.GetPath(), wxBITMAP_TYPE_PNG);

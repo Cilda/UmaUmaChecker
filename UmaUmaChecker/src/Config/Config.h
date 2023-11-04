@@ -26,6 +26,7 @@ public:
 	bool SaveMissingEvent;
 	std::wstring ScreenshotSavePath;
 	std::wstring FontName;
+	std::wstring Language;
 	int FontSize;
 	bool IsHideNoneChoise;
 	bool IsShowStatusBar;

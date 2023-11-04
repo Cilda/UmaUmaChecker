@@ -1,14 +1,17 @@
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include <winsock2.h>
+#include <gdiplus.h>
+#include <VersionHelpers.h>
 
 #include <wx/app.h>
 #include <wx/log.h>
 #include <wx/debugrpt.h>
 #include <wx/ffile.h>
-
-#include <gdiplus.h>
-#include <VersionHelpers.h>
+#include <wx/translation.h>
+#include <wx/uilocale.h>
+#include <wx/stdpaths.h>
+#include <wx/filename.h>
 
 #include "Update/UpdateManager.h"
 
@@ -21,6 +24,7 @@
 #include "Tesseract/Tesseract.h"
 #include "Data/EventLibrary.h"
 #include "Capture/UmaWindowCapture.h"
+#include "Language/Languages.h"
 
 typedef HRESULT(_stdcall* SetThreadDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
 typedef BOOL(*SetProcessDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
@@ -45,6 +49,11 @@ public:
 			LOG_INFO << "/------------------------------------------------------------------------------------------/";
 			LOG_INFO << app_name << L" " << app_version;
 
+			Config* config = Config::GetInstance();
+			config->Load();
+
+			InitLanguageSupport();
+
 #ifndef _DEBUG
 			UpdateManager::GetInstance().UpdateEvents();
 #endif
@@ -56,9 +65,6 @@ public:
 
 			Gdiplus::GdiplusStartup(&token, &input, NULL);
 			wxInitAllImageHandlers();
-
-			Config* config = Config::GetInstance();
-			config->Load();
 
 			MainFrame* frame = new MainFrame(NULL);
 			frame->Show(true);
@@ -73,6 +79,17 @@ public:
 		return true;
 	}
 
+	void InitLanguageSupport()
+	{
+		if (!wxUILocale::UseDefault()) {
+			wxLogWarning(wxT("Failed to initialize the default system locale."));
+		}
+
+		Languages::InitializeLanguages();
+
+		Languages::SetLang(Config::GetInstance()->Language);
+	}
+
 	virtual int OnExit()
 	{
 		Config* config = Config::GetInstance();
@@ -81,6 +98,7 @@ public:
 		Gdiplus::GdiplusShutdown(token);
 		Tesseract::Uninitialize();
 		UmaWindowCapture::Uninitilize();
+		Languages::UninitializeLanguages();
 
 		return 0;
 	}

@@ -31,6 +31,7 @@ private:
 	void OnClickBrowse(wxCommandEvent& event);
 	void OnClickOkButton(wxCommandEvent& event);
 	void OnClickFontSelect(wxCommandEvent& event);
+	void OnSelectedLanguage(wxCommandEvent& event);
 
 private:
 	wxStaticText* m_staticTextUpdate;
@@ -51,6 +52,7 @@ private:
 	wxSpinCtrl* m_spinCtrlMaxLine;
 	wxComboBox* m_comboOcrPoolSize;
 	wxComboBox* m_comboTheme;
+	wxComboBox* m_comboLanguage;
 	FontComboBox* m_comboFontList;
 	wxComboBox* m_comboFontSizeList;
 	wxComboBox* m_comboCaptureMode;
