@@ -555,7 +555,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 
 		auto event = GetCardEvent(events);
 		if (!event) event = GetEventByBottomOption(srcImg);
-		if (config->EnableDebug && event) LOG_DEBUG << L"[サポートカード] イベント名: " << event->Name;
+		if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[サポートカード] イベント名: " << event->Name;
 		return event.get();
 	}
 
@@ -568,7 +568,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 
 			auto event = GetCharaEvent(events);
 			if (!event) event = GetCharaEventByBottomOption(srcImg);
-			if (config->EnableDebug && event) LOG_DEBUG << L"[育成ウマ娘] イベント名: " << event->Name;
+			if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[育成ウマ娘] イベント名: " << event->Name;
 			return event.get();
 		}
 	}
@@ -581,7 +581,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 
 		auto event = GetScenarioEvent(events);
 		if (!event) event = GetScenarioEventByBottomOption(srcImg);
-		if (config->EnableDebug && event) LOG_DEBUG << L"[シナリオイベント] イベント名: " << event->Name;
+		if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[シナリオイベント] イベント名: " << event->Name;
 		return event.get();
 	}
 
