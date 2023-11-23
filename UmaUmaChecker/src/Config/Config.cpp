@@ -87,6 +87,7 @@ void Config::Save()
 	config["CaptureMode"] = (int)CaptureMode;
 	config["Language"] = std::filesystem::path(Language.begin(), Language.end()).u8string();
 	config["UpdateUrl"] = std::filesystem::path(UpdateUrl.begin(), UpdateUrl.end()).u8string();
+	config["TesseractLanguage"] = std::filesystem::path(TesseractLanguage.begin(), TesseractLanguage.end()).u8string();
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;
