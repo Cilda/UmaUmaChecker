@@ -36,5 +36,6 @@ public:
 	int OcrPoolSize;
 	int Theme;
 	CaptureMode CaptureMode;
+	std::wstring UpdateUrl;
 };
 

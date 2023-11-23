@@ -60,12 +60,13 @@ void UpdateManager::GetUpdates(wxWindow* parent, bool bHideDontShowCheck)
 
 bool UpdateManager::UpdateEvents()
 {
+	auto config = Config::GetInstance();
 	std::vector<wxString> urls{
-		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Chara.json"),
-		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Events.json"),
-		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/ReplaceText.json"),
-		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/ScenarioEvents.json"),
-		wxT("https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/Skills.json"),
+		config->UpdateUrl + wxT("Chara.json"),
+		config->UpdateUrl + wxT("Events.json"),
+		config->UpdateUrl + wxT("ReplaceText.json"),
+		config->UpdateUrl + wxT("ScenarioEvents.json"),
+		config->UpdateUrl + wxT("Skills.json"),
 	};
 
 	int UpdatedCount = 0;
