@@ -49,6 +49,7 @@ bool Config::Load()
 		Language = utility::from_u8string(config.value("Language", "System"));
 		UpdateUrl = utility::from_u8string(config.value("UpdateUrl", "https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/"));
 		if (UpdateUrl.back() != '/') UpdateUrl += L"/";
+		TesseractLanguage = utility::from_u8string(config.value("TesseractLanguage", "jpn"));
 	}
 	catch (json::exception& ex) {
 		return false;
@@ -86,6 +87,7 @@ void Config::Save()
 	config["CaptureMode"] = (int)CaptureMode;
 	config["Language"] = std::filesystem::path(Language.begin(), Language.end()).u8string();
 	config["UpdateUrl"] = std::filesystem::path(UpdateUrl.begin(), UpdateUrl.end()).u8string();
+	config["TesseractLanguage"] = std::filesystem::path(TesseractLanguage.begin(), TesseractLanguage.end()).u8string();
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

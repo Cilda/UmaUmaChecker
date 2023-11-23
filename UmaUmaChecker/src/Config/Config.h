@@ -37,5 +37,6 @@ public:
 	int Theme;
 	CaptureMode CaptureMode;
 	std::wstring UpdateUrl;
+	std::wstring TesseractLanguage;
 };
 
