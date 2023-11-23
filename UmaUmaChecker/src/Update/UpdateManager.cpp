@@ -187,6 +187,9 @@ bool UpdateManager::UpdateFile(const wxString& url)
 			case wxWebRequest::State_Active:
 				IsActive = true;
 				break;
+			case wxWebRequest::State_Failed:
+				IsActive = false;
+				break;
 		}
 
 		if (!IsActive) {
