@@ -49,6 +49,7 @@ bool Config::Load()
 		Language = utility::from_u8string(config.value("Language", "System"));
 		UpdateUrl = utility::from_u8string(config.value("UpdateUrl", "https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/"));
 		if (UpdateUrl.back() != '/') UpdateUrl += L"/";
+		TesseractLanguage = utility::from_u8string(config.value("TesseractLanguage", "jpn"));
 	}
 	catch (json::exception& ex) {
 		return false;
