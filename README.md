@@ -16,6 +16,7 @@ Tesseract OCRを使用して画面のスクリーンショットからイベン�
     * [イベントの認識](docs/recognize-event.md)
     * [レシート因子撮影](docs/merge-umamusume-detail.md)
     * [設定画面](docs/settings.md)
+  * [イベントデータ](#イベントデータ)
   * [インストール](#インストール)
   * [実行](#実行)
   * [サポート](#サポート)
@@ -33,6 +34,12 @@ Tesseract OCRを使用して画面のスクリーンショットからイベン�
 - [イベントの認識](docs/recognize-event.md)  
 - [レシート因子撮影](docs/merge-umamusume-detail.md)  
 - [設定画面](docs/settings.md)  
+
+## イベントデータ
+・イベントデータは[GameWith](https://gamewith.jp/uma-musume/)様のサイトよりデータを抽出し生成しています。  
+・イベントデータは毎日 9時、15時、18時、22時 に更新しています。  
+　※サーバの状態によっては更新が遅れることがあります  
+・新しいカードが発表された当日はまだデータが揃ってない可能性があります。  
 
 ## インストール
 [リリースページ](https://github.com/Cilda/UmaUmaChecker/releases)から最新バージョンのUmaUmaChecker_vX.X.X_x64.zipをダウンロードします。  
@@ -88,6 +95,15 @@ UmaUmaChecker.slnを開いてビルドを行います。
 
 ## 更新履歴
 <pre>
+ v1.6.2
+[Update]
+Tesseractの言語をconfig.jsonで設定できるように
+設定ファイルにアップデートURLを追加
+デバッグログの出力内容の調整
+リソースデータを起動時に全て読み込むように、読み込めなかった場合はエラーを表示する
+[Add]
+多言語化
+
 v1.6.1
 [Update]
 ・リファクタリング
