@@ -313,5 +313,6 @@
     <None Include="locale\ja.po" />
     <None Include="locale\en.po" />
     <None Include="locale\ko.po" />
+    <None Include="Assets\Recognizer.json" />
   </ItemGroup>
 </Project>

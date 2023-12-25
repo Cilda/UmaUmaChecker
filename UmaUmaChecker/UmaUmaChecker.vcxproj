@@ -429,6 +429,7 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Recognizer.json" />
     <None Include="locale\en.po" />
     <None Include="locale\ja.po" />
     <None Include="locale\ko.po" />
