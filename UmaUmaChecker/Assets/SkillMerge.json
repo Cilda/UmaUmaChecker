@@ -1,0 +1,49 @@
+{
+  "ScrollbarInfo": {
+    "ScrollbarThreshold": 0.01,
+    "ScrollbarScanLine": [
+      {
+        "x": 0.967,
+        "y": 0.4519
+      },
+      {
+        "x": 0.967,
+        "y": 0.992
+      }
+    ],
+    "ScanMinCoord": {
+      "x": 0.02452,
+      "y": 0.46235
+    },
+    "ScrollColorRange": {
+      "min": {
+        "r": 123,
+        "g": 121,
+        "b": 140
+      },
+      "max": {
+        "r": 211,
+        "g": 210,
+        "b": 217
+      }
+    },
+    "BarColorRange": {
+      "min": {
+        "r": 123,
+        "g": 121,
+        "b": 140
+      },
+      "max": {
+        "r": 210,
+        "g": 210,
+        "b": 210
+      }
+    }
+  },
+  "SkillListStartPoint": {
+    "x": 0.02452830188679245283018867924528,
+    "y": 0.46235418875927889713679745493107
+  },
+  "SkillDetectThreshold": 0.90,
+
+}

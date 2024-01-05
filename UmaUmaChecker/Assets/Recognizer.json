@@ -1,4 +1,6 @@
 {
+  "ResizeRatio": 2.0,
+  "UnsharpRatio": 2.0,
   "BaseRecognizer": {
     "BottomOptionBound": {
       "x": 0.1038,
