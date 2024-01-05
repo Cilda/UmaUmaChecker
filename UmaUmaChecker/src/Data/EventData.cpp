@@ -64,6 +64,13 @@ bool EventData::Load(const std::wstring& path)
 						if (EventMap.find(EventName) == EventMap.end()) {
 							EventMap[EventName] = event;
 						}
+
+						if (EventDuplicationCount.find(EventName) == EventDuplicationCount.end()) {
+							EventDuplicationCount[EventName] = 1;
+						}
+						else {
+							EventDuplicationCount[EventName]++;
+						}
 					}
 				}
 
@@ -197,6 +204,13 @@ std::shared_ptr<EventRoot> EventData::GetName(const std::wstring& name)
 	if (itr == NameMap.end()) return nullptr;
 
 	return itr->second;
+}
+
+bool EventData::IsEventDuplicate(const std::wstring& name)
+{
+	if (EventDuplicationCount.find(name) == EventDuplicationCount.end()) return false;
+
+	return EventDuplicationCount[name] > 1;
 }
 
 void EventData::InitDB(const std::filesystem::path& path)

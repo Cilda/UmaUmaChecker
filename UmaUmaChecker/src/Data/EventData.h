@@ -24,6 +24,8 @@ public:
 	std::shared_ptr<EventRoot> RetrieveName(const std::wstring& name);
 	std::shared_ptr<EventRoot> GetName(const std::wstring& name);
 
+	bool IsEventDuplicate(const std::wstring& name);
+
 	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetRanks() const { return ByRank; }
 
 private:
@@ -36,6 +38,7 @@ private:
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> EventMap;
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> OptionMap;
 	std::unordered_map<std::wstring, std::shared_ptr<EventRoot>> NameMap;
+	std::unordered_map<std::wstring, int> EventDuplicationCount;
 
 	std::filesystem::path dbpath;
 	std::filesystem::path optiondbpath;

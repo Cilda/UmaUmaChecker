@@ -554,7 +554,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 		if (pHash) *pHash = hash;
 
 		auto event = GetCardEvent(events);
-		if (!event) event = GetEventByBottomOption(srcImg);
+		if (!event || EventLib.CardEvent.IsEventDuplicate(event->Name)) event = GetEventByBottomOption(srcImg);
 		if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[サポートカード] イベント名: " << event->Name;
 		return event.get();
 	}
