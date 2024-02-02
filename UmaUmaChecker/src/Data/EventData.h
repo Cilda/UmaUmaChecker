@@ -24,7 +24,7 @@ public:
 	std::shared_ptr<EventRoot> RetrieveName(const std::wstring& name);
 	std::shared_ptr<EventRoot> GetName(const std::wstring& name);
 
-	bool IsEventDuplicate(const std::wstring& name);
+	bool IsEventNameDuplicate(const std::wstring& name);
 
 	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetRanks() const { return ByRank; }
 

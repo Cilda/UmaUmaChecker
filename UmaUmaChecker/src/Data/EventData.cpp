@@ -206,7 +206,7 @@ std::shared_ptr<EventRoot> EventData::GetName(const std::wstring& name)
 	return itr->second;
 }
 
-bool EventData::IsEventDuplicate(const std::wstring& name)
+bool EventData::IsEventNameDuplicate(const std::wstring& name)
 {
 	if (EventDuplicationCount.find(name) == EventDuplicationCount.end()) return false;
 
