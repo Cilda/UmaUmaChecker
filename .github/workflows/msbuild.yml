@@ -31,7 +31,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.1.1
     
     - name: Workaround test
       if: runner.os == 'Windows'
@@ -65,7 +65,7 @@ jobs:
         $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1.3
+      uses: microsoft/setup-msbuild@v2
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -84,7 +84,7 @@ jobs:
       run: cd "${{ env.VCPKG_INSTALL_PATH }}" && vcpkg.exe integrate install
 
     - name: Restore vcpkg caches
-      uses: actions/cache@v3.2.3
+      uses: actions/cache@v4.0.0
       with:
         path: C:\vcpkg_caches
         key: vcpkg-${{hashFiles('./vcpkg.json')}}
@@ -98,7 +98,7 @@ jobs:
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} /p:Platform="${{env.BUILD_PLATFORM}}"
     
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.0
+      uses: actions/upload-artifact@v4.3.0
       with:
         name: UmaUmaChecker-${{env.BUILD_PLATFORM}}
         path: ${{env.SOLUTION_FILE_PATH}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}
