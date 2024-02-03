@@ -1,7 +1,5 @@
 #pragma once
 
-#define BOOST_USE_WINAPI_VERSION BOOST_WINAPI_VERSION_WIN7
-
 #include <boost/log/expressions.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
