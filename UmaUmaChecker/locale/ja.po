@@ -12,44 +12,44 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.4\n"
 
-#: src\ui\settingdialog.cpp:134
+#: umaumachecker\src\ui\settingdialog.cpp:137
 msgid "*Need to restart application."
 msgstr "※再起動が必要です。"
 
-#: src\ui\checkupdatedialog.cpp:30
+#: umaumachecker\src\ui\checkupdatedialog.cpp:30
 #, c-format
 msgid "<h1>Available update %s</h1><h2>Update history</h2>"
 msgstr "<h1>%s の更新が利用可能です。</h1><h2>更新履歴</h2>"
 
-#: src\ui\mainframe.cpp:66
+#: umaumachecker\src\ui\mainframe.cpp:66
 msgid "About"
 msgstr "About"
 
-#: src\ui\aboutdialog.cpp:14
+#: umaumachecker\src\ui\aboutdialog.cpp:14
 msgid "About UmaUmaChecker"
 msgstr "ウマウマチェッカーについて"
 
-#: src\ui\settingdialog.cpp:304
+#: umaumachecker\src\ui\settingdialog.cpp:307
 msgid "Apply after restart."
 msgstr "再起動後に適用されます。"
 
-#: src\ui\settingdialog.cpp:147
+#: umaumachecker\src\ui\settingdialog.cpp:150
 msgid "BitBlt"
 msgstr "BitBlt"
 
-#: src\ui\settingdialog.cpp:171
+#: umaumachecker\src\ui\settingdialog.cpp:174
 msgid "Browse"
 msgstr "参照"
 
-#: src\ui\settingdialog.cpp:205
+#: umaumachecker\src\ui\settingdialog.cpp:208
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src\ui\settingdialog.cpp:143
+#: umaumachecker\src\ui\settingdialog.cpp:146
 msgid "Capture Type"
 msgstr "キャプチャタイプ"
 
-#: src\ui\mainframe.cpp:53
+#: umaumachecker\src\ui\mainframe.cpp:53
 msgid ""
 "Capture Umamusume window.\n"
 "Click the right button to open save location."
@@ -57,222 +57,235 @@ msgstr ""
 "ウマ娘をキャプチャします。\n"
 "右クリックすると保存先が開きます。"
 
-#: src\ui\settingdialog.cpp:193
+#: umaumachecker\src\ui\settingdialog.cpp:196
 msgid "Capture screen if event is not recognized"
 msgstr "イベントが認識されなかった場合に画面をキャプチャする"
 
-#: src\ui\aboutdialog.cpp:68
+#: umaumachecker\src\ui\aboutdialog.cpp:68
 msgid "Check Update"
 msgstr "アップデートを確認"
 
-#: src\ui\mainframe.cpp:93
+#: umaumachecker\src\ui\mainframe.cpp:93
 msgid "Choise"
 msgstr "選択肢"
 
-#: src\ui\aboutdialog.cpp:45
+#: umaumachecker\src\ui\aboutdialog.cpp:45
 msgid "Contain the following libraries:"
 msgstr "以下のライブラリが含まれます:"
 
-#: src\ui\settingdialog.cpp:88
+#: umaumachecker\src\ui\settingdialog.cpp:88
 msgid "Dark"
 msgstr "ダーク"
 
-#: src\ui\settingdialog.cpp:190
+#: umaumachecker\src\ui\settingdialog.cpp:193
 msgid "Debug Mode"
 msgstr "デバッグモード"
 
-#: src\ui\checkupdatedialog.cpp:39
+#: umaumachecker\src\ui\checkupdatedialog.cpp:39
 msgid "Do not check on startup."
 msgstr "起動時に確認しない。"
 
-#: src\ui\settingdialog.cpp:110
+#: umaumachecker\src\ui\settingdialog.cpp:110
 msgid "Enable Status Bar"
 msgstr "ステータスバーを有効にする"
 
-#: src\ui\mainframe.cpp:211
+#: umaumachecker\src\ui\settingdialog.cpp:117
+msgid "Enable auto start on startup"
+msgstr "起動時に自動スタート"
+
+#: umaumachecker\src\ui\mainframe.cpp:212
 msgid "Error"
 msgstr "エラー"
 
-#: src\ui\mainframe.cpp:82
+#: umaumachecker\src\ui\mainframe.cpp:82
 msgid "Event Name"
 msgstr "イベント名"
 
-#: src\ui\mainframe.cpp:317
+#: umaumachecker\src\ui\mainframe.cpp:318
 msgid "Failed to capture."
 msgstr "キャプチャに失敗しました。"
 
-#: src\data\eventlibrary.cpp:57
+#: umaumachecker\src\data\eventlibrary.cpp:57
 msgid "Failed to load Scenario Event Data."
 msgstr "シナリオイベントデータのロードに失敗しました。"
 
-#: src\data\eventlibrary.cpp:61
+#: umaumachecker\src\data\eventlibrary.cpp:61
 msgid "Failed to load Skill Data."
 msgstr "スキルデータのロードに失敗しました。"
 
-#: src\data\eventlibrary.cpp:49
+#: umaumachecker\src\data\eventlibrary.cpp:49
 msgid "Failed to load SupportCard Event Data."
 msgstr "サポートカードイベントデータのロードに失敗しました。"
 
-#: src\data\eventlibrary.cpp:53
+#: umaumachecker\src\data\eventlibrary.cpp:53
 msgid "Failed to load Umamusume Event Data."
 msgstr "ウマ娘イベントデータの読み込みに失敗しました。"
 
-#: src\ui\mainframe.cpp:257
+#: umaumachecker\src\ui\mainframe.cpp:258
 msgid "Failed to save image."
 msgstr "画像の保存に失敗しました。"
 
-#: src\ui\settingdialog.cpp:176
+#: umaumachecker\src\ui\settingdialog.cpp:179
 msgid "File Type"
 msgstr "ファイルタイプ"
 
-#: src\ui\settingdialog.cpp:35
+#: umaumachecker\src\ui\settingdialog.cpp:35
 msgid "General"
 msgstr "一般"
 
-#: src\ui\settingdialog.cpp:106
+#: umaumachecker\src\ui\settingdialog.cpp:106
 msgid "Hide \"no choise\" event"
 msgstr "「選択肢なし」のイベントを表示しない"
 
-#: src\ui\settingdialog.cpp:138
+#: umaumachecker\src\ui\settingdialog.cpp:141
 msgid ""
 "Increase the value then CPU usage and Memory increase.\n"
 "Decrease the value then CPU usage and Memory decrease but be slowly "
 "recognize event."
 msgstr ""
 "値を大きくするとCPU使用率とメモリが増えます。\n"
-"値を小さくするとCPU使用率とメモリは少なくなりますがイベント識別が遅"
-"くなります。"
+"値を小さくするとCPU使用率とメモリは少なくなりますがイベント識別が遅くなりま"
+"す。"
 
-#: src\ui\settingdialog.cpp:92
+#: umaumachecker\src\ui\settingdialog.cpp:92
 msgid "Language"
 msgstr "言語"
 
-#: src\ui\settingdialog.cpp:87
+#: umaumachecker\src\ui\settingdialog.cpp:87
 msgid "Light"
 msgstr "ライト"
 
-#: src\ui\settingdialog.cpp:163
+#: umaumachecker\src\ui\settingdialog.cpp:166
 msgid "Location"
 msgstr "場所"
 
-#: src\ui\settingdialog.cpp:78
+#: umaumachecker\src\ui\settingdialog.cpp:78
 msgid "Max number of effect line"
 msgstr "最大効果行数"
 
-#: src\ui\mainframe.cpp:57 src\ui\mainframe.cpp:311
+#: umaumachecker\src\ui\mainframe.cpp:57 umaumachecker\src\ui\mainframe.cpp:312
 msgid "Merge umamusume skill tab as an image."
 msgstr "ウマ娘のスキルタブを一つの画像として結合します。"
 
-#: src\ui\settingdialog.cpp:261
+#: umaumachecker\src\ui\settingdialog.cpp:264
 msgid "No available update."
 msgstr "更新はありません。"
 
-#: src\ui\mainframe.cpp:263 src\ui\mainframe.cpp:277
+#: umaumachecker\src\ui\mainframe.cpp:264
+#: umaumachecker\src\ui\mainframe.cpp:278
 msgid "Not found Umamusume window."
 msgstr "ウマ娘のウィンドウが見つかりませんでした。"
 
-#: src\ui\settingdialog.cpp:114
+#: umaumachecker\src\ui\settingdialog.cpp:114
 msgid "Notice on startup if there is available update"
 msgstr "アップデートが利用可能な場合、起動時に通知を行う"
 
-#: src\ui\settingdialog.cpp:125
+#: umaumachecker\src\ui\settingdialog.cpp:128
 msgid "Number of OCR"
 msgstr "OCR数"
 
-#: src\ui\settingdialog.cpp:121
+#: umaumachecker\src\ui\settingdialog.cpp:124
 msgid "OCR Setting"
 msgstr "OCR設定"
 
-#: src\ui\mainframe.cpp:211
+#: umaumachecker\src\ui\mainframe.cpp:212
 msgid "Please stop merging image to exit."
 msgstr "終了するためには結合を停止してください。"
 
-#: src\ui\mainframe.cpp:60 src\ui\previewframe.cpp:14
+#: umaumachecker\src\ui\mainframe.cpp:60
+#: umaumachecker\src\ui\previewframe.cpp:14
 msgid "Preview"
 msgstr "プレビュー"
 
-#: src\ui\previewframe.cpp:29 src\ui\previewframe.cpp:108
+#: umaumachecker\src\ui\previewframe.cpp:29
+#: umaumachecker\src\ui\previewframe.cpp:108
 msgid "Save an image"
 msgstr "画像を保存"
 
-#: src\ui\settingdialog.cpp:158
+#: umaumachecker\src\ui\settingdialog.cpp:161
 msgid "Screenshot"
 msgstr "スクリーンショット"
 
-#: src\ui\settingdialog.cpp:266
+#: umaumachecker\src\ui\settingdialog.cpp:269
 msgid "Select screenshot save location"
 msgstr "スクリーンショット保存先を指定"
 
-#: src\ui\mainframe.cpp:63 src\ui\settingdialog.cpp:21
+#: umaumachecker\src\ui\mainframe.cpp:63
+#: umaumachecker\src\ui\settingdialog.cpp:21
 msgid "Setting"
 msgstr "設定"
 
-#: src\ui\checkupdatedialog.cpp:45
+#: umaumachecker\src\ui\checkupdatedialog.cpp:45
 msgid "Skip"
 msgstr "スキップ"
 
-#: src\ui\mainframe.cpp:49 src\ui\mainframe.cpp:222
+#: umaumachecker\src\ui\mainframe.cpp:49 umaumachecker\src\ui\mainframe.cpp:223
 msgid "Start"
 msgstr "スタート"
 
-#: src\ui\mainframe.cpp:226
+#: umaumachecker\src\ui\mainframe.cpp:227
 msgid "Stop"
 msgstr "ストップ"
 
-#: src\ui\mainframe.cpp:298 src\ui\mainframe.cpp:302
+#: umaumachecker\src\ui\mainframe.cpp:299
+#: umaumachecker\src\ui\mainframe.cpp:303
 msgid "Stop merge."
 msgstr "結合を停止。"
 
-#: src\ui\settingdialog.cpp:94
+#: umaumachecker\src\ui\settingdialog.cpp:94
 msgid "System Language"
 msgstr "システム言語"
 
-#: src\ui\settingdialog.cpp:85
+#: umaumachecker\src\ui\settingdialog.cpp:85
 msgid "Theme"
 msgstr "テーマ"
 
-#: src\ui\mainframe.cpp:74
+#: umaumachecker\src\ui\mainframe.cpp:74
 msgid "Training Umamusume"
 msgstr "育成ウマ娘"
 
-#: src\version.h:11 src\ui\mainframe.cpp:257 src\ui\mainframe.cpp:263
-#: src\ui\settingdialog.cpp:256 src\ui\settingdialog.cpp:261
+#: umaumachecker\src\version.h:11 umaumachecker\src\ui\mainframe.cpp:258
+#: umaumachecker\src\ui\mainframe.cpp:264
+#: umaumachecker\src\ui\settingdialog.cpp:259
+#: umaumachecker\src\ui\settingdialog.cpp:264
 msgid "UmaUmaChecker"
 msgstr "ウマウマチェッカー"
 
-#: src\ui\checkupdatedialog.cpp:48 src\ui\settingdialog.cpp:41
+#: umaumachecker\src\ui\checkupdatedialog.cpp:48
+#: umaumachecker\src\ui\settingdialog.cpp:41
 msgid "Update"
 msgstr "更新"
 
-#: src\ui\settingdialog.cpp:40
+#: umaumachecker\src\ui\settingdialog.cpp:40
 msgid "Update Event Data"
 msgstr "イベントデータを更新"
 
-#: src\ui\checkupdatedialog.cpp:20
+#: umaumachecker\src\ui\checkupdatedialog.cpp:20
 msgid "Update UmaUmaChecker"
 msgstr "ウマウマチェッカーを更新"
 
-#: src\ui\settingdialog.cpp:256
+#: umaumachecker\src\ui\settingdialog.cpp:259
 msgid "Update completed."
 msgstr "更新が完了しました。"
 
-#: src\ui\settingdialog.cpp:47
+#: umaumachecker\src\ui\settingdialog.cpp:47
 msgid "Window Font"
 msgstr "ウィンドウのフォント"
 
-#: src\ui\settingdialog.cpp:148
+#: umaumachecker\src\ui\settingdialog.cpp:151
 msgid "Windows 10 (above 1903)"
 msgstr "Windows 10 (1903以降)"
 
-#: src\ui\settingdialog.cpp:192
+#: umaumachecker\src\ui\settingdialog.cpp:195
 msgid "Write debug log in output.log"
 msgstr "デバッグログをoutput.logに出力する"
 
-#: src\ui\mainframe.cpp:508
+#: umaumachecker\src\ui\mainframe.cpp:509
 #, c-format
 msgid "umamusume: %dx%d"
 msgstr "ウマ娘: %dx%d"
 
-#: src\ui\mainframe.cpp:128 src\ui\mainframe.cpp:511
+#: umaumachecker\src\ui\mainframe.cpp:129
+#: umaumachecker\src\ui\mainframe.cpp:512
 msgid "umamusume: Not detected"
 msgstr "ウマ娘: 未検出"

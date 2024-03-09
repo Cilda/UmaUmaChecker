@@ -12,44 +12,44 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.4\n"
 
-#: src\ui\settingdialog.cpp:134
+#: umaumachecker\src\ui\settingdialog.cpp:137
 msgid "*Need to restart application."
 msgstr "애플리케이션을 다시 시작해야 합니다."
 
-#: src\ui\checkupdatedialog.cpp:30
+#: umaumachecker\src\ui\checkupdatedialog.cpp:30
 #, c-format
 msgid "<h1>Available update %s</h1><h2>Update history</h2>"
 msgstr "<h1>%s 업데이트 가능</h1><h2>업데이트 내역</h2>"
 
-#: src\ui\mainframe.cpp:66
+#: umaumachecker\src\ui\mainframe.cpp:66
 msgid "About"
 msgstr "소개"
 
-#: src\ui\aboutdialog.cpp:14
+#: umaumachecker\src\ui\aboutdialog.cpp:14
 msgid "About UmaUmaChecker"
 msgstr "UmaUmaChecker 정보"
 
-#: src\ui\settingdialog.cpp:304
+#: umaumachecker\src\ui\settingdialog.cpp:307
 msgid "Apply after restart."
 msgstr "재시작 후 적용합니다."
 
-#: src\ui\settingdialog.cpp:147
+#: umaumachecker\src\ui\settingdialog.cpp:150
 msgid "BitBlt"
 msgstr "BitBlt"
 
-#: src\ui\settingdialog.cpp:171
+#: umaumachecker\src\ui\settingdialog.cpp:174
 msgid "Browse"
 msgstr "찾아보기"
 
-#: src\ui\settingdialog.cpp:205
+#: umaumachecker\src\ui\settingdialog.cpp:208
 msgid "Cancel"
 msgstr "취소"
 
-#: src\ui\settingdialog.cpp:143
+#: umaumachecker\src\ui\settingdialog.cpp:146
 msgid "Capture Type"
 msgstr "캡처 유형"
 
-#: src\ui\mainframe.cpp:53
+#: umaumachecker\src\ui\mainframe.cpp:53
 msgid ""
 "Capture Umamusume window.\n"
 "Click the right button to open save location."
@@ -57,222 +57,235 @@ msgstr ""
 "우마무스메 창 캡처.\n"
 "오른쪽 버튼을 클릭하여 저장 위치 열기."
 
-#: src\ui\settingdialog.cpp:193
+#: umaumachecker\src\ui\settingdialog.cpp:196
 msgid "Capture screen if event is not recognized"
 msgstr "이벤트를 인식하지 못하면 화면 캡처"
 
-#: src\ui\aboutdialog.cpp:68
+#: umaumachecker\src\ui\aboutdialog.cpp:68
 msgid "Check Update"
 msgstr "업데이트 확인"
 
-#: src\ui\mainframe.cpp:93
+#: umaumachecker\src\ui\mainframe.cpp:93
 msgid "Choise"
 msgstr "선택"
 
-#: src\ui\aboutdialog.cpp:45
+#: umaumachecker\src\ui\aboutdialog.cpp:45
 msgid "Contain the following libraries:"
 msgstr "다음 라이브러리 포함:"
 
-#: src\ui\settingdialog.cpp:88
+#: umaumachecker\src\ui\settingdialog.cpp:88
 msgid "Dark"
 msgstr "어두운"
 
-#: src\ui\settingdialog.cpp:190
+#: umaumachecker\src\ui\settingdialog.cpp:193
 msgid "Debug Mode"
 msgstr "디버그 모드"
 
-#: src\ui\checkupdatedialog.cpp:39
+#: umaumachecker\src\ui\checkupdatedialog.cpp:39
 msgid "Do not check on startup."
 msgstr "시작 시 확인하지 않음."
 
-#: src\ui\settingdialog.cpp:110
+#: umaumachecker\src\ui\settingdialog.cpp:110
 msgid "Enable Status Bar"
 msgstr "상태 표시줄 사용"
 
-#: src\ui\mainframe.cpp:211
+#: umaumachecker\src\ui\settingdialog.cpp:117
+msgid "Enable auto start on startup"
+msgstr "시작시 자동으로 시작"
+
+#: umaumachecker\src\ui\mainframe.cpp:212
 msgid "Error"
 msgstr "오류"
 
-#: src\ui\mainframe.cpp:82
+#: umaumachecker\src\ui\mainframe.cpp:82
 msgid "Event Name"
 msgstr "이벤트 이름"
 
-#: src\ui\mainframe.cpp:317
+#: umaumachecker\src\ui\mainframe.cpp:318
 msgid "Failed to capture."
 msgstr "캡처 실패."
 
-#: src\data\eventlibrary.cpp:57
+#: umaumachecker\src\data\eventlibrary.cpp:57
 msgid "Failed to load Scenario Event Data."
 msgstr "시나리오 이벤트 데이터를 로드하지 못했습니다."
 
-#: src\data\eventlibrary.cpp:61
+#: umaumachecker\src\data\eventlibrary.cpp:61
 msgid "Failed to load Skill Data."
 msgstr "스킬 데이터를 로드하지 못했습니다."
 
-#: src\data\eventlibrary.cpp:49
+#: umaumachecker\src\data\eventlibrary.cpp:49
 msgid "Failed to load SupportCard Event Data."
 msgstr "SupportCard 이벤트 데이터를 로드하지 못했습니다."
 
-#: src\data\eventlibrary.cpp:53
+#: umaumachecker\src\data\eventlibrary.cpp:53
 msgid "Failed to load Umamusume Event Data."
 msgstr "우마무스메 이벤트 데이터를 로드하지 못했습니다."
 
-#: src\ui\mainframe.cpp:257
+#: umaumachecker\src\ui\mainframe.cpp:258
 msgid "Failed to save image."
 msgstr "이미지 저장 실패."
 
-#: src\ui\settingdialog.cpp:176
+#: umaumachecker\src\ui\settingdialog.cpp:179
 msgid "File Type"
 msgstr "파일 유형"
 
-#: src\ui\settingdialog.cpp:35
+#: umaumachecker\src\ui\settingdialog.cpp:35
 msgid "General"
 msgstr "일반"
 
-#: src\ui\settingdialog.cpp:106
+#: umaumachecker\src\ui\settingdialog.cpp:106
 msgid "Hide \"no choise\" event"
 msgstr "\"선택 없음\" 이벤트 숨기기"
 
-#: src\ui\settingdialog.cpp:138
+#: umaumachecker\src\ui\settingdialog.cpp:141
 msgid ""
 "Increase the value then CPU usage and Memory increase.\n"
 "Decrease the value then CPU usage and Memory decrease but be slowly "
 "recognize event."
 msgstr ""
 "값을 증가시키면 CPU 사용량 및 메모리 사용량이 증가합니다.\n"
-"값을 감소시키면 CPU 사용량 및 메모리 사용량이 감소하지만 이벤트 인식"
-"이 느려집니다."
+"값을 감소시키면 CPU 사용량 및 메모리 사용량이 감소하지만 이벤트 인식이 느려집"
+"니다."
 
-#: src\ui\settingdialog.cpp:92
+#: umaumachecker\src\ui\settingdialog.cpp:92
 msgid "Language"
 msgstr "언어"
 
-#: src\ui\settingdialog.cpp:87
+#: umaumachecker\src\ui\settingdialog.cpp:87
 msgid "Light"
 msgstr "밝은"
 
-#: src\ui\settingdialog.cpp:163
+#: umaumachecker\src\ui\settingdialog.cpp:166
 msgid "Location"
 msgstr "위치"
 
-#: src\ui\settingdialog.cpp:78
+#: umaumachecker\src\ui\settingdialog.cpp:78
 msgid "Max number of effect line"
 msgstr "최대 효과 라인 수"
 
-#: src\ui\mainframe.cpp:57 src\ui\mainframe.cpp:311
+#: umaumachecker\src\ui\mainframe.cpp:57 umaumachecker\src\ui\mainframe.cpp:312
 msgid "Merge umamusume skill tab as an image."
 msgstr "umamusume 스킬 탭을 이미지로 병합합니다."
 
-#: src\ui\settingdialog.cpp:261
+#: umaumachecker\src\ui\settingdialog.cpp:264
 msgid "No available update."
 msgstr "사용 가능한 업데이트 없음."
 
-#: src\ui\mainframe.cpp:263 src\ui\mainframe.cpp:277
+#: umaumachecker\src\ui\mainframe.cpp:264
+#: umaumachecker\src\ui\mainframe.cpp:278
 msgid "Not found Umamusume window."
 msgstr "umamusume 창을 찾을 수 없습니다."
 
-#: src\ui\settingdialog.cpp:114
+#: umaumachecker\src\ui\settingdialog.cpp:114
 msgid "Notice on startup if there is available update"
 msgstr "사용 가능한 업데이트가 있을 경우 시작 시 알림"
 
-#: src\ui\settingdialog.cpp:125
+#: umaumachecker\src\ui\settingdialog.cpp:128
 msgid "Number of OCR"
 msgstr "OCR 수"
 
-#: src\ui\settingdialog.cpp:121
+#: umaumachecker\src\ui\settingdialog.cpp:124
 msgid "OCR Setting"
 msgstr "OCR 설정"
 
-#: src\ui\mainframe.cpp:211
+#: umaumachecker\src\ui\mainframe.cpp:212
 msgid "Please stop merging image to exit."
 msgstr "종료하려면 이미지 병합을 중지하세요."
 
-#: src\ui\mainframe.cpp:60 src\ui\previewframe.cpp:14
+#: umaumachecker\src\ui\mainframe.cpp:60
+#: umaumachecker\src\ui\previewframe.cpp:14
 msgid "Preview"
 msgstr "미리보기"
 
-#: src\ui\previewframe.cpp:29 src\ui\previewframe.cpp:108
+#: umaumachecker\src\ui\previewframe.cpp:29
+#: umaumachecker\src\ui\previewframe.cpp:108
 msgid "Save an image"
 msgstr "이미지 저장"
 
-#: src\ui\settingdialog.cpp:158
+#: umaumachecker\src\ui\settingdialog.cpp:161
 msgid "Screenshot"
 msgstr "스크린샷"
 
-#: src\ui\settingdialog.cpp:266
+#: umaumachecker\src\ui\settingdialog.cpp:269
 msgid "Select screenshot save location"
 msgstr "스크린샷 저장 위치 선택"
 
-#: src\ui\mainframe.cpp:63 src\ui\settingdialog.cpp:21
+#: umaumachecker\src\ui\mainframe.cpp:63
+#: umaumachecker\src\ui\settingdialog.cpp:21
 msgid "Setting"
 msgstr "설정"
 
-#: src\ui\checkupdatedialog.cpp:45
+#: umaumachecker\src\ui\checkupdatedialog.cpp:45
 msgid "Skip"
 msgstr "건너뛰기"
 
-#: src\ui\mainframe.cpp:49 src\ui\mainframe.cpp:222
+#: umaumachecker\src\ui\mainframe.cpp:49 umaumachecker\src\ui\mainframe.cpp:223
 msgid "Start"
 msgstr "시작"
 
-#: src\ui\mainframe.cpp:226
+#: umaumachecker\src\ui\mainframe.cpp:227
 msgid "Stop"
 msgstr "중지"
 
-#: src\ui\mainframe.cpp:298 src\ui\mainframe.cpp:302
+#: umaumachecker\src\ui\mainframe.cpp:299
+#: umaumachecker\src\ui\mainframe.cpp:303
 msgid "Stop merge."
 msgstr "병합 중지."
 
-#: src\ui\settingdialog.cpp:94
+#: umaumachecker\src\ui\settingdialog.cpp:94
 msgid "System Language"
 msgstr "시스템 언어"
 
-#: src\ui\settingdialog.cpp:85
+#: umaumachecker\src\ui\settingdialog.cpp:85
 msgid "Theme"
 msgstr "테마"
 
-#: src\ui\mainframe.cpp:74
+#: umaumachecker\src\ui\mainframe.cpp:74
 msgid "Training Umamusume"
 msgstr "훈련 umamusume"
 
-#: src\version.h:11 src\ui\mainframe.cpp:257 src\ui\mainframe.cpp:263
-#: src\ui\settingdialog.cpp:256 src\ui\settingdialog.cpp:261
+#: umaumachecker\src\version.h:11 umaumachecker\src\ui\mainframe.cpp:258
+#: umaumachecker\src\ui\mainframe.cpp:264
+#: umaumachecker\src\ui\settingdialog.cpp:259
+#: umaumachecker\src\ui\settingdialog.cpp:264
 msgid "UmaUmaChecker"
 msgstr "UmaUmaChecker"
 
-#: src\ui\checkupdatedialog.cpp:48 src\ui\settingdialog.cpp:41
+#: umaumachecker\src\ui\checkupdatedialog.cpp:48
+#: umaumachecker\src\ui\settingdialog.cpp:41
 msgid "Update"
 msgstr "업데이트"
 
-#: src\ui\settingdialog.cpp:40
+#: umaumachecker\src\ui\settingdialog.cpp:40
 msgid "Update Event Data"
 msgstr "이벤트 데이터 업데이트"
 
-#: src\ui\checkupdatedialog.cpp:20
+#: umaumachecker\src\ui\checkupdatedialog.cpp:20
 msgid "Update UmaUmaChecker"
 msgstr "UmaUmaChecker 업데이트"
 
-#: src\ui\settingdialog.cpp:256
+#: umaumachecker\src\ui\settingdialog.cpp:259
 msgid "Update completed."
 msgstr "업데이트 완료."
 
-#: src\ui\settingdialog.cpp:47
+#: umaumachecker\src\ui\settingdialog.cpp:47
 msgid "Window Font"
 msgstr "창 글꼴"
 
-#: src\ui\settingdialog.cpp:148
+#: umaumachecker\src\ui\settingdialog.cpp:151
 msgid "Windows 10 (above 1903)"
 msgstr "Windows 10 (버전 1903 이상)"
 
-#: src\ui\settingdialog.cpp:192
+#: umaumachecker\src\ui\settingdialog.cpp:195
 msgid "Write debug log in output.log"
 msgstr "디버그 로그를 output.log에 작성"
 
-#: src\ui\mainframe.cpp:508
+#: umaumachecker\src\ui\mainframe.cpp:509
 #, c-format
 msgid "umamusume: %dx%d"
 msgstr "umamusume: %dx%d"
 
-#: src\ui\mainframe.cpp:128 src\ui\mainframe.cpp:511
+#: umaumachecker\src\ui\mainframe.cpp:129
+#: umaumachecker\src\ui\mainframe.cpp:512
 msgid "umamusume: Not detected"
 msgstr "umamusume: 미탐지"

@@ -202,8 +202,13 @@ void MainFrame::Init()
 
 	DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
 	debug2->Show();
-	
 #endif
+
+	if (Config::GetInstance()->EnabledAutoStartOnStartup) {
+		umaMgr->Start();
+		m_toggleBtnStart->SetValue(true);
+		m_toggleBtnStart->SetLabelText(_("Stop"));
+	}
 }
 
 void MainFrame::OnClose(wxCloseEvent& event)
