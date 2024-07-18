@@ -114,6 +114,9 @@ SettingDialog::SettingDialog(wxWindow* parent, Config* config) : ThemedWindowWra
 			m_checkBoxCheckUpdate = new ThemedWrapper<wxCheckBox>(sizeS1->GetStaticBox(), wxID_ANY, _("Notice on startup if there is available update"));
 			sizeS1->Add(m_checkBoxCheckUpdate, 0, wxLEFT | wxBOTTOM, 5);
 
+			m_checkBoxEnableAutoStart = new ThemedWrapper<wxCheckBox>(sizeS1->GetStaticBox(), wxID_ANY, _("Enable auto start on startup"));
+			sizeS1->Add(m_checkBoxEnableAutoStart, 0, wxLEFT | wxBOTTOM, 5);
+
 			sizeParent->Add(sizeS1, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 		}
 
@@ -247,6 +250,7 @@ void SettingDialog::OnInitDialog(wxInitDialogEvent& event)
 		if (index != wxNOT_FOUND) m_comboLanguage->SetSelection(index + 1);
 		else m_comboLanguage->SetSelection(0);
 	}
+	m_checkBoxEnableAutoStart->Set3StateValue(config->EnabledAutoStartOnStartup ? wxCHK_CHECKED : wxCHK_UNCHECKED);
 }
 
 void SettingDialog::OnClickUpdate(wxCommandEvent& event)
@@ -290,6 +294,7 @@ void SettingDialog::OnClickOkButton(wxCommandEvent& event)
 		auto locales = wxTranslations::Get()->GetAvailableTranslations(wxT("UmaUmaChecker"));
 		config->Language = locales[m_comboLanguage->GetSelection() - 1];
 	}
+	config->EnabledAutoStartOnStartup = m_checkBoxEnableAutoStart->IsChecked();
 
 	this->GetParent()->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->EndModal(1);
