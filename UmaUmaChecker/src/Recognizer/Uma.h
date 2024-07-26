@@ -48,7 +48,7 @@ private:
 	void MonitorThread();
 
 	// イベント名認識
-	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg, uint64* pHash);
+	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg, uint64* pHash, bool HasEventIcon);
 	std::vector<std::wstring> RecognizeCardEventText(const cv::Mat& srcImg, uint64* pHash);
 	std::vector<std::wstring> RecognizeScenarioEventText(const cv::Mat& srcImg, uint64* pHash);
 
@@ -63,9 +63,9 @@ private:
 	std::shared_ptr<EventSource> GetScenarioEventByBottomOption(const cv::Mat& srcImg);
 
 	// イベント判定
-	bool IsCharaEvent(const cv::Mat& srcImg);
-	bool IsCardEvent(const cv::Mat& srcImg);
-	bool IsScenarioEvent(const cv::Mat& srcImg);
+	//bool IsCharaEvent(const cv::Mat& srcImg);
+	//bool IsCardEvent(const cv::Mat& srcImg);
+	//bool IsScenarioEvent(const cv::Mat& srcImg);
 	bool IsBottomOption(const cv::Mat& srcImg);
 
 	// OCR関数
@@ -82,7 +82,7 @@ private:
 	// 画像操作
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 	void UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k);
-	void ResizeBest(cv::Mat& src, cv::Mat& dest, int height);
+	void ResizeBest(const cv::Mat& src, cv::Mat& dest, int height);
 	bool IsEventIcon(const cv::Mat& img);
 
 	// ハッシュ関数
@@ -95,10 +95,8 @@ private:
 	bool DetectCharaStatus(const cv::Mat& src);
 
 public:
-	static const cv::Rect2d CharaEventBound; // キャライベント境界
-	static const cv::Rect2d CardEventBound;
+	static const cv::Rect2d EventTitleBound;
 	static const cv::Rect2d BottomChoiseBound;
-	static const cv::Rect2d ScenarioChoiseBound;
 	static const cv::Rect2d TrainingCharaAliasNameBound;
 	static const cv::Rect2d TrainingCharaNameBound;
 	static const cv::Rect2d EventIconBound;
@@ -117,6 +115,7 @@ private:
 	std::wstring DetectedEventName;
 	std::mutex mutex;
 
+	cv::Size ImageSize;
 	uint64 EventHash = 0;
 	uint64 PrevEventHash = 0;
 
