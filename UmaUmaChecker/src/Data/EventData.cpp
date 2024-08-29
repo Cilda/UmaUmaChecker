@@ -173,6 +173,36 @@ std::shared_ptr<EventSource> EventData::RetrieveOption(const std::wstring& optio
 	return event->second;
 }
 
+std::wstring EventData::RetrieveOptionTitle(const std::wstring& option, EventRoot* root)
+{
+	std::vector<std::wstring> xstrs;
+
+	for (double ratio = 100; ratio > 40; ratio -= 10) {
+		optionreader->retrieve(option, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
+	if (xstrs.empty()) return nullptr;
+
+	std::wstring match = xstrs.front();
+	if (xstrs.size() >= 2) {
+		match = GetBestMatchString(xstrs, option);
+	}
+
+	if (root) {
+		auto event = root->OptionMap.find(match);
+		if (event != root->OptionMap.end()) {
+			return match;
+		}
+	}
+
+	const auto& event = OptionMap.find(match);
+	if (event == OptionMap.end()) return L"";
+
+	return match;
+}
+
 std::shared_ptr<EventRoot> EventData::RetrieveName(const std::wstring& name)
 {
 	std::vector<std::wstring> xstrs;

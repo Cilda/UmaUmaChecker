@@ -108,6 +108,26 @@ std::shared_ptr<EventSource> ScenarioData::RetrieveOption(const std::wstring& op
 	return event->second;
 }
 
+std::wstring ScenarioData::RetrieveOptionTitle(const std::wstring& option, EventRoot* root)
+{
+	std::vector<std::wstring> xstrs;
+
+	for (double ratio = 100; ratio > 40; ratio -= 10) {
+		optionreader->retrieve(option, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
+	if (xstrs.empty()) return L"";
+
+	std::wstring match = xstrs.front();
+
+	const auto& event = OptionMap.find(match);
+	if (event == OptionMap.end()) return L"";
+
+	return match;
+}
+
 void ScenarioData::InitDB(const std::filesystem::path& path)
 {
 	this->dbpath = path / L"event.db";

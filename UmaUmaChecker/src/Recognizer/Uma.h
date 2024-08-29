@@ -34,7 +34,8 @@ public:
 		return EventLib.CharaEvent.GetRanks();
 	}
 
-	EventSource* DetectEvent(const cv::Mat& srcImg, uint64* pHash = nullptr, std::vector<std::wstring>* pEvents = nullptr, bool* bScaned = nullptr);
+	std::shared_ptr<EventSource> DetectEvent(const cv::Mat& srcImg, uint64* pHash = nullptr, std::vector<std::wstring>* pEvents = nullptr, bool* bScaned = nullptr);
+	std::shared_ptr<EventSource> AdjustRandomEvent(std::shared_ptr<EventSource> event, const cv::Mat& image);
 	EventRoot* DetectTrainingCharaName(const cv::Mat& srcImg);
 
 	bool Reload();
@@ -61,6 +62,8 @@ private:
 	std::shared_ptr<EventSource> GetEventByBottomOption(const cv::Mat& srcImg);
 	std::shared_ptr<EventSource> GetCharaEventByBottomOption(const cv::Mat& srcImg);
 	std::shared_ptr<EventSource> GetScenarioEventByBottomOption(const cv::Mat& srcImg);
+
+	std::vector<std::wstring> RecognizeAllEventTitles(EventSource* event, const cv::Mat& img, BaseData* data);
 
 	// イベント判定
 	//bool IsCharaEvent(const cv::Mat& srcImg);
@@ -101,7 +104,7 @@ public:
 	static const cv::Rect2d TrainingCharaNameBound;
 	static const cv::Rect2d EventIconBound;
 	static const cv::Rect2d StatusBounds[5];
-	static const cv::Rect2d OptionBounds[6];
+	static const cv::Rect2d OptionBounds[5];
 
 public:
 	EventSource* CurrentEvent;

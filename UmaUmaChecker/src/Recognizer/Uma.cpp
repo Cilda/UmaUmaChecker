@@ -34,8 +34,12 @@ const cv::Rect2d Uma::StatusBounds[5] = {
 	{ 0.57180851063829787234042553191489, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 	{ 0.73138297872340425531914893617021, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 };
-const cv::Rect2d Uma::OptionBounds[6] = {
-
+const cv::Rect2d Uma::OptionBounds[5] = {
+	{ 0.1038, 0.2765, 0.8415, 0.04047 },
+	{ 0.1038, 0.3633, 0.8415, 0.04047 },
+	{ 0.1038, 0.4523, 0.8415, 0.04047 },
+	{ 0.1038, 0.5412, 0.8415, 0.04047 },
+	{ 0.1038, 0.6286, 0.8415, 0.04047 },
 };
 
 const double Uma::ResizeRatio = 2.0;
@@ -137,10 +141,15 @@ void Uma::MonitorThread()
 			uint64 hash = 0;
 			std::vector<std::wstring> events;
 
-			EventSource* event = DetectEvent(srcImage, &hash, &events, &bScaned);
+			std::shared_ptr<EventSource> event = DetectEvent(srcImage, &hash, &events, &bScaned);
 			if (event) {
-				if (event != CurrentEvent) {
-					CurrentEvent = event;
+				if (event.get() != CurrentEvent) {
+					CurrentEvent = event.get();
+
+					auto AdjustEvent = AdjustRandomEvent(event, srcImage);
+					if (AdjustEvent) {
+						event = AdjustEvent;
+					}
 
 					HBITMAP hBmp;
 
@@ -502,7 +511,53 @@ std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& 
 	return RecognizeBottomOption(srcImg, &EventLib.ScenarioEvent);
 }
 
-EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<std::wstring>* pEvents, bool* bScaned)
+std::vector<std::wstring> Uma::RecognizeAllEventTitles(EventSource* event, const cv::Mat& img, BaseData* data)
+{
+	std::vector<cv::Mat> optionImages;
+
+	for (int i = 0; i < 5; i++) {
+		cv::Mat rsImg, gray, bin;
+		cv::Mat cut = cv::Mat(img, cv::Rect(
+			Uma::OptionBounds[i].x * img.size().width,
+			Uma::OptionBounds[i].y * img.size().height,
+			Uma::OptionBounds[i].width * img.size().width,
+			Uma::OptionBounds[i].height * img.size().height
+		));
+
+		if (!IsBottomOption(cut)) {
+			break;
+		}
+
+		ResizeBest(cut, rsImg, img.size().height);
+		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+		cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
+
+		optionImages.push_back(bin);
+	}
+
+	std::vector<std::wstring> results;
+
+	results.resize(optionImages.size());
+
+	for (int i = 0; i < optionImages.size(); i++) {
+		{
+			auto async = std::async(std::launch::async, [&] {
+				auto text = Tesseract::RecognizeAsRaw(optionImages[i]);
+				if (!text.empty()) {
+					auto fixedText = data->RetrieveOptionTitle(text);
+
+					if (!fixedText.empty()) {
+						results[i] = fixedText;
+					}
+				}
+			});
+		}
+	}
+
+	return results;
+}
+
+std::shared_ptr<EventSource> Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<std::wstring>* pEvents, bool* bScaned)
 {
 	if (bScaned) *bScaned = false;
 	if (pHash) *pHash = 0;
@@ -531,7 +586,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 			auto event = GetCardEvent(events);
 			if (!event || EventLib.CardEvent.IsEventNameDuplicate(event->Name)) event = GetEventByBottomOption(srcImg);
 			if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[サポートカード] イベント名: " << event->Name;
-			return event.get();
+			return event;
 		}
 	}
 	else if (EventType == EventDetector::Character) {
@@ -545,7 +600,7 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 				auto event = GetCharaEvent(events);
 				if (!event) event = GetCharaEventByBottomOption(srcImg);
 				if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[育成ウマ娘] イベント名: " << event->Name;
-				return event.get();
+				return event;
 			}
 		}
 	}
@@ -560,11 +615,35 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 			if (!event) event = GetScenarioEventByBottomOption(srcImg);
 			if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[シナリオイベント] イベント名: " << event->Name;
 
-			if (EventLib.RandomEvent.IsScenarioRandom(event->Name)) {
-
-			}
-			return event.get();
+			return event;
 		}
+	}
+
+	return nullptr;
+}
+
+std::shared_ptr<EventSource> Uma::AdjustRandomEvent(std::shared_ptr<EventSource> event, const cv::Mat& image)
+{
+	if (EventLib.RandomEvent.IsScenarioRandom(event->Name)) {
+		auto titles = RecognizeAllEventTitles(event.get(), image, &EventLib.ScenarioEvent);
+
+		std::shared_ptr<EventSource> newEvent(new EventSource());
+		newEvent->Name = event->Name;
+
+		for (auto& title : titles) {
+			for (auto& option : event->Options) {
+				if (option->Title == title) {
+					std::shared_ptr<EventOption> newOption(new EventOption());
+					newOption->Title = option->Title;
+					newOption->Effect = option->Effect;
+
+					newEvent->Options.push_back(newOption);
+					break;
+				}
+			}
+		}
+
+		return newEvent;
 	}
 
 	return nullptr;

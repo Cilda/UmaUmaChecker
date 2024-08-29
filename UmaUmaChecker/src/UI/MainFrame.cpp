@@ -483,9 +483,13 @@ void MainFrame::OnPreviewDragFile(wxCommandEvent& event)
 		Gdiplus::Bitmap* gimage = Gdiplus::Bitmap::FromHBITMAP(image.GetHBITMAP(), NULL);
 		cv::Mat mat = Uma::BitmapToCvMat(gimage);
 
-		EventSource* EventSrc = umaMgr->DetectEvent(mat);
+		std::shared_ptr<EventSource> EventSrc = umaMgr->DetectEvent(mat);
 		if (EventSrc) {
-			ChangeEventOptions(EventSrc);
+			auto AdjustEvent = umaMgr->AdjustRandomEvent(EventSrc, mat);
+			if (AdjustEvent) {
+				EventSrc = AdjustEvent;
+			}
+			ChangeEventOptions(EventSrc.get());
 		}
 #if _DEBUG
 		else {
