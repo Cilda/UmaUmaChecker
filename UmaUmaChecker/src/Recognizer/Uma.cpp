@@ -540,18 +540,16 @@ std::vector<std::wstring> Uma::RecognizeAllEventTitles(EventSource* event, const
 	results.resize(optionImages.size());
 
 	for (int i = 0; i < optionImages.size(); i++) {
-		{
-			auto async = std::async(std::launch::async, [&] {
-				auto text = Tesseract::RecognizeAsRaw(optionImages[i]);
-				if (!text.empty()) {
-					auto fixedText = data->RetrieveOptionTitle(text);
+		std::async(std::launch::async, [&] {
+			auto text = Tesseract::RecognizeAsRaw(optionImages[i]);
+			if (!text.empty()) {
+				auto fixedText = data->RetrieveOptionTitle(text);
 
-					if (!fixedText.empty()) {
-						results[i] = fixedText;
-					}
+				if (!fixedText.empty()) {
+					results[i] = fixedText;
 				}
-			});
-		}
+			}
+		});
 	}
 
 	return results;
