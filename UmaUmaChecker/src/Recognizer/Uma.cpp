@@ -155,9 +155,11 @@ void Uma::MonitorThread()
 
 					image->GetHBITMAP(Gdiplus::Color(0, 0, 0), &hBmp);
 
+					UmaThreadData data = { event, hBmp };
+
 					wxThreadEvent event(wxEVT_THREAD);
 					event.SetId(1);
-					event.SetPayload(hBmp);
+					event.SetPayload(data);
 					wxQueueEvent(frame, event.Clone());
 				}
 			}

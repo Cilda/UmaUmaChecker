@@ -411,19 +411,19 @@ void MainFrame::OnSelectedUma(wxCommandEvent& event)
 void MainFrame::OnUmaThreadEvent(wxThreadEvent& event)
 {
 	if (event.GetId() == 1) {
-		HBITMAP hBmp = event.GetPayload<HBITMAP>();
+		Uma::UmaThreadData data = event.GetPayload<Uma::UmaThreadData>();
 
-		if (umaMgr->CurrentEvent) {
-			ChangeEventOptions(umaMgr->CurrentEvent);
+		if (data.event) {
+			ChangeEventOptions(data.event.get());
 
 			if (m_PreviewWindow) {
 				BITMAP bmp;
 
-				GetObject(hBmp, sizeof(BITMAP), &bmp);
-				m_PreviewWindow->SetImage(hBmp, bmp.bmWidth, bmp.bmHeight);
+				GetObject(data.hBitmap, sizeof(BITMAP), &bmp);
+				m_PreviewWindow->SetImage(data.hBitmap, bmp.bmWidth, bmp.bmHeight);
 			}
 			else {
-				DeleteObject(hBmp);
+				DeleteObject(data.hBitmap);
 			}
 		}
 	}

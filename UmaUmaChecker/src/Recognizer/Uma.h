@@ -19,6 +19,12 @@
 class Uma
 {
 public:
+	struct UmaThreadData {
+		std::shared_ptr<EventSource> event;
+		HBITMAP hBitmap;
+	};
+
+public:
 	Uma(wxFrame* frame);
 	~Uma();
 
