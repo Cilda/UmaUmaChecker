@@ -62,6 +62,8 @@ bool EventLibrary::Load()
 		return false;
 	}
 
+	RandomEvent.Load(path + L"\\Library\\RandomOptionEvents.json");
+
 	auto end = std::chrono::system_clock::now();
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 

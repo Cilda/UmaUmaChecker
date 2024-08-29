@@ -34,6 +34,9 @@ const cv::Rect2d Uma::StatusBounds[5] = {
 	{ 0.57180851063829787234042553191489, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 	{ 0.73138297872340425531914893617021, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 };
+const cv::Rect2d Uma::OptionBounds[6] = {
+
+};
 
 const double Uma::ResizeRatio = 2.0;
 const float Uma::UnsharpRatio = 2.0f;
@@ -556,6 +559,10 @@ EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<
 			auto event = GetScenarioEvent(events);
 			if (!event) event = GetScenarioEventByBottomOption(srcImg);
 			if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[シナリオイベント] イベント名: " << event->Name;
+
+			if (EventLib.RandomEvent.IsScenarioRandom(event->Name)) {
+
+			}
 			return event.get();
 		}
 	}

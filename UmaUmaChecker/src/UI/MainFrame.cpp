@@ -98,6 +98,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		wxColour(255, 200, 200),
 		wxColour(106, 227, 255),
 		wxColour(182, 193, 255),
+		wxColour(231, 183, 255),
 	};
 	for (int i = 0; i < EventOptionCount; i++) {
 		wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);

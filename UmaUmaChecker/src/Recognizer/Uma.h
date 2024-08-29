@@ -101,6 +101,7 @@ public:
 	static const cv::Rect2d TrainingCharaNameBound;
 	static const cv::Rect2d EventIconBound;
 	static const cv::Rect2d StatusBounds[5];
+	static const cv::Rect2d OptionBounds[6];
 
 public:
 	EventSource* CurrentEvent;
