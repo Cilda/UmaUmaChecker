@@ -87,9 +87,9 @@ jobs:
       uses: actions/cache@v4.0.0
       with:
         path: C:\vcpkg_caches
-        key: vcpkg-${{hashFiles('./vcpkg.json')}}
+        key: vcpkg-${{hashFiles('./UmaUmaChecker/vcpkg.json')}}
         restore-keys: |
-          vcpkg-${{hashFiles('./vcpkg.json')}}
+          vcpkg-${{hashFiles('./UmaUmaChecker/vcpkg.json')}}
     
     - name: Build
       # working-directory: ${{env.GITHUB_WORKSPACE}}
