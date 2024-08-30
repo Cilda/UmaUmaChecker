@@ -98,6 +98,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		wxColour(255, 200, 200),
 		wxColour(106, 227, 255),
 		wxColour(182, 193, 255),
+		wxColour(231, 183, 255),
 	};
 	for (int i = 0; i < EventOptionCount; i++) {
 		wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);
@@ -410,19 +411,19 @@ void MainFrame::OnSelectedUma(wxCommandEvent& event)
 void MainFrame::OnUmaThreadEvent(wxThreadEvent& event)
 {
 	if (event.GetId() == 1) {
-		HBITMAP hBmp = event.GetPayload<HBITMAP>();
+		Uma::UmaThreadData data = event.GetPayload<Uma::UmaThreadData>();
 
-		if (umaMgr->CurrentEvent) {
-			ChangeEventOptions(umaMgr->CurrentEvent);
+		if (data.event) {
+			ChangeEventOptions(data.event.get());
 
 			if (m_PreviewWindow) {
 				BITMAP bmp;
 
-				GetObject(hBmp, sizeof(BITMAP), &bmp);
-				m_PreviewWindow->SetImage(hBmp, bmp.bmWidth, bmp.bmHeight);
+				GetObject(data.hBitmap, sizeof(BITMAP), &bmp);
+				m_PreviewWindow->SetImage(data.hBitmap, bmp.bmWidth, bmp.bmHeight);
 			}
 			else {
-				DeleteObject(hBmp);
+				DeleteObject(data.hBitmap);
 			}
 		}
 	}
@@ -482,9 +483,13 @@ void MainFrame::OnPreviewDragFile(wxCommandEvent& event)
 		Gdiplus::Bitmap* gimage = Gdiplus::Bitmap::FromHBITMAP(image.GetHBITMAP(), NULL);
 		cv::Mat mat = Uma::BitmapToCvMat(gimage);
 
-		EventSource* EventSrc = umaMgr->DetectEvent(mat);
+		std::shared_ptr<EventSource> EventSrc = umaMgr->DetectEvent(mat);
 		if (EventSrc) {
-			ChangeEventOptions(EventSrc);
+			auto AdjustEvent = umaMgr->AdjustRandomEvent(EventSrc, mat);
+			if (AdjustEvent) {
+				EventSrc = AdjustEvent;
+			}
+			ChangeEventOptions(EventSrc.get());
 		}
 #if _DEBUG
 		else {

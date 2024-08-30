@@ -79,7 +79,7 @@ public:
 	static void SetFontAllChildren(wxWindow* parent, const wxFont& font);
 
 private:
-	const int EventOptionCount = 5;
+	const int EventOptionCount = 6;
 
 private:
 	wxToggleButton* m_toggleBtnStart;

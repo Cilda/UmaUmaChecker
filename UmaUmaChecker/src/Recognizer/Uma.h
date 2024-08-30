@@ -19,6 +19,12 @@
 class Uma
 {
 public:
+	struct UmaThreadData {
+		std::shared_ptr<EventSource> event;
+		HBITMAP hBitmap;
+	};
+
+public:
 	Uma(wxFrame* frame);
 	~Uma();
 
@@ -34,7 +40,8 @@ public:
 		return EventLib.CharaEvent.GetRanks();
 	}
 
-	EventSource* DetectEvent(const cv::Mat& srcImg, uint64* pHash = nullptr, std::vector<std::wstring>* pEvents = nullptr, bool* bScaned = nullptr);
+	std::shared_ptr<EventSource> DetectEvent(const cv::Mat& srcImg, uint64* pHash = nullptr, std::vector<std::wstring>* pEvents = nullptr, bool* bScaned = nullptr);
+	std::shared_ptr<EventSource> AdjustRandomEvent(std::shared_ptr<EventSource> event, const cv::Mat& image);
 	EventRoot* DetectTrainingCharaName(const cv::Mat& srcImg);
 
 	bool Reload();
@@ -48,7 +55,7 @@ private:
 	void MonitorThread();
 
 	// イベント名認識
-	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg, uint64* pHash);
+	std::vector<std::wstring> RecognizeCharaEventText(const cv::Mat& srcImg, uint64* pHash, bool HasEventIcon);
 	std::vector<std::wstring> RecognizeCardEventText(const cv::Mat& srcImg, uint64* pHash);
 	std::vector<std::wstring> RecognizeScenarioEventText(const cv::Mat& srcImg, uint64* pHash);
 
@@ -62,10 +69,12 @@ private:
 	std::shared_ptr<EventSource> GetCharaEventByBottomOption(const cv::Mat& srcImg);
 	std::shared_ptr<EventSource> GetScenarioEventByBottomOption(const cv::Mat& srcImg);
 
+	std::vector<std::wstring> RecognizeAllEventTitles(EventSource* event, const cv::Mat& img, BaseData* data);
+
 	// イベント判定
-	bool IsCharaEvent(const cv::Mat& srcImg);
-	bool IsCardEvent(const cv::Mat& srcImg);
-	bool IsScenarioEvent(const cv::Mat& srcImg);
+	//bool IsCharaEvent(const cv::Mat& srcImg);
+	//bool IsCardEvent(const cv::Mat& srcImg);
+	//bool IsScenarioEvent(const cv::Mat& srcImg);
 	bool IsBottomOption(const cv::Mat& srcImg);
 
 	// OCR関数
@@ -82,7 +91,7 @@ private:
 	// 画像操作
 	void RemoveWhiteSpace(const cv::Mat& mat, cv::Mat& output);
 	void UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k);
-	void ResizeBest(cv::Mat& src, cv::Mat& dest, int height);
+	void ResizeBest(const cv::Mat& src, cv::Mat& dest, int height);
 	bool IsEventIcon(const cv::Mat& img);
 
 	// ハッシュ関数
@@ -95,14 +104,13 @@ private:
 	bool DetectCharaStatus(const cv::Mat& src);
 
 public:
-	static const cv::Rect2d CharaEventBound; // キャライベント境界
-	static const cv::Rect2d CardEventBound;
+	static const cv::Rect2d EventTitleBound;
 	static const cv::Rect2d BottomChoiseBound;
-	static const cv::Rect2d ScenarioChoiseBound;
 	static const cv::Rect2d TrainingCharaAliasNameBound;
 	static const cv::Rect2d TrainingCharaNameBound;
 	static const cv::Rect2d EventIconBound;
 	static const cv::Rect2d StatusBounds[5];
+	static const cv::Rect2d OptionBounds[5];
 
 public:
 	EventSource* CurrentEvent;
@@ -117,6 +125,7 @@ private:
 	std::wstring DetectedEventName;
 	std::mutex mutex;
 
+	cv::Size ImageSize;
 	uint64 EventHash = 0;
 	uint64 PrevEventHash = 0;
 

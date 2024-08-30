@@ -240,6 +240,8 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Data\RandomOptionEventData.cpp" />
+    <ClCompile Include="src\Recognizer\EventDetector.cpp" />
     <ClCompile Include="src\Language\Languages.cpp" />
     <ClCompile Include="src\UI\AboutDialog.cpp" />
     <ClCompile Include="src\UI\CheckUpdateDialog.cpp" />
@@ -283,6 +285,8 @@
     <ClInclude Include="3rdparty\simstring\memory_mapped_file_win32.h" />
     <ClInclude Include="3rdparty\simstring\ngram.h" />
     <ClInclude Include="3rdparty\simstring\simstring.h" />
+    <ClInclude Include="src\Data\RandomOptionEventData.h" />
+    <ClInclude Include="src\Recognizer\EventDetector.h" />
     <ClInclude Include="src\Language\Languages.h" />
     <ClInclude Include="src\Range.h" />
     <ClInclude Include="src\UI\AboutDialog.h" />
@@ -429,6 +433,21 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <CopyFileToFolders Include="Library\RandomOptionEvents.json">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\Library</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\Library</DestinationFolders>
+    </CopyFileToFolders>
     <None Include="locale\en.po" />
     <None Include="locale\ja.po" />
     <None Include="locale\ko.po" />

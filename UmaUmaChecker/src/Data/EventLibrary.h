@@ -5,6 +5,7 @@
 
 #include "EventData.h"
 #include "ScenarioData.h"
+#include "RandomOptionEventData.h"
 
 namespace simstring {
 	class reader;
@@ -28,6 +29,7 @@ public:
 	EventData CharaEvent;
 	ScenarioData ScenarioEvent;
 	std::unordered_map<std::wstring, std::wstring> SkillMap; // スキル名 -> 説明
+	RandomOptionEventData RandomEvent;
 
 private:
 	std::string DBPath;

@@ -19,12 +19,11 @@
 #include "Utils/utility.h"
 #include "Tesseract/Tesseract.h"
 #include "Capture/UmaWindowCapture.h"
+#include "EventDetector.h"
 
 
-const cv::Rect2d Uma::CharaEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
-const cv::Rect2d Uma::CardEventBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
+const cv::Rect2d Uma::EventTitleBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::BottomChoiseBound = { 0.1038, 0.6286, 0.8415, 0.04047 };
-const cv::Rect2d Uma::ScenarioChoiseBound = { 0.15206185567010309278350515463918, 0.18847603661820140010770059235326, 0.61094941634241245136186770428016, 0.02898550724637681159420289855072 };
 const cv::Rect2d Uma::TrainingCharaAliasNameBound = { 0.31715771230502599653379549393414, 0.11024390243902439024390243902439, 0.66897746967071057192374350086655, 0.02829268292682926829268292682927 };
 const cv::Rect2d Uma::TrainingCharaNameBound = { 0.31715771230502599653379549393414, 0.1375609756097560975609756097561, 0.66897746967071057192374350086655, 0.02439024390243902439024390243902 };
 const cv::Rect2d Uma::EventIconBound = { 0.15206185567010309278350515463918, 0.18551587301587301587301587301587, 0.06701940035273368606701940035273, 0.03769841269841269841269841269841 };
@@ -34,6 +33,13 @@ const cv::Rect2d Uma::StatusBounds[5] = {
 	{ 0.41755319148936170212765957446809, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 	{ 0.57180851063829787234042553191489, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
 	{ 0.73138297872340425531914893617021, 0.66916167664670658682634730538922, 0.08776595744680851063829787234043, 0.02095808383233532934131736526946 },
+};
+const cv::Rect2d Uma::OptionBounds[5] = {
+	{ 0.1038, 0.2765, 0.8415, 0.04047 },
+	{ 0.1038, 0.3633, 0.8415, 0.04047 },
+	{ 0.1038, 0.4523, 0.8415, 0.04047 },
+	{ 0.1038, 0.5412, 0.8415, 0.04047 },
+	{ 0.1038, 0.6286, 0.8415, 0.04047 },
 };
 
 const double Uma::ResizeRatio = 2.0;
@@ -135,18 +141,25 @@ void Uma::MonitorThread()
 			uint64 hash = 0;
 			std::vector<std::wstring> events;
 
-			EventSource* event = DetectEvent(srcImage, &hash, &events, &bScaned);
+			std::shared_ptr<EventSource> event = DetectEvent(srcImage, &hash, &events, &bScaned);
 			if (event) {
-				if (event != CurrentEvent) {
-					CurrentEvent = event;
+				if (event.get() != CurrentEvent) {
+					CurrentEvent = event.get();
+
+					auto AdjustEvent = AdjustRandomEvent(event, srcImage);
+					if (AdjustEvent) {
+						event = AdjustEvent;
+					}
 
 					HBITMAP hBmp;
 
 					image->GetHBITMAP(Gdiplus::Color(0, 0, 0), &hBmp);
 
+					UmaThreadData data = { event, hBmp };
+
 					wxThreadEvent event(wxEVT_THREAD);
 					event.SetId(1);
-					event.SetPayload(hBmp);
+					event.SetPayload(data);
 					wxQueueEvent(frame, event.Clone());
 				}
 			}
@@ -189,86 +202,48 @@ void Uma::MonitorThread()
 	}
 }
 
-bool Uma::IsCharaEvent(const cv::Mat& srcImg)
+std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg, uint64* pHash, bool HasEventIcon)
 {
-	cv::Mat bg;
-	cv::Mat img = srcImg.clone();
+	cv::Mat gray, bin, blur;
+	cv::Mat bin2;
+	cv::Mat rsImg, rsImg2;
+	cv::Mat cut = srcImg;
 
-	cv::inRange(img, cv::Scalar(150, 100, 251), cv::Scalar(209, 198, 255), bg);
-	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
-}
-
-std::vector<std::wstring> Uma::RecognizeCharaEventText(const cv::Mat& srcImg, uint64* pHash)
-{
-	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
-		Uma::CharaEventBound.x * srcImg.size().width,
-		Uma::CharaEventBound.y * srcImg.size().height,
-		Uma::CharaEventBound.width * srcImg.size().width,
-		Uma::CharaEventBound.height * srcImg.size().height
-	));
-
-	if (IsCharaEvent(cut)) {
-		cv::Mat gray, bin, blur;
-		cv::Mat bin2;
-		cv::Mat rsImg, rsImg2;
-
-
-		if (IsEventIcon(srcImg)) {
-			double x = Uma::EventIconBound.width * srcImg.size().width;
-			cut = cv::Mat(cut, cv::Rect(x, 0, cut.size().width - x, cut.size().height));
-		}
-
-		ResizeBest(cut, rsImg, srcImg.size().height);
-		//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-		rsImg2 = rsImg.clone();
-		UnsharpMask(rsImg, rsImg, UnsharpRatio);
-
-		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-		cv::bitwise_not(gray, gray);
-
-		bin = Uma::ImageBinarization(rsImg);
-		RemoveWhiteSpace(bin, bin);
-		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
-
-		bin2 = Uma::ImageBinarization(rsImg2);
-		RemoveWhiteSpace(bin2, bin2);
-
-		gray = cv::Mat(gray, cv::Rect(0, 0, bin.size().width, gray.size().height));
-		
-		std::vector<std::wstring> text_list;
-		{
-			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
-			auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
-			auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
-
-			auto a4 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin2); });
-		}
-
-		AppendCollectedText(text_list);
-		if (pHash) *pHash = GetImageHash(cut);
-
-		return text_list;
+	if (HasEventIcon) {
+		double x = Uma::EventIconBound.width * ImageSize.width;
+		cut = cv::Mat(srcImg, cv::Rect(x, 0, cut.size().width - x, cut.size().height));
 	}
 
-	return std::vector<std::wstring>();
-}
+	ResizeBest(cut, rsImg, ImageSize.height);
+	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	rsImg2 = rsImg.clone();
+	UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
-bool Uma::IsCardEvent(const cv::Mat& srcImg)
-{
-	cv::Mat bg;
-	cv::Mat img = srcImg.clone();
+	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+	cv::bitwise_not(gray, gray);
 
-	cv::inRange(img, cv::Scalar(240, 145, 40), cv::Scalar(255, 210, 120), bg);
-	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
-}
+	bin = Uma::ImageBinarization(rsImg);
+	RemoveWhiteSpace(bin, bin);
+	cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
-bool Uma::IsScenarioEvent(const cv::Mat& srcImg)
-{
-	cv::Mat bg;
-	cv::Mat img = srcImg.clone();
+	bin2 = Uma::ImageBinarization(rsImg2);
+	RemoveWhiteSpace(bin2, bin2);
 
-	cv::inRange(img, cv::Scalar(20, 200, 110), cv::Scalar(80, 240, 170), bg);
-	return (double)cv::countNonZero(bg) / bg.size().area() > 0.3;
+	gray = cv::Mat(gray, cv::Rect(0, 0, bin.size().width, gray.size().height));
+		
+	std::vector<std::wstring> text_list;
+	{
+		auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
+		auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
+		auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
+
+		auto a4 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin2); });
+	}
+
+	AppendCollectedText(text_list);
+	if (pHash) *pHash = GetImageHash(cut);
+
+	return text_list;
 }
 
 bool Uma::IsBottomOption(const cv::Mat& srcImg)
@@ -379,7 +354,7 @@ void Uma::UnsharpMask(const cv::Mat& mat, cv::Mat& dst, float k)
 	cv::filter2D(mat, dst, -1, kernel);
 }
 
-void Uma::ResizeBest(cv::Mat& src, cv::Mat& dest, int height)
+void Uma::ResizeBest(const cv::Mat& src, cv::Mat& dest, int height)
 {
 	// フォントサイズが30px～33pxだと一番識別率が良い
 	double ratio = (int)(58.125 * 32) / (double)height;
@@ -538,51 +513,137 @@ std::shared_ptr<EventSource> Uma::GetScenarioEventByBottomOption(const cv::Mat& 
 	return RecognizeBottomOption(srcImg, &EventLib.ScenarioEvent);
 }
 
-EventSource* Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<std::wstring>* pEvents, bool* bScaned)
+std::vector<std::wstring> Uma::RecognizeAllEventTitles(EventSource* event, const cv::Mat& img, BaseData* data)
+{
+	std::vector<cv::Mat> optionImages;
+
+	for (int i = 0; i < 5; i++) {
+		cv::Mat rsImg, gray, bin;
+		cv::Mat cut = cv::Mat(img, cv::Rect(
+			Uma::OptionBounds[i].x * img.size().width,
+			Uma::OptionBounds[i].y * img.size().height,
+			Uma::OptionBounds[i].width * img.size().width,
+			Uma::OptionBounds[i].height * img.size().height
+		));
+
+		if (!IsBottomOption(cut)) {
+			break;
+		}
+
+		ResizeBest(cut, rsImg, img.size().height);
+		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+		cv::threshold(gray, bin, 90, 255, cv::THRESH_BINARY);
+
+		optionImages.push_back(bin);
+	}
+
+	std::vector<std::wstring> results;
+
+	results.resize(optionImages.size());
+
+	for (int i = 0; i < optionImages.size(); i++) {
+		std::async(std::launch::async, [&] {
+			auto text = Tesseract::RecognizeAsRaw(optionImages[i]);
+			if (!text.empty()) {
+				auto fixedText = data->RetrieveOptionTitle(text);
+
+				if (!fixedText.empty()) {
+					results[i] = fixedText;
+				}
+			}
+		});
+	}
+
+	return results;
+}
+
+std::shared_ptr<EventSource> Uma::DetectEvent(const cv::Mat& srcImg, uint64* pHash, std::vector<std::wstring>* pEvents, bool* bScaned)
 {
 	if (bScaned) *bScaned = false;
 	if (pHash) *pHash = 0;
 
 	uint64 hash = 0;
 	Config* config = Config::GetInstance();
+	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
+		Uma::EventTitleBound.x * srcImg.size().width,
+		Uma::EventTitleBound.y * srcImg.size().height,
+		Uma::EventTitleBound.width * srcImg.size().width,
+		Uma::EventTitleBound.height * srcImg.size().height
+	));
+	EventDetector detector(cut);
+	auto EventType = detector.GetEventType();
 
-	// サポートカードイベント
-	std::vector<std::wstring> events = RecognizeCardEventText(srcImg, &hash);
-	if (!events.empty()) {
-		if (bScaned) *bScaned = true;
-		if (pEvents) *pEvents = events;
-		if (pHash) *pHash = hash;
+	ImageSize = srcImg.size();
 
-		auto event = GetCardEvent(events);
-		if (!event || EventLib.CardEvent.IsEventNameDuplicate(event->Name)) event = GetEventByBottomOption(srcImg);
-		if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[サポートカード] イベント名: " << event->Name;
-		return event.get();
-	}
-
-	if (CurrentCharacter) {
-		events = RecognizeCharaEventText(srcImg, &hash);
+	if (EventType == EventDetector::SupportCard) {
+		// サポートカードイベント
+		std::vector<std::wstring> events = RecognizeCardEventText(cut, &hash);
 		if (!events.empty()) {
 			if (bScaned) *bScaned = true;
 			if (pEvents) *pEvents = events;
 			if (pHash) *pHash = hash;
 
-			auto event = GetCharaEvent(events);
-			if (!event) event = GetCharaEventByBottomOption(srcImg);
-			if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[育成ウマ娘] イベント名: " << event->Name;
-			return event.get();
+			auto event = GetCardEvent(events);
+			if (!event || EventLib.CardEvent.IsEventNameDuplicate(event->Name)) event = GetEventByBottomOption(srcImg);
+			if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[サポートカード] イベント名: " << event->Name;
+			return event;
+		}
+	}
+	else if (EventType == EventDetector::Character) {
+		if (CurrentCharacter) {
+			std::vector<std::wstring> events = RecognizeCharaEventText(cut, &hash, IsEventIcon(srcImg));
+			if (!events.empty()) {
+				if (bScaned) *bScaned = true;
+				if (pEvents) *pEvents = events;
+				if (pHash) *pHash = hash;
+
+				auto event = GetCharaEvent(events);
+				if (!event) event = GetCharaEventByBottomOption(srcImg);
+				if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[育成ウマ娘] イベント名: " << event->Name;
+				return event;
+			}
+		}
+	}
+	else if (EventType == EventDetector::Scenario) {
+		std::vector<std::wstring> events = RecognizeScenarioEventText(cut, &hash);
+		if (!events.empty()) {
+			if (bScaned) *bScaned = true;
+			if (pEvents) *pEvents = events;
+			if (pHash) *pHash = hash;
+
+			auto event = GetScenarioEvent(events);
+			if (!event) event = GetScenarioEventByBottomOption(srcImg);
+			if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[シナリオイベント] イベント名: " << event->Name;
+
+			return event;
 		}
 	}
 
-	events = RecognizeScenarioEventText(srcImg, &hash);
-	if (!events.empty()) {
-		if (bScaned) *bScaned = true;
-		if (pEvents) *pEvents = events;
-		if (pHash) *pHash = hash;
+	return nullptr;
+}
 
-		auto event = GetScenarioEvent(events);
-		if (!event) event = GetScenarioEventByBottomOption(srcImg);
-		if (config->EnableDebug && event && event.get() != CurrentEvent) LOG_DEBUG << L"[シナリオイベント] イベント名: " << event->Name;
-		return event.get();
+std::shared_ptr<EventSource> Uma::AdjustRandomEvent(std::shared_ptr<EventSource> event, const cv::Mat& image)
+{
+	if (EventLib.RandomEvent.IsScenarioRandom(event->Name)) {
+		auto titles = RecognizeAllEventTitles(event.get(), image, &EventLib.ScenarioEvent);
+
+		std::shared_ptr<EventSource> newEvent(new EventSource());
+		newEvent->Name = event->Name;
+
+		for (auto& title : titles) {
+			for (auto& option : event->Options) {
+				if (option->Title == title) {
+					std::shared_ptr<EventOption> newOption(new EventOption());
+					newOption->Title = option->Title;
+					newOption->Effect = option->Effect;
+
+					newEvent->Options.push_back(newOption);
+					break;
+				}
+			}
+		}
+
+		return newEvent;
 	}
 
 	return nullptr;
@@ -783,96 +844,74 @@ std::shared_ptr<EventSource> Uma::RecognizeBottomOption(const cv::Mat& srcImg, B
 
 std::vector<std::wstring> Uma::RecognizeCardEventText(const cv::Mat& srcImg, uint64* pHash)
 {
-	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
-		Uma::CardEventBound.x * srcImg.size().width,
-		Uma::CardEventBound.y * srcImg.size().height,
-		Uma::CardEventBound.width * srcImg.size().width,
-		Uma::CardEventBound.height * srcImg.size().height
-	));
-	
-	if (IsCardEvent(cut)) {
-		cv::Mat gray, bin, blur;
-		cv::Mat bin2;
-		cv::Mat rsImg, rsImg2;
+	cv::Mat gray, bin, blur;
+	cv::Mat bin2;
+	cv::Mat rsImg, rsImg2;
 
-		ResizeBest(cut, rsImg, srcImg.size().height);
-		//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-		rsImg2 = rsImg.clone();
-		UnsharpMask(rsImg, rsImg, UnsharpRatio);
+	ResizeBest(srcImg, rsImg, ImageSize.height);
+	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	rsImg2 = rsImg.clone();
+	UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
-		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-		cv::bitwise_not(gray, gray);
-		bin = Uma::ImageBinarization(rsImg);
-		RemoveWhiteSpace(bin, bin);
-		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
+	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+	cv::bitwise_not(gray, gray);
+	bin = Uma::ImageBinarization(rsImg);
+	RemoveWhiteSpace(bin, bin);
+	cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
-		bin2 = Uma::ImageBinarization(rsImg2);
-		RemoveWhiteSpace(bin2, bin2);
+	bin2 = Uma::ImageBinarization(rsImg2);
+	RemoveWhiteSpace(bin2, bin2);
 
-		gray = cv::Mat(gray, cv::Rect(0, 0, bin.size().width, gray.size().height));
+	gray = cv::Mat(gray, cv::Rect(0, 0, bin.size().width, gray.size().height));
 
-		std::vector<std::wstring> text_list;
-		{
-			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
-			auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
-			auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
+	std::vector<std::wstring> text_list;
+	{
+		auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
+		auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
+		auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
 
-			auto a4 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin2); });
-		}
-
-		AppendCollectedText(text_list);
-		if (pHash) *pHash = GetImageHash(cut);
-
-		return text_list;
+		auto a4 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin2); });
 	}
 
-	return std::vector<std::wstring>();
+	AppendCollectedText(text_list);
+	if (pHash) *pHash = GetImageHash(srcImg);
+
+	return text_list;
 }
 
 std::vector<std::wstring> Uma::RecognizeScenarioEventText(const cv::Mat& srcImg, uint64* pHash)
 {
-	cv::Mat cut = cv::Mat(srcImg, cv::Rect(
-		Uma::ScenarioChoiseBound.x * srcImg.size().width,
-		Uma::ScenarioChoiseBound.y * srcImg.size().height,
-		Uma::ScenarioChoiseBound.width * srcImg.size().width,
-		Uma::ScenarioChoiseBound.height * srcImg.size().height
-	));
-	
-	if (IsScenarioEvent(cut)) {
-		cv::Mat gray, bin, blur;
-		cv::Mat bin2;
-		cv::Mat rsImg, rsImg2;
+	cv::Mat gray, bin, blur;
+	cv::Mat bin2;
+	cv::Mat rsImg, rsImg2;
 
-		ResizeBest(cut, rsImg, srcImg.size().height);
-		//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
-		rsImg2 = rsImg.clone();
-		UnsharpMask(rsImg, rsImg, UnsharpRatio);
+	ResizeBest(srcImg, rsImg, ImageSize.height);
+	//cv::resize(cut, rsImg, cv::Size(), ResizeRatio, ResizeRatio, cv::INTER_CUBIC);
+	rsImg2 = rsImg.clone();
+	UnsharpMask(rsImg, rsImg, UnsharpRatio);
 
-		cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
-		cv::bitwise_not(gray, gray);
-		bin = Uma::ImageBinarization(rsImg);
-		RemoveWhiteSpace(bin, bin);
-		cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
+	cv::cvtColor(rsImg, gray, cv::COLOR_RGB2GRAY);
+	cv::bitwise_not(gray, gray);
+	bin = Uma::ImageBinarization(rsImg);
+	RemoveWhiteSpace(bin, bin);
+	cv::dilate(bin, blur, cv::Mat(2, 2, CV_8U, cv::Scalar(1)), cv::Point(-1, -1), 1);
 
-		bin2 = Uma::ImageBinarization(rsImg2);
-		RemoveWhiteSpace(bin2, bin2);
+	bin2 = Uma::ImageBinarization(rsImg2);
+	RemoveWhiteSpace(bin2, bin2);
 
-		gray = cv::Mat(gray, cv::Rect(0, 0, bin.size().width, gray.size().height));
+	gray = cv::Mat(gray, cv::Rect(0, 0, bin.size().width, gray.size().height));
 
-		std::vector<std::wstring> text_list;
-		{
-			auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
-			auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
-			auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
+	std::vector<std::wstring> text_list;
+	{
+		auto a1 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin); });
+		auto a2 = std::async(std::launch::async, [&] { AsyncFunction(text_list, gray); });
+		auto a3 = std::async(std::launch::async, [&] { AsyncFunction(text_list, blur); });
 
-			auto a4 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin2); });
-		}
-
-		AppendCollectedText(text_list);
-		if (pHash) *pHash = GetImageHash(cut);
-
-		return text_list;
+		auto a4 = std::async(std::launch::async, [&] { AsyncFunction(text_list, bin2); });
 	}
 
-	return std::vector<std::wstring>();
+	AppendCollectedText(text_list);
+	if (pHash) *pHash = GetImageHash(srcImg);
+
+	return text_list;
 }
