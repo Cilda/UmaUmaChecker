@@ -74,7 +74,7 @@ msgid "Enable Status Bar"
 msgstr ""
 
 #: umaumachecker\src\ui\settingdialog.cpp:117
-msgid "Enable auto start on startup."
+msgid "Enable auto start on startup"
 msgstr ""
 
 #: umaumachecker\src\ui\mainframe.cpp:212
