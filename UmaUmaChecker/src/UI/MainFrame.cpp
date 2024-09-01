@@ -30,6 +30,8 @@
 
 #pragma comment(lib, "gdiplus.lib")
 
+#define IDM_ALWAYSONTOP 10000
+
 using json = nlohmann::json;
 
 
@@ -40,6 +42,8 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->SetIcon(wxICON(AppIcon));
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->SetDoubleBuffered(true);
+
+	AddToSystemMenu();
 
 	ChangeTheme();
 
@@ -210,6 +214,15 @@ void MainFrame::Init()
 		m_toggleBtnStart->SetValue(true);
 		m_toggleBtnStart->SetLabelText(_("Stop"));
 	}
+}
+
+void MainFrame::AddToSystemMenu()
+{
+	HMENU hMenu = GetSystemMenu(GetHWND(), FALSE);
+
+	AppendMenu(hMenu, MF_SEPARATOR, 0, TEXT(""));
+	AppendMenu(hMenu, MF_STRING | MFS_UNCHECKED, IDM_ALWAYSONTOP, _("Always on top"));
+	DrawMenuBar(GetHWND());
 }
 
 void MainFrame::OnClose(wxCloseEvent& event)
@@ -630,6 +643,37 @@ void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
 	this->Layout();
 
 	this->SetSizeHints(wxSize(-1, this->GetSize().y), wxSize(-1, this->GetSize().y));
+}
+
+bool MainFrame::MSWTranslateMessage(WXMSG* msg)
+{
+	if (msg->message == WM_SYSCOMMAND) {
+		switch (msg->wParam) {
+			case IDM_ALWAYSONTOP: {
+				MENUITEMINFO mii;
+
+				ZeroMemory(&mii, sizeof(mii));
+				mii.cbSize = sizeof(MENUITEMINFO);
+				mii.fMask = MIIM_STATE;
+
+				GetMenuItemInfo(GetSystemMenu(GetHWND(), FALSE), IDM_ALWAYSONTOP, FALSE, &mii);
+
+				if (mii.fState == MFS_CHECKED) {
+					this->SetWindowStyleFlag(this->GetWindowStyleFlag() & ~wxSTAY_ON_TOP);
+				}
+				else {
+					this->SetWindowStyleFlag(this->GetWindowStyleFlag() | wxSTAY_ON_TOP);
+				}
+
+				mii.fState = mii.fState == MFS_CHECKED ? MFS_UNCHECKED : MFS_CHECKED;
+				SetMenuItemInfo(GetSystemMenu(GetHWND(), FALSE), IDM_ALWAYSONTOP, FALSE, &mii);
+
+				return true;
+			}
+		}
+	}
+
+	return wxFrame::MSWTranslateMessage(msg);
 }
 
 void MainFrame::ChangeEventOptions(EventSource* event)

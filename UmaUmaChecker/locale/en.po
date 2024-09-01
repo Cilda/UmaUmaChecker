@@ -11,44 +11,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.4\n"
 
-#: umaumachecker\src\ui\settingdialog.cpp:137
+#: src\ui\settingdialog.cpp:137
 msgid "*Need to restart application."
 msgstr "*Need to restart application."
 
-#: umaumachecker\src\ui\checkupdatedialog.cpp:30
+#: src\ui\checkupdatedialog.cpp:30
 #, c-format
 msgid "<h1>Available update %s</h1><h2>Update history</h2>"
 msgstr "<h1>Available update %s</h1><h2>Update history</h2>"
 
-#: umaumachecker\src\ui\mainframe.cpp:66
+#: src\ui\mainframe.cpp:70
 msgid "About"
 msgstr "About"
 
-#: umaumachecker\src\ui\aboutdialog.cpp:14
+#: src\ui\aboutdialog.cpp:14
 msgid "About UmaUmaChecker"
 msgstr "About UmaUmaChecker"
 
-#: umaumachecker\src\ui\settingdialog.cpp:307
+#: src\ui\mainframe.cpp:224
+msgid "Always on top"
+msgstr ""
+
+#: src\ui\settingdialog.cpp:309
 msgid "Apply after restart."
 msgstr "Apply after restart."
 
-#: umaumachecker\src\ui\settingdialog.cpp:150
+#: src\ui\settingdialog.cpp:150
 msgid "BitBlt"
 msgstr "BitBlt"
 
-#: umaumachecker\src\ui\settingdialog.cpp:174
+#: src\ui\settingdialog.cpp:174
 msgid "Browse"
 msgstr "Browse"
 
-#: umaumachecker\src\ui\settingdialog.cpp:208
+#: src\ui\settingdialog.cpp:208
 msgid "Cancel"
 msgstr "Cancel"
 
-#: umaumachecker\src\ui\settingdialog.cpp:146
+#: src\ui\settingdialog.cpp:146
 msgid "Capture Type"
 msgstr "Capture Type"
 
-#: umaumachecker\src\ui\mainframe.cpp:53
+#: src\ui\mainframe.cpp:57
 msgid ""
 "Capture Umamusume window.\n"
 "Click the right button to open save location."
@@ -56,87 +60,87 @@ msgstr ""
 "Capture Umamusume window.\n"
 "Click the right button to open save location."
 
-#: umaumachecker\src\ui\settingdialog.cpp:196
+#: src\ui\settingdialog.cpp:196
 msgid "Capture screen if event is not recognized"
 msgstr "Capture screen if event is not recognized"
 
-#: umaumachecker\src\ui\aboutdialog.cpp:68
+#: src\ui\aboutdialog.cpp:68
 msgid "Check Update"
 msgstr "Check Update"
 
-#: umaumachecker\src\ui\mainframe.cpp:93
+#: src\ui\mainframe.cpp:97
 msgid "Choise"
 msgstr "Choise"
 
-#: umaumachecker\src\ui\aboutdialog.cpp:45
+#: src\ui\aboutdialog.cpp:45
 msgid "Contain the following libraries:"
 msgstr "Contain the following libraries:"
 
-#: umaumachecker\src\ui\settingdialog.cpp:88
+#: src\ui\settingdialog.cpp:88
 msgid "Dark"
 msgstr "Dark"
 
-#: umaumachecker\src\ui\settingdialog.cpp:193
+#: src\ui\settingdialog.cpp:193
 msgid "Debug Mode"
 msgstr "Debug Mode"
 
-#: umaumachecker\src\ui\checkupdatedialog.cpp:39
+#: src\ui\checkupdatedialog.cpp:39
 msgid "Do not check on startup."
 msgstr "Do not check on startup."
 
-#: umaumachecker\src\ui\settingdialog.cpp:110
+#: src\ui\settingdialog.cpp:110
 msgid "Enable Status Bar"
 msgstr "Enable Status Bar"
 
-#: umaumachecker\src\ui\settingdialog.cpp:117
+#: src\ui\settingdialog.cpp:117
 msgid "Enable auto start on startup"
 msgstr "Enable auto start on startup"
 
-#: umaumachecker\src\ui\mainframe.cpp:212
+#: src\ui\mainframe.cpp:231
 msgid "Error"
 msgstr "Error"
 
-#: umaumachecker\src\ui\mainframe.cpp:82
+#: src\ui\mainframe.cpp:86
 msgid "Event Name"
 msgstr "Event Name"
 
-#: umaumachecker\src\ui\mainframe.cpp:318
+#: src\ui\mainframe.cpp:337
 msgid "Failed to capture."
 msgstr "Failed to capture."
 
-#: umaumachecker\src\data\eventlibrary.cpp:57
+#: src\data\eventlibrary.cpp:57
 msgid "Failed to load Scenario Event Data."
 msgstr "Failed to load Scenario Event Data."
 
-#: umaumachecker\src\data\eventlibrary.cpp:61
+#: src\data\eventlibrary.cpp:61
 msgid "Failed to load Skill Data."
 msgstr "Failed to load Skill Data."
 
-#: umaumachecker\src\data\eventlibrary.cpp:49
+#: src\data\eventlibrary.cpp:49
 msgid "Failed to load SupportCard Event Data."
 msgstr "Failed to load SupportCard Event Data."
 
-#: umaumachecker\src\data\eventlibrary.cpp:53
+#: src\data\eventlibrary.cpp:53
 msgid "Failed to load Umamusume Event Data."
 msgstr "Failed to load Umamusume Event Data."
 
-#: umaumachecker\src\ui\mainframe.cpp:258
+#: src\ui\mainframe.cpp:277
 msgid "Failed to save image."
 msgstr "Failed to save image."
 
-#: umaumachecker\src\ui\settingdialog.cpp:179
+#: src\ui\settingdialog.cpp:179
 msgid "File Type"
 msgstr "File Type"
 
-#: umaumachecker\src\ui\settingdialog.cpp:35
+#: src\ui\settingdialog.cpp:35
 msgid "General"
 msgstr "General"
 
-#: umaumachecker\src\ui\settingdialog.cpp:106
+#: src\ui\settingdialog.cpp:106
 msgid "Hide \"no choise\" event"
 msgstr "Hide \"no choise\" event"
 
-#: umaumachecker\src\ui\settingdialog.cpp:141
+#: src\ui\settingdialog.cpp:141
 msgid ""
 "Increase the value then CPU usage and Memory increase.\n"
 "Decrease the value then CPU usage and Memory decrease but be slowly "
@@ -146,145 +150,136 @@ msgstr ""
 "Decrease the value then CPU usage and Memory decrease but be slowly "
 "recognize event."
 
-#: umaumachecker\src\ui\settingdialog.cpp:92
+#: src\ui\settingdialog.cpp:92
 msgid "Language"
 msgstr "Language"
 
-#: umaumachecker\src\ui\settingdialog.cpp:87
+#: src\ui\settingdialog.cpp:87
 msgid "Light"
 msgstr "Light"
 
-#: umaumachecker\src\ui\settingdialog.cpp:166
+#: src\ui\settingdialog.cpp:166
 msgid "Location"
 msgstr "Location"
 
-#: umaumachecker\src\ui\settingdialog.cpp:78
+#: src\ui\settingdialog.cpp:78
 msgid "Max number of effect line"
 msgstr "Max number of effect line"
 
-#: umaumachecker\src\ui\mainframe.cpp:57 umaumachecker\src\ui\mainframe.cpp:312
+#: src\ui\mainframe.cpp:61 src\ui\mainframe.cpp:331
 msgid "Merge umamusume skill tab as an image."
 msgstr "Merge umamusume skill tab as an image."
 
-#: umaumachecker\src\ui\settingdialog.cpp:264
+#: src\ui\settingdialog.cpp:265
 msgid "No available update."
 msgstr "No available update."
 
-#: umaumachecker\src\ui\mainframe.cpp:264
-#: umaumachecker\src\ui\mainframe.cpp:278
+#: src\ui\mainframe.cpp:283 src\ui\mainframe.cpp:297
 msgid "Not found Umamusume window."
 msgstr "Not found Umamusume window."
 
-#: umaumachecker\src\ui\settingdialog.cpp:114
+#: src\ui\settingdialog.cpp:114
 msgid "Notice on startup if there is available update"
 msgstr "Notice on startup if there is available update"
 
-#: umaumachecker\src\ui\settingdialog.cpp:128
+#: src\ui\settingdialog.cpp:128
 msgid "Number of OCR"
 msgstr "Number of OCR"
 
-#: umaumachecker\src\ui\settingdialog.cpp:124
+#: src\ui\settingdialog.cpp:124
 msgid "OCR Setting"
 msgstr "OCR Setting"
 
-#: umaumachecker\src\ui\mainframe.cpp:212
+#: src\ui\mainframe.cpp:231
 msgid "Please stop merging image to exit."
 msgstr "Please stop merging image to exit."
 
-#: umaumachecker\src\ui\mainframe.cpp:60
-#: umaumachecker\src\ui\previewframe.cpp:14
+#: src\ui\mainframe.cpp:64 src\ui\previewframe.cpp:14
 msgid "Preview"
 msgstr "Preview"
 
-#: umaumachecker\src\ui\previewframe.cpp:29
-#: umaumachecker\src\ui\previewframe.cpp:108
+#: src\ui\previewframe.cpp:29 src\ui\previewframe.cpp:108
 msgid "Save an image"
 msgstr "Save an image"
 
-#: umaumachecker\src\ui\settingdialog.cpp:161
+#: src\ui\settingdialog.cpp:161
 msgid "Screenshot"
 msgstr "Screenshot"
 
-#: umaumachecker\src\ui\settingdialog.cpp:269
+#: src\ui\settingdialog.cpp:270
 msgid "Select screenshot save location"
 msgstr "Select screenshot save location"
 
-#: umaumachecker\src\ui\mainframe.cpp:63
-#: umaumachecker\src\ui\settingdialog.cpp:21
+#: src\ui\mainframe.cpp:67 src\ui\settingdialog.cpp:21
 msgid "Setting"
 msgstr "Setting"
 
-#: umaumachecker\src\ui\checkupdatedialog.cpp:45
+#: src\ui\checkupdatedialog.cpp:45
 msgid "Skip"
 msgstr "Skip"
 
-#: umaumachecker\src\ui\mainframe.cpp:49 umaumachecker\src\ui\mainframe.cpp:223
+#: src\ui\mainframe.cpp:53 src\ui\mainframe.cpp:242
 msgid "Start"
 msgstr "Start"
 
-#: umaumachecker\src\ui\mainframe.cpp:227
+#: src\ui\mainframe.cpp:215 src\ui\mainframe.cpp:246
 msgid "Stop"
 msgstr "Stop"
 
-#: umaumachecker\src\ui\mainframe.cpp:299
-#: umaumachecker\src\ui\mainframe.cpp:303
+#: src\ui\mainframe.cpp:318 src\ui\mainframe.cpp:322
 msgid "Stop merge."
 msgstr "Stop merge."
 
-#: umaumachecker\src\ui\settingdialog.cpp:94
+#: src\ui\settingdialog.cpp:94
 msgid "System Language"
 msgstr "System Language"
 
-#: umaumachecker\src\ui\settingdialog.cpp:85
+#: src\ui\settingdialog.cpp:85
 msgid "Theme"
 msgstr "Theme"
 
-#: umaumachecker\src\ui\mainframe.cpp:74
+#: src\ui\mainframe.cpp:78
 msgid "Training Umamusume"
 msgstr "Training Umamusume"
 
-#: umaumachecker\src\version.h:11 umaumachecker\src\ui\mainframe.cpp:258
-#: umaumachecker\src\ui\mainframe.cpp:264
-#: umaumachecker\src\ui\settingdialog.cpp:259
-#: umaumachecker\src\ui\settingdialog.cpp:264
+#: src\version.h:11 src\ui\mainframe.cpp:277 src\ui\mainframe.cpp:283
+#: src\ui\settingdialog.cpp:260 src\ui\settingdialog.cpp:265
 msgid "UmaUmaChecker"
 msgstr "UmaUmaChecker"
 
-#: umaumachecker\src\ui\checkupdatedialog.cpp:48
-#: umaumachecker\src\ui\settingdialog.cpp:41
+#: src\ui\checkupdatedialog.cpp:48 src\ui\settingdialog.cpp:41
 msgid "Update"
 msgstr "Update"
 
-#: umaumachecker\src\ui\settingdialog.cpp:40
+#: src\ui\settingdialog.cpp:40
 msgid "Update Event Data"
 msgstr "Update Event Data"
 
-#: umaumachecker\src\ui\checkupdatedialog.cpp:20
+#: src\ui\checkupdatedialog.cpp:20
 msgid "Update UmaUmaChecker"
 msgstr "Update UmaUmaChecker"
 
-#: umaumachecker\src\ui\settingdialog.cpp:259
+#: src\ui\settingdialog.cpp:260
 msgid "Update completed."
 msgstr "Update completed."
 
-#: umaumachecker\src\ui\settingdialog.cpp:47
+#: src\ui\settingdialog.cpp:47
 msgid "Window Font"
 msgstr "Window Font"
 
-#: umaumachecker\src\ui\settingdialog.cpp:151
+#: src\ui\settingdialog.cpp:151
 msgid "Windows 10 (above 1903)"
 msgstr "Windows 10 (above 1903)"
 
-#: umaumachecker\src\ui\settingdialog.cpp:195
+#: src\ui\settingdialog.cpp:195
 msgid "Write debug log in output.log"
 msgstr "Write debug log in output.log"
 
-#: umaumachecker\src\ui\mainframe.cpp:509
+#: src\ui\mainframe.cpp:532
 #, c-format
 msgid "umamusume: %dx%d"
 msgstr "umamusume: %dx%d"
 
-#: umaumachecker\src\ui\mainframe.cpp:129
-#: umaumachecker\src\ui\mainframe.cpp:512
+#: src\ui\mainframe.cpp:134 src\ui\mainframe.cpp:535
 msgid "umamusume: Not detected"
 msgstr "umamusume: Not detected"
