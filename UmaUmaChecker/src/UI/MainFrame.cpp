@@ -42,6 +42,9 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	this->SetIcon(wxICON(AppIcon));
 	this->SetFont(wxFont(config->FontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, config->FontName));
 	this->SetDoubleBuffered(true);
+	if (config->AlwaysOnTop) {
+		this->SetWindowStyleFlag(this->GetWindowStyleFlag() | wxSTAY_ON_TOP);
+	}
 
 	AddToSystemMenu();
 
@@ -221,7 +224,7 @@ void MainFrame::AddToSystemMenu()
 	HMENU hMenu = GetSystemMenu(GetHWND(), FALSE);
 
 	AppendMenu(hMenu, MF_SEPARATOR, 0, TEXT(""));
-	AppendMenu(hMenu, MF_STRING | MFS_UNCHECKED, IDM_ALWAYSONTOP, _("Always on top"));
+	AppendMenu(hMenu, MF_STRING | (Config::GetInstance()->AlwaysOnTop ? MFS_CHECKED : MFS_UNCHECKED), IDM_ALWAYSONTOP, _("Always on top"));
 	DrawMenuBar(GetHWND());
 }
 
@@ -666,6 +669,7 @@ bool MainFrame::MSWTranslateMessage(WXMSG* msg)
 				}
 
 				mii.fState = mii.fState == MFS_CHECKED ? MFS_UNCHECKED : MFS_CHECKED;
+				Config::GetInstance()->AlwaysOnTop = mii.fState == MFS_CHECKED;
 				SetMenuItemInfo(GetSystemMenu(GetHWND(), FALSE), IDM_ALWAYSONTOP, FALSE, &mii);
 
 				return true;
