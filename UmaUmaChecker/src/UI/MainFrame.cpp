@@ -553,11 +553,9 @@ void MainFrame::OnComboTextUpdate(wxCommandEvent& event)
 		}
 
 		m_comboPopup->ClearList();
-		for (auto& rank : umaMgr->GetCharacters()) {
-			for (auto& chara : rank) {
-				if (chara->Name.find(value) != std::wstring::npos) {
-					m_comboPopup->AddString(chara->Name);
-				}
+		for (auto& chara : umaMgr->GetCharacters()) {
+			if (chara->Name.find(value) != std::wstring::npos) {
+				m_comboPopup->AddString(chara->Name);
 			}
 		}
 	}
@@ -708,17 +706,9 @@ void MainFrame::ChangeTheme()
 
 void MainFrame::SetTrainingCharaComboBox()
 {
-	int r = 3;
-
 	auto& characters = umaMgr->GetCharacters();
 	for (auto itr = characters.begin(); itr != characters.end(); itr++) {
-		m_comboBoxUma->Append(std::wstring(L"☆") + std::to_wstring(r));
-
-		for (auto& chara : *itr) {
-			m_comboBoxUma->Append(chara->Name);
-		}
-
-		r--;
+		m_comboBoxUma->Append((*itr)->Name);
 	}
 }
 

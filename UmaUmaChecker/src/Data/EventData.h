@@ -17,17 +17,16 @@ public:
 	EventData();
 	~EventData();
 
-	bool Load(const std::wstring& path);
+	bool Load(const std::wstring& path, bool sort = false);
 
 	std::shared_ptr<EventSource> RetrieveTitle(const std::wstring& title, EventRoot* root = nullptr) override;
 	std::shared_ptr<EventSource> RetrieveOption(const std::wstring& option, EventRoot* root = nullptr) override;
 	std::wstring RetrieveOptionTitle(const std::wstring& option, EventRoot* root = nullptr) override;
 	std::shared_ptr<EventRoot> RetrieveName(const std::wstring& name);
 	std::shared_ptr<EventRoot> GetName(const std::wstring& name);
+	const std::vector<std::shared_ptr<EventRoot>>& GetRoots() const { return EventRoots; }
 
 	bool IsEventNameDuplicate(const std::wstring& name);
-
-	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetRanks() const { return ByRank; }
 
 private:
 	void InitDB(const std::filesystem::path& path);
@@ -35,7 +34,6 @@ private:
 
 private:
 	std::vector<std::shared_ptr<EventRoot>> EventRoots;
-	std::vector<std::vector<std::shared_ptr<EventRoot>>> ByRank;
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> EventMap;
 	std::unordered_map<std::wstring, std::shared_ptr<EventSource>> OptionMap;
 	std::unordered_map<std::wstring, std::shared_ptr<EventRoot>> NameMap;
