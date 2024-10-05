@@ -36,8 +36,8 @@ public:
 	bool SetTrainingCharacter(const std::wstring& CharaName);
 	std::wstring GetTrainingCharacter() const { return CurrentCharacter ? CurrentCharacter->Name : L""; }
 
-	const std::vector<std::vector<std::shared_ptr<EventRoot>>>& GetCharacters() const {
-		return EventLib.CharaEvent.GetRanks();
+	const std::vector<std::shared_ptr<EventRoot>>& GetCharacters() const {
+		return EventLib.CharaEvent.GetRoots();
 	}
 
 	std::shared_ptr<EventSource> DetectEvent(const cv::Mat& srcImg, uint64* pHash = nullptr, std::vector<std::wstring>* pEvents = nullptr, bool* bScaned = nullptr);
