@@ -52,82 +52,88 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	wxBoxSizer* bSizerTop = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
+	{
+		m_toggleBtnStart = new ThemedButtonWrapper<wxToggleButton>(this, wxID_ANY, _("Start"), wxDefaultPosition, wxDefaultSize, 0);
+		bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
 
-	m_toggleBtnStart = new ThemedButtonWrapper<wxToggleButton>(this, wxID_ANY, _("Start"), wxDefaultPosition, wxDefaultSize, 0);
-	bSizerButtons->Add(m_toggleBtnStart, 0, wxALL, 5);
+		m_buttonScreenshot = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("ScreenShot"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+		m_buttonScreenshot->SetToolTip(_("Capture Umamusume window.\nClick the right button to open save location."));
+		bSizerButtons->Add(m_buttonScreenshot, wxSizerFlags().Proportion(0).Border(wxALL & ~wxRIGHT, 5));
 
-	m_buttonScreenshot = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("ScreenShot"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-	m_buttonScreenshot->SetToolTip(_("Capture Umamusume window.\nClick the right button to open save location."));
-	bSizerButtons->Add(m_buttonScreenshot, 0, wxALL & ~wxRIGHT, 5);
+		m_buttonCombine = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+		m_buttonCombine->SetToolTip(_("Merge umamusume skill tab as an image."));
+		bSizerButtons->Add(m_buttonCombine, wxSizerFlags().Proportion(0).Border(wxALL & ~wxLEFT, 5));
 
-	m_buttonCombine = new ThemedButtonWrapper<wxBitmapButton>(this, wxID_ANY, wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-	m_buttonCombine->SetToolTip(_("Merge umamusume skill tab as an image."));
-	bSizerButtons->Add(m_buttonCombine, 0, wxALL & ~wxLEFT, 5);
+		m_buttonPreview = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("Preview"), wxDefaultPosition, wxDefaultSize, 0);
+		bSizerButtons->Add(m_buttonPreview, wxSizerFlags().Proportion(0).Border(wxALL, 5));
 
-	m_buttonPreview = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("Preview"), wxDefaultPosition, wxDefaultSize, 0);
-	bSizerButtons->Add(m_buttonPreview, 0, wxALL, 5);
+		m_buttonSetting = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("Setting"), wxDefaultPosition, wxDefaultSize, 0);
+		bSizerButtons->Add(m_buttonSetting, wxSizerFlags().Proportion(0).Border(wxALL, 5));
 
-	m_buttonSetting = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("Setting"), wxDefaultPosition, wxDefaultSize, 0);
-	bSizerButtons->Add(m_buttonSetting, 0, wxALL, 5);
-
-	m_buttonAbout = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("About"), wxDefaultPosition, wxDefaultSize, 0);
-	bSizerButtons->Add(m_buttonAbout, 0, wxALL, 5);
-
-	bSizerTop->Add(bSizerButtons, 0, wxEXPAND | wxFIXED_MINSIZE | wxRIGHT | wxLEFT | wxBOTTOM, 5);
+		m_buttonAbout = new ThemedButtonWrapper<wxButton>(this, wxID_ANY, _("About"), wxDefaultPosition, wxDefaultSize, 0);
+		bSizerButtons->Add(m_buttonAbout, wxSizerFlags().Proportion(0).Border(wxALL, 5));
+	}
+	bSizerTop->Add(bSizerButtons, wxSizerFlags().Expand().Border(wxLEFT | wxRIGHT | wxBOTTOM, 5).Proportion(0));
 
 	wxFlexGridSizer* sizerEventInfo = new wxFlexGridSizer(2, 2, 9, 9);
+	{
+		// 育成ウマ娘
+		m_staticTextCharaName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, _("Training Umamusume"));
+		m_staticTextCharaName->Wrap(-1);
+		sizerEventInfo->Add(m_staticTextCharaName, 0, wxALIGN_CENTER_VERTICAL);
 
-	// 育成ウマ娘
-	m_staticTextCharaName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, _("Training Umamusume"));
-	m_staticTextCharaName->Wrap(-1);
-	sizerEventInfo->Add(m_staticTextCharaName, 0, wxALIGN_CENTER_VERTICAL);
+		m_comboBoxUma = new ThemedComboBoxWrapper<wxComboBox>(this, wxID_ANY);
+		sizerEventInfo->Add(m_comboBoxUma, 1, wxEXPAND);
 
-	m_comboBoxUma = new ThemedComboBoxWrapper<wxComboBox>(this, wxID_ANY);
-	sizerEventInfo->Add(m_comboBoxUma, 1, wxEXPAND);
+		// イベント名
+		m_staticTextEventName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, _("Event Name"));
+		m_staticTextEventName->Wrap(-1);
+		sizerEventInfo->Add(m_staticTextEventName, 0, wxALIGN_CENTER_VERTICAL);
 
-	// イベント名
-	m_staticTextEventName = new ThemedWrapper<wxStaticText>(this, wxID_ANY, _("Event Name"));
-	m_staticTextEventName->Wrap(-1);
-	sizerEventInfo->Add(m_staticTextEventName, 0, wxALIGN_CENTER_VERTICAL);
-
-	m_textCtrlEventSource = new ThemedEditWrapper<wxTextCtrl>(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-	sizerEventInfo->Add(m_textCtrlEventSource, 1, wxEXPAND);
-	sizerEventInfo->AddGrowableCol(1, 1);
-
-	bSizerTop->Add(sizerEventInfo, 0, wxEXPAND | wxRIGHT | wxLEFT, 15);
+		m_textCtrlEventSource = new ThemedEditWrapper<wxTextCtrl>(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+		sizerEventInfo->Add(m_textCtrlEventSource, 1, wxEXPAND);
+		sizerEventInfo->AddGrowableCol(1, 1);
+	}
+	bSizerTop->Add(sizerEventInfo, wxSizerFlags().Proportion(0).Expand().Border(wxLEFT | wxRIGHT, 15));
 
 	// 選択肢
 	wxStaticBoxSizer* sbSizerOptions = new wxStaticBoxSizer(new ThemedWrapper<wxStaticBox>(this, wxID_ANY, _("Choise")), wxVERTICAL);
+	{
+		std::vector<wxColour> bgColors = {
+			wxColour(200, 255, 150),
+			wxColour(255, 240, 140),
+			wxColour(255, 200, 200),
+			wxColour(106, 227, 255),
+			wxColour(182, 193, 255),
+			wxColour(231, 183, 255),
+		};
+		wxBoxSizer* sbOptionSizer = new wxBoxSizer(wxVERTICAL);
 
-	std::vector<wxColour> bgColors = {
-		wxColour(200, 255, 150),
-		wxColour(255, 240, 140),
-		wxColour(255, 200, 200),
-		wxColour(106, 227, 255),
-		wxColour(182, 193, 255),
-		wxColour(231, 183, 255),
-	};
-	for (int i = 0; i < EventOptionCount; i++) {
-		wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);
+		for (int i = 0; i < EventOptionCount; i++) {
+			wxBoxSizer* bSizerOption1 = new wxBoxSizer(wxHORIZONTAL);
 
-		// 選択肢名
-		wxTextCtrl* TitleCtrl = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-		if (i < bgColors.size()) TitleCtrl->SetBackgroundColour(bgColors[i]);
-		else TitleCtrl->SetBackgroundColour(*wxWHITE);
-		bSizerOption1->Add(TitleCtrl, 2, wxALL, 5);
+			// 選択肢名
+			wxTextCtrl* TitleCtrl = new wxTextCtrl(sbSizerOptions->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+			if (i < bgColors.size()) TitleCtrl->SetBackgroundColour(bgColors[i]);
+			else TitleCtrl->SetBackgroundColour(*wxWHITE);
+			bSizerOption1->Add(TitleCtrl, wxSizerFlags().Border(wxALL, 5).Proportion(2));
 
-		// 効果
-		wxUmaTextCtrl* OptionCtrl = new ThemedEditWrapper<wxUmaTextCtrl>(sbSizerOptions->GetStaticBox());
-		OptionCtrl->SetHeightByLine(config->OptionMaxLine);
-		bSizerOption1->Add(OptionCtrl, 3, wxALL | wxEXPAND, 5);
+			// 効果
+			wxUmaTextCtrl* OptionCtrl = new ThemedEditWrapper<wxUmaTextCtrl>(sbSizerOptions->GetStaticBox(), config->OptionMaxLine);
+			bSizerOption1->Add(OptionCtrl, wxSizerFlags().Expand().Border(wxALL, 5).Proportion(3));
 
-		sbSizerOptions->Add(bSizerOption1, 1, wxEXPAND, 5);
+			sbOptionSizer->Add(bSizerOption1, wxSizerFlags().Expand().Proportion(1));
 
-		m_textCtrlEventTitles.push_back(TitleCtrl);
-		m_textCtrlEventOptions.push_back(OptionCtrl);
+			m_textCtrlEventTitles.push_back(TitleCtrl);
+			m_textCtrlEventOptions.push_back(OptionCtrl);
+		}
+
+		sbSizerOptions->Add(sbOptionSizer, wxSizerFlags().Expand().Proportion(1));
 	}
-
 	bSizerTop->Add(sbSizerOptions, 1, wxEXPAND | wxALL, 5);
+
+	//
+	//sbSizerOptions->Fit(this);
 
 	m_statusBar = new wxStatusBar(this, wxID_ANY);
 	int widths[] = { -2, -3, -4 };
@@ -139,9 +145,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 
 	m_comboPopup = new wxComboBoxPopup(this);
 
-	this->SetSizer(bSizerTop);
-	this->Fit();
-	this->Layout();
+	this->SetSizerAndFit(bSizerTop);
 	this->Centre(wxBOTH);
 
 	this->SetSizeHints(wxSize(-1, this->GetSize().y), wxSize(-1, this->GetSize().y));

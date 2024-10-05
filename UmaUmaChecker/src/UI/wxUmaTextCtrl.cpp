@@ -5,13 +5,20 @@
 #include <wx/dcclient.h>
 #include <wx/richtext/richtextbuffer.h>
 
-wxUmaTextCtrl::wxUmaTextCtrl(wxWindow* parent) : wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_RICH2 | wxTE_MULTILINE | wxTE_NO_VSCROLL | wxTE_DONTWRAP)
+wxUmaTextCtrl::wxUmaTextCtrl(wxWindow* parent, int line): wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_RICH2 | wxTE_MULTILINE | wxTE_NO_VSCROLL | wxTE_DONTWRAP)
 {
+	Line = line;
+
 	DWORD dwOptions = SendMessage(this->GetHWND(), EM_GETLANGOPTIONS, 0, 0);
 	dwOptions &= ~IMF_AUTOFONT;
 	dwOptions |= IMF_UIFONTS;
 	SendMessage(this->GetHWND(), EM_SETLANGOPTIONS, 0, (LPARAM)dwOptions);
 	SendMessage(this->GetHWND(), EM_SHOWSCROLLBAR, SB_HORZ, FALSE);
+
+	SetHeightByLine(Line);
+	SetValue("+1\n2\n3\n4\n5\n6");
+
+	this->Refresh();
 }
 
 wxUmaTextCtrl::~wxUmaTextCtrl()
@@ -121,12 +128,25 @@ bool wxUmaTextCtrl::SetFont(const wxFont& font)
 
 void wxUmaTextCtrl::SetHeightByLine(int line)
 {
+	Line = line;
+
 	wxClientDC dc(this);
 	wxTextAttr attr = this->GetDefaultStyle();
 	wxFontMetrics metrics = dc.GetFontMetrics();
 
-	wxSize size = wxSize(wxDefaultCoord, metrics.height * line);
-	this->SetMinClientSize(size);
+	wxSize size = wxSize(-1, metrics.height * line);
+	//this->SetMinClientSize(size);
+	
+	this->SetClientSize(size);
 	this->SetMaxClientSize(size);
 }
 
+int wxUmaTextCtrl::GetHeightByLine(int line) const
+{
+	wxUmaTextCtrl* const self = const_cast<wxUmaTextCtrl*>(this);
+	wxClientDC dc(self);
+	wxTextAttr attr = this->GetDefaultStyle();
+	wxFontMetrics metrics = dc.GetFontMetrics();
+
+	return metrics.height * line;
+}
