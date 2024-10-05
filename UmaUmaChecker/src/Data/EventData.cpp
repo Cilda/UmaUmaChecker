@@ -19,7 +19,7 @@ EventData::~EventData()
 {
 }
 
-bool EventData::Load(const std::wstring& path)
+bool EventData::Load(const std::wstring& path, bool sort)
 {
 	std::fstream stream(path);
 	if (!stream.good()) return false;
@@ -28,8 +28,6 @@ bool EventData::Load(const std::wstring& path)
 		json skills = json::parse(stream);
 
 		for (auto& cards : skills.items().begin().value()) {
-			std::vector<std::shared_ptr<EventRoot>> RankList;
-
 			for (auto& card : cards.items()) {
 				auto name = card.key();
 				auto events = card.value()["Events"];
@@ -75,23 +73,23 @@ bool EventData::Load(const std::wstring& path)
 				}
 
 				EventRoots.push_back(skill);
-				RankList.push_back(skill);
 
 				NameMap[skill->Name] = skill;
 			}
+		}
 
-			std::sort(RankList.begin(), RankList.end(), [](std::shared_ptr<EventRoot> a, std::shared_ptr<EventRoot> b) {
+		if (sort) {
+			std::sort(EventRoots.begin(), EventRoots.end(), [](std::shared_ptr<EventRoot> a, std::shared_ptr<EventRoot> b) {
 				std::wregex regex(L"^［(.+?)］(.+?)$");
 				std::wcmatch m1, m2;
 
 				std::regex_search(a->Name.c_str(), m1, regex);
 				std::regex_search(b->Name.c_str(), m2, regex);
 
-				return m1[2].str() < m2[2].str();
-			});
+				int comp = m1[2].str().compare(m2[2].str());
 
-			ByRank.push_back(RankList);
-			RankList.clear();
+				return comp != 0 ? comp < 0 : m1[1].str() < m2[1].str();
+			});
 		}
 	}
 	catch (json::exception& ex) {
