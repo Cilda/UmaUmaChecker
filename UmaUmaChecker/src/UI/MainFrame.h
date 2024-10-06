@@ -47,8 +47,8 @@ private:
 	void AddToSystemMenu();
 
 	void OnClose(wxCloseEvent& event);
-	void OnSize(wxSizeEvent& event);
-	void OnSizing(wxSizeEvent& event);
+	//void OnSize(wxSizeEvent& event);
+	//void OnSizing(wxSizeEvent& event);
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
 	void OnRightClickScreenShot(wxMouseEvent& event);

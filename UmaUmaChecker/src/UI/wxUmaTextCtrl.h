@@ -14,6 +14,9 @@ public:
 	virtual bool SetFont(const wxFont& font);
 	void SetHeightByLine(int line);
 
+protected:
+	wxSize DoGetBestClientSize() const override;
+
 private:
 	int GetHeightByLine(int line) const;
 

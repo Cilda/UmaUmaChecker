@@ -141,6 +141,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	m_statusBar->PushStatusText(wxT("CPU: 100.0%"), 0);
 	m_statusBar->PushStatusText(wxT("MEM: 0.0 MB"), 1);
 	m_statusBar->PushStatusText(_("umamusume: Not detected"), 2);
+	if (!config->IsShowStatusBar) m_statusBar->Hide();
 	this->SetStatusBar(m_statusBar);
 
 	m_comboPopup = new wxComboBoxPopup(this);
@@ -179,8 +180,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		this->Move(config->WindowX, config->WindowY);
 	}
 
-	if (!config->IsShowStatusBar) m_statusBar->Hide();
-	else timer.Start(1000);
+	if (config->IsShowStatusBar) timer.Start(1000);
 
 	Init();
 }
