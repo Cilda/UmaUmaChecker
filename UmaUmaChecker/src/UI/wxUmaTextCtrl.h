@@ -5,7 +5,7 @@
 class wxUmaTextCtrl : public wxTextCtrl
 {
 public:
-	wxUmaTextCtrl(wxWindow* parent);
+	wxUmaTextCtrl(wxWindow* parent, int line = -1);
 	~wxUmaTextCtrl();
 
 	virtual void SetValue(const wxString& value);
@@ -14,6 +14,13 @@ public:
 	virtual bool SetFont(const wxFont& font);
 	void SetHeightByLine(int line);
 
-	//virtual bool SetBackgroundColour(const wxColour& colour);
+protected:
+	wxSize DoGetBestClientSize() const override;
+
+private:
+	int GetHeightByLine(int line) const;
+
+private:
+	int Line;
 };
 

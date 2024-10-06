@@ -44,10 +44,11 @@ public:
 
 private:
 	void Init();
+	void AddToSystemMenu();
 
 	void OnClose(wxCloseEvent& event);
-	void OnSize(wxSizeEvent& event);
-	void OnSizing(wxSizeEvent& event);
+	//void OnSize(wxSizeEvent& event);
+	//void OnSizing(wxSizeEvent& event);
 	void OnClickStart(wxCommandEvent& event);
 	void OnClickScreenShot(wxCommandEvent& event);
 	void OnRightClickScreenShot(wxMouseEvent& event);
@@ -68,6 +69,8 @@ private:
 	void OnComboKeyDown(wxKeyEvent& event);
 	// DPI用
 	void OnDPIChanged(wxDPIChangedEvent& event);
+
+	bool MSWTranslateMessage(WXMSG* msg) override;
 
 	void ChangeEventOptions(EventSource* event);
 	std::wstring GetSkillDescFromOption(const std::wstring& option);
