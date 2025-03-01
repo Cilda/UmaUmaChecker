@@ -25,6 +25,7 @@
 #include "Theme/StdRenderer.h"
 #include "Theme/DarkThemeRenderer.h"
 
+
 #include "Log/Log.h"
 #include "Capture/UmaWindowCapture.h"
 
@@ -90,7 +91,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 		m_staticTextEventName->Wrap(-1);
 		sizerEventInfo->Add(m_staticTextEventName, 0, wxALIGN_CENTER_VERTICAL);
 
-		m_textCtrlEventSource = new ThemedEditWrapper<wxTextCtrl>(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+		m_textCtrlEventSource = new ThemedEditWrapper<AutocompleteWrapper<wxTextCtrl>>(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
 		sizerEventInfo->Add(m_textCtrlEventSource, 1, wxEXPAND);
 		sizerEventInfo->AddGrowableCol(1, 1);
 	}
@@ -212,8 +213,8 @@ void MainFrame::Init()
 	DebugFrame* debug = new DebugFrame(this);
 	debug->Show();
 
-	DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
-	debug2->Show();
+	//DebugImageCombineFrame* debug2 = new DebugImageCombineFrame(this);
+	//debug2->Show();
 #endif
 
 	if (Config::GetInstance()->EnabledAutoStartOnStartup) {
@@ -221,6 +222,8 @@ void MainFrame::Init()
 		m_toggleBtnStart->SetValue(true);
 		m_toggleBtnStart->SetLabelText(_("Stop"));
 	}
+
+	m_textCtrlEventSource->SetAutoCompleteItems(EventLib.CardEvent.GetAllEventNames());
 }
 
 void MainFrame::AddToSystemMenu()

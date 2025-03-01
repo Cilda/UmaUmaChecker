@@ -28,6 +28,8 @@ public:
 
 	bool IsEventNameDuplicate(const std::wstring& name);
 
+	std::vector<std::wstring> GetAllEventNames();
+
 private:
 	void InitDB(const std::filesystem::path& path);
 	std::wstring GetBestMatchString(const std::vector<std::wstring>& xstrs, const std::wstring& text);

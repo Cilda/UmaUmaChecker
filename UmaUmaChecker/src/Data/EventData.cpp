@@ -241,6 +241,17 @@ bool EventData::IsEventNameDuplicate(const std::wstring& name)
 	return EventDuplicationCount[name] > 1;
 }
 
+std::vector<std::wstring> EventData::GetAllEventNames()
+{
+	std::vector<std::wstring> result;
+
+	for (auto pair : EventDuplicationCount) {
+		result.push_back(pair.first);
+	}
+
+	return result;
+}
+
 void EventData::InitDB(const std::filesystem::path& path)
 {
 	this->dbpath = path / L"event.db";

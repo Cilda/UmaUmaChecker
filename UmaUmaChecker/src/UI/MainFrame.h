@@ -26,6 +26,7 @@
 #include "wxTextPopupCtrl.h"
 #include "wxUmaTextCtrl.h"
 #include "wxComboBoxPopup.h"
+#include "Autocomplete/AutocompleteWrapper.h"
 #include "UI/Theme/ThemeWrapper.h"
 #include "Recognizer/CombineImage.h"
 
@@ -94,7 +95,7 @@ private:
 	wxStaticText* m_staticTextCharaName;
 	wxComboBox* m_comboBoxUma;
 	wxStaticText* m_staticTextEventName;
-	wxTextCtrl* m_textCtrlEventSource;
+	AutocompleteWrapper<wxTextCtrl>* m_textCtrlEventSource;
 	std::vector<wxTextCtrl*> m_textCtrlEventTitles;
 	std::vector<wxUmaTextCtrl*> m_textCtrlEventOptions;
 	PreviewFrame* m_PreviewWindow;
