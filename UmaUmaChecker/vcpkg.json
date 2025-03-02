@@ -5,12 +5,19 @@
     {
       "name": "opencv4",
       "default-features": false,
-      "features": ["jpeg", "png", "world"]
+      "features": [ "jpeg", "png", "world" ]
     },
     "nlohmann-json",
     "tesseract",
     "wxwidgets",
     "boost-log",
     "boost-locale"
+  ],
+  "builtin-baseline": "efb1e7436979a30c4d3e5ab2375fd8e2e461d541",
+  "overrides": [
+    {
+      "name": "opencv4",
+      "version": "4.8.0#22"
+    }
   ]
 }
