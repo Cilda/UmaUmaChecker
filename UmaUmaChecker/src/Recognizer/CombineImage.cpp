@@ -4,6 +4,8 @@
 #include <gdiplus.h>
 
 #include <numeric>
+#include <chrono>
+
 #include <opencv2/core/types_c.h>
 #include <wx/imagbmp.h>
 
