@@ -162,6 +162,7 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	m_buttonPreview->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickPreview, this);
 	m_buttonSetting->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnClickSetting, this);
 	m_comboBoxUma->Bind(wxEVT_COMMAND_COMBOBOX_SELECTED, &MainFrame::OnSelectedUma, this);
+	m_textCtrlEventSource->Bind(EVT_SELECTED_AUTOCOMPLETE, &MainFrame::OnAutocompleteEvent, this);
 	for (int i = 0; i < EventOptionCount; i++) {
 		m_textCtrlEventOptions[i]->Bind(wxEVT_ENTER_WINDOW, &MainFrame::OnEnterControl, this);
 		m_textCtrlEventOptions[i]->Bind(wxEVT_LEAVE_WINDOW, &MainFrame::OnLeaveControl, this);
@@ -636,6 +637,17 @@ void MainFrame::OnComboKeyDown(wxKeyEvent& event)
 	event.Skip();
 }
 
+void MainFrame::OnAutocompleteEvent(wxCommandEvent& event)
+{
+	wxString value = m_textCtrlEventSource->GetValue();
+	if (!value.empty()) {
+		auto event = EventLib.CardEvent.GetEventFromName(value.ToStdWstring());
+		if (event) {
+			ChangeEventOptions(event.get());
+		}
+	}
+}
+
 void MainFrame::OnDPIChanged(wxDPIChangedEvent& event)
 {
 	LOG_INFO << "DPI was changed (NEW DPI -> " << event.GetNewDPI().x << ")";
@@ -701,7 +713,7 @@ void MainFrame::ChangeEventOptions(EventSource* event)
 
 		if (!bShow) return;
 
-		m_textCtrlEventSource->SetValue(event->Name);
+		m_textCtrlEventSource->ChangeValue(event->Name);
 
 		for (int i = 0; i < EventOptionCount; i++) {
 			if (i < event->Options.size()) {

@@ -240,7 +240,6 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\UI\Autocomplete\AutocompleteThreadHelper.cpp" />
     <ClCompile Include="src\Data\RandomOptionEventData.cpp" />
     <ClCompile Include="src\Recognizer\EventDetector.cpp" />
     <ClCompile Include="src\Language\Languages.cpp" />
@@ -287,7 +286,6 @@
     <ClInclude Include="3rdparty\simstring\memory_mapped_file_win32.h" />
     <ClInclude Include="3rdparty\simstring\ngram.h" />
     <ClInclude Include="3rdparty\simstring\simstring.h" />
-    <ClInclude Include="src\UI\Autocomplete\AutocompleteThreadHelper.h" />
     <ClInclude Include="src\Data\RandomOptionEventData.h" />
     <ClInclude Include="src\Recognizer\EventDetector.h" />
     <ClInclude Include="src\Language\Languages.h" />

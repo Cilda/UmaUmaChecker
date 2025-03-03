@@ -24,6 +24,7 @@ public:
 	std::wstring RetrieveOptionTitle(const std::wstring& option, EventRoot* root = nullptr) override;
 	std::shared_ptr<EventRoot> RetrieveName(const std::wstring& name);
 	std::shared_ptr<EventRoot> GetName(const std::wstring& name);
+	virtual std::shared_ptr<EventSource> GetEventFromName(const std::wstring& name) override;
 	const std::vector<std::shared_ptr<EventRoot>>& GetRoots() const { return EventRoots; }
 
 	bool IsEventNameDuplicate(const std::wstring& name);

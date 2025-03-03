@@ -10,6 +10,8 @@
 
 #include "UI/wxComboBoxPopup.h"
 
+wxDEFINE_EVENT(EVT_SELECTED_AUTOCOMPLETE, wxCommandEvent);
+
 template<class TextCtrlBase>
 class AutocompleteWrapper : public TextCtrlBase, wxThreadHelper
 {
@@ -140,6 +142,7 @@ private:
 					wxString value = popup->m_listBox->GetStringSelection();
 
 					this->ChangeValue(value);
+					wxQueueEvent(this, new wxCommandEvent(EVT_SELECTED_AUTOCOMPLETE));
 					//this->SetStringSelection(value.ToStdWstring());
 					//umaMgr->SetTrainingCharacter(value.ToStdWstring());
 					popup->Dismiss();
@@ -154,6 +157,7 @@ private:
 	void OnSelectedItem(wxCommandEvent& event)
 	{
 		this->ChangeValue(event.GetString());
+		wxQueueEvent(this, new wxCommandEvent(EVT_SELECTED_AUTOCOMPLETE));
 	}
 
 	void OnThreadUpdate(wxThreadEvent& event)

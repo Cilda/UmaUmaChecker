@@ -123,9 +123,6 @@
     <ClCompile Include="src\Data\RandomOptionEventData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\UI\Autocomplete\AutocompleteThreadHelper.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="src\UI\Autocomplete\AutocompleteWrapper.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -276,9 +273,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="src\Data\RandomOptionEventData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="src\UI\Autocomplete\AutocompleteThreadHelper.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="src\UI\Autocomplete\AutocompleteWrapper.h">

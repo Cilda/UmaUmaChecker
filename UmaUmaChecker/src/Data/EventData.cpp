@@ -234,6 +234,15 @@ std::shared_ptr<EventRoot> EventData::GetName(const std::wstring& name)
 	return itr->second;
 }
 
+std::shared_ptr<EventSource> EventData::GetEventFromName(const std::wstring& name)
+{
+	if (EventMap.find(name) != EventMap.end()) {
+		return EventMap[name];
+	}
+
+	return nullptr;
+}
+
 bool EventData::IsEventNameDuplicate(const std::wstring& name)
 {
 	if (EventDuplicationCount.find(name) == EventDuplicationCount.end()) return false;

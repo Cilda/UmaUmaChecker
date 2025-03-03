@@ -33,4 +33,5 @@ public:
 	virtual std::shared_ptr<EventSource> RetrieveTitle(const std::wstring& title, EventRoot* root = nullptr) = 0;
 	virtual std::shared_ptr<EventSource> RetrieveOption(const std::wstring& option, EventRoot* root = nullptr) = 0;
 	virtual std::wstring RetrieveOptionTitle(const std::wstring& option, EventRoot* root = nullptr) = 0;
+	virtual std::shared_ptr<EventSource> GetEventFromName(const std::wstring& name) { return nullptr; }
 };
