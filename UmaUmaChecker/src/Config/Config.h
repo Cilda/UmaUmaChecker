@@ -38,5 +38,7 @@ public:
 	CaptureMode CaptureMode;
 	std::wstring UpdateUrl;
 	std::wstring TesseractLanguage;
+	bool EnabledAutoStartOnStartup;
+	bool AlwaysOnTop;
 };
 

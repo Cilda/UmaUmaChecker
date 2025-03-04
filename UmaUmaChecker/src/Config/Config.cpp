@@ -50,6 +50,8 @@ bool Config::Load()
 		UpdateUrl = utility::from_u8string(config.value("UpdateUrl", "https://raw.githubusercontent.com/Cilda/UmaUmaChecker/master/UmaUmaChecker/Library/"));
 		if (UpdateUrl.back() != '/') UpdateUrl += L"/";
 		TesseractLanguage = utility::from_u8string(config.value("TesseractLanguage", "jpn"));
+		EnabledAutoStartOnStartup = config.value("EnabledAutoStartOnStartup", false);
+		AlwaysOnTop = config.value("AlwaysOnTop", false);
 	}
 	catch (json::exception& ex) {
 		return false;
@@ -88,6 +90,8 @@ void Config::Save()
 	config["Language"] = std::filesystem::path(Language.begin(), Language.end()).u8string();
 	config["UpdateUrl"] = std::filesystem::path(UpdateUrl.begin(), UpdateUrl.end()).u8string();
 	config["TesseractLanguage"] = std::filesystem::path(TesseractLanguage.begin(), TesseractLanguage.end()).u8string();
+	config["EnabledAutoStartOnStartup"] = EnabledAutoStartOnStartup;
+	config["AlwaysOnTop"] = AlwaysOnTop;
 
 	std::ofstream output(utility::GetExeDirectory() + L"\\config.json");
 	output << std::setw(4) << config << std::endl;

@@ -49,7 +49,7 @@ bool EventLibrary::Load()
 		wxMessageBox(_("Failed to load SupportCard Event Data."), app_name, wxICON_ERROR);
 		return false;
 	}
-	if (!CharaEvent.Load(path + L"\\Library\\Chara.json")) {
+	if (!CharaEvent.Load(path + L"\\Library\\Chara.json", true)) {
 		wxMessageBox(_("Failed to load Umamusume Event Data."), app_name, wxICON_ERROR);
 		return false;
 	}
@@ -61,6 +61,8 @@ bool EventLibrary::Load()
 		wxMessageBox(_("Failed to load Skill Data."), app_name, wxICON_ERROR);
 		return false;
 	}
+
+	RandomEvent.Load(path + L"\\Library\\RandomOptionEvents.json");
 
 	auto end = std::chrono::system_clock::now();
 	auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();

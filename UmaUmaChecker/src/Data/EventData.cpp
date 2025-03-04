@@ -19,7 +19,7 @@ EventData::~EventData()
 {
 }
 
-bool EventData::Load(const std::wstring& path)
+bool EventData::Load(const std::wstring& path, bool sort)
 {
 	std::fstream stream(path);
 	if (!stream.good()) return false;
@@ -28,8 +28,6 @@ bool EventData::Load(const std::wstring& path)
 		json skills = json::parse(stream);
 
 		for (auto& cards : skills.items().begin().value()) {
-			std::vector<std::shared_ptr<EventRoot>> RankList;
-
 			for (auto& card : cards.items()) {
 				auto name = card.key();
 				auto events = card.value()["Events"];
@@ -64,27 +62,34 @@ bool EventData::Load(const std::wstring& path)
 						if (EventMap.find(EventName) == EventMap.end()) {
 							EventMap[EventName] = event;
 						}
+
+						if (EventDuplicationCount.find(EventName) == EventDuplicationCount.end()) {
+							EventDuplicationCount[EventName] = 1;
+						}
+						else {
+							EventDuplicationCount[EventName]++;
+						}
 					}
 				}
 
 				EventRoots.push_back(skill);
-				RankList.push_back(skill);
 
 				NameMap[skill->Name] = skill;
 			}
+		}
 
-			std::sort(RankList.begin(), RankList.end(), [](std::shared_ptr<EventRoot> a, std::shared_ptr<EventRoot> b) {
+		if (sort) {
+			std::sort(EventRoots.begin(), EventRoots.end(), [](std::shared_ptr<EventRoot> a, std::shared_ptr<EventRoot> b) {
 				std::wregex regex(L"^［(.+?)］(.+?)$");
 				std::wcmatch m1, m2;
 
 				std::regex_search(a->Name.c_str(), m1, regex);
 				std::regex_search(b->Name.c_str(), m2, regex);
 
-				return m1[2].str() < m2[2].str();
-			});
+				int comp = m1[2].str().compare(m2[2].str());
 
-			ByRank.push_back(RankList);
-			RankList.clear();
+				return comp != 0 ? comp < 0 : m1[1].str() < m2[1].str();
+			});
 		}
 	}
 	catch (json::exception& ex) {
@@ -166,6 +171,36 @@ std::shared_ptr<EventSource> EventData::RetrieveOption(const std::wstring& optio
 	return event->second;
 }
 
+std::wstring EventData::RetrieveOptionTitle(const std::wstring& option, EventRoot* root)
+{
+	std::vector<std::wstring> xstrs;
+
+	for (double ratio = 100; ratio > 40; ratio -= 10) {
+		optionreader->retrieve(option, simstring::cosine, ratio / 100.0, std::back_inserter(xstrs));
+		if (xstrs.size() > 0)
+			break;
+	}
+
+	if (xstrs.empty()) return nullptr;
+
+	std::wstring match = xstrs.front();
+	if (xstrs.size() >= 2) {
+		match = GetBestMatchString(xstrs, option);
+	}
+
+	if (root) {
+		auto event = root->OptionMap.find(match);
+		if (event != root->OptionMap.end()) {
+			return match;
+		}
+	}
+
+	const auto& event = OptionMap.find(match);
+	if (event == OptionMap.end()) return L"";
+
+	return match;
+}
+
 std::shared_ptr<EventRoot> EventData::RetrieveName(const std::wstring& name)
 {
 	std::vector<std::wstring> xstrs;
@@ -197,6 +232,13 @@ std::shared_ptr<EventRoot> EventData::GetName(const std::wstring& name)
 	if (itr == NameMap.end()) return nullptr;
 
 	return itr->second;
+}
+
+bool EventData::IsEventNameDuplicate(const std::wstring& name)
+{
+	if (EventDuplicationCount.find(name) == EventDuplicationCount.end()) return false;
+
+	return EventDuplicationCount[name] > 1;
 }
 
 void EventData::InitDB(const std::filesystem::path& path)
