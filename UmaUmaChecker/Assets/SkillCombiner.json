@@ -1,7 +1,7 @@
 {
   "ScrollbarInfo": {
-    "ScrollbarThreshold": 0.01,
-    "ScrollbarScanLine": [
+    "Threshold": 0.01,
+    "ScanLine": [
       {
         "x": 0.967,
         "y": 0.4519
@@ -44,6 +44,5 @@
     "x": 0.02452830188679245283018867924528,
     "y": 0.46235418875927889713679745493107
   },
-  "SkillDetectThreshold": 0.90,
-
+  "SkillDetectThreshold": 0.90
 }

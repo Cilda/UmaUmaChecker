@@ -8,9 +8,7 @@
 #include <wx/msgdlg.h>
 #include <opencv2/opencv.hpp>
 
-#include "Recognizer/CombineImage.h"
-#include "Recognizer/ScrollbarDetector.h"
-#include "Capture/UmaWindowCapture.h"
+#include "Images/Combine/SkillImageCombiner.h"
 
 
 enum {
@@ -25,7 +23,7 @@ wxEND_EVENT_TABLE()
 
 DebugImageCombineFrame::DebugImageCombineFrame(wxWindow* parent) : wxFrame(parent, wxID_ANY, wxT("画像結合"))
 {
-	this->DragAcceptFiles(true);
+	//this->DragAcceptFiles(true);
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -36,7 +34,9 @@ DebugImageCombineFrame::DebugImageCombineFrame(wxWindow* parent) : wxFrame(paren
 	sizer->Add(button);
 	this->SetSizer(sizer);
 
+	Bind(wxEVT_THREAD, &DebugImageCombineFrame::OnThreadUpdate, this);
 	timer.Bind(wxEVT_TIMER, &DebugImageCombineFrame::OnTimer, this);
+
 	timer.Start(10);
 	
 	FILE* fp;
@@ -58,41 +58,67 @@ void DebugImageCombineFrame::OnDropFiles(wxDropFilesEvent& event)
 
 void DebugImageCombineFrame::OnClickStartCapture(wxCommandEvent& event)
 {
-	if (combine.IsCapturing()) {
-		combine.EndCapture();
-	}
-	else {
-		bRunning = true;
-		thread = std::thread([this] {
-			combine.StartCapture();
-			bRunning = false;
-		});
+	wxButton* button = (wxButton*)FindWindowById(ID_StartCapture);
 
-		while (bRunning) {
-			wxYield();
+	if (!GetThread()) {
+		if (CreateThread(wxTHREAD_JOINABLE) != wxTHREAD_NO_ERROR) {
+			return;
 		}
 
-		if (thread.joinable()) thread.join();
+		if (GetThread()->Run() != wxTHREAD_NO_ERROR) {
+			return;
+		}
+
+		button->SetLabelText(wxT("Stop"));
+	}
+	else {
+		if (GetThread() && GetThread()->IsRunning()) {
+			GetThread()->Delete();
+			GetThread()->Wait();
+		}
+		button->SetLabelText(wxT("Start Capture"));
 	}
 }
 
 void DebugImageCombineFrame::OnTimer(wxTimerEvent& event)
 {
-	if (!combine.IsCapturing()) {
+	/*if (!combine.IsCapturing()) {
 		text->SetLabel(wxT("キャプチャしていません。"));
 	}
 	else {
 		int msec = combine.GetProgressTime();
 		if (msec >= 10) text->SetLabel(wxString::Format(wxT("処理時間:%d"), msec));
-	}
+	}*/
 }
 
 void DebugImageCombineFrame::OnClose(wxCloseEvent& event)
 {
-	if (thread.joinable()) {
-		wxMessageBox(wxT("終了するには結合を停止してください。"));
-		return;
+	if (GetThread() && GetThread()->IsRunning()) {
+		GetThread()->Delete();
+	}
+	Destroy();
+}
+
+void DebugImageCombineFrame::OnThreadUpdate(wxThreadEvent& event)
+{
+}
+
+void* DebugImageCombineFrame::Entry()
+{
+	SkillImageCombiner combiner;
+
+	while (!GetThread()->TestDestroy()) {
+		if (!combiner.Process(GetThread()->TestDestroy())) break;
 	}
 
-	Destroy();
+	std::wstring message = combiner.GetError();
+
+	if (message.empty()) {
+		combiner.Save("test.png");
+	}
+	else {
+		// error
+	}
+
+	return 0;
 }

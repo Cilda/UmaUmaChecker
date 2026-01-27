@@ -1,64 +1,64 @@
-#include "ScrollbarDetector.h"
+#include "ScrollPositionProcessor.h"
 
 #include <mutex>
 
 #include <opencv2/opencv.hpp>
 
 
-Point<double> ScrollbarDetector::Start(0.967, 0.4519);
-Point<double> ScrollbarDetector::End(0.967, 1.0 - 0.08);
+Point<double> ScrollPositionProcessor::Start(0.967, 0.4519);
+Point<double> ScrollPositionProcessor::End(0.967, 1.0 - 0.08);
 
-ScrollbarDetector::ScrollbarDetector(const cv::Mat& img) : valid(false)
+ScrollPositionProcessor::ScrollPositionProcessor(const cv::Mat& img) : valid(false)
 {
 	DetectScrollbar(img);
 	//InitScrollInfo(img);
 }
 
-ScrollbarDetector::~ScrollbarDetector()
+ScrollPositionProcessor::~ScrollPositionProcessor()
 {
 }
 
-bool ScrollbarDetector::IsValid() const
+bool ScrollPositionProcessor::IsValid() const
 {
 	return valid;
 }
 
-int ScrollbarDetector::GetPos() const
+int ScrollPositionProcessor::GetPos() const
 {
 	if (!valid) return 0;
 
 	return BarRange.end().y();
 }
 
-int ScrollbarDetector::GetTotalLength() const
+int ScrollPositionProcessor::GetTotalLength() const
 {
 	if (!valid) return 0;
 
 	return ScrollRange.end().y() - ScrollRange.start().y();
 }
 
-int ScrollbarDetector::GetBarLength() const
+int ScrollPositionProcessor::GetBarLength() const
 {
 	if (!valid) return 0;
 
 	return BarRange.end().y() - BarRange.start().y();
 }
 
-bool ScrollbarDetector::IsBegin() const
+bool ScrollPositionProcessor::IsBegin() const
 {
 	if (!valid) return false;
 
 	return ScrollRange.start().y() == BarRange.start().y();
 }
 
-bool ScrollbarDetector::IsEnd() const
+bool ScrollPositionProcessor::IsEnd() const
 {
 	if (!valid) return false;
 
-	return ScrollRange.end().y() == BarRange.end().y();
+	return std::abs(ScrollRange.end().y() - BarRange.end().y()) <= 1;
 }
 
-void ScrollbarDetector::DetectScrollbar(const cv::Mat& img)
+void ScrollPositionProcessor::DetectScrollbar(const cv::Mat& img)
 {
 	valid = false;
 
@@ -77,7 +77,7 @@ void ScrollbarDetector::DetectScrollbar(const cv::Mat& img)
 	valid = true;
 }
 
-std::vector<Point<int>> ScrollbarDetector::GetMargin(const cv::Mat& img)
+std::vector<Point<int>> ScrollPositionProcessor::GetMargin(const cv::Mat& img)
 {
 	auto start = Point<int>(img.size().width * Start.x(), img.size().height * Start.y());
 	auto end = Point<int>(img.size().width * End.x(), img.size().height * End.y());
@@ -106,7 +106,7 @@ std::vector<Point<int>> ScrollbarDetector::GetMargin(const cv::Mat& img)
 	};
 }
 
-std::vector<Point<int>> ScrollbarDetector::GetScrollBar(const cv::Mat& img, const Point<int>& start, const Point<int>& end)
+std::vector<Point<int>> ScrollPositionProcessor::GetScrollBar(const cv::Mat& img, const Point<int>& start, const Point<int>& end)
 {
 	std::once_flag once;
 	Point<int> pos_start(start.x(), 0);

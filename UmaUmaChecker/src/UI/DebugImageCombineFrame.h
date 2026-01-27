@@ -4,7 +4,6 @@
 #include <wx/timer.h>
 #include <wx/stattext.h>
 
-#include "Recognizer/CombineImage.h"
 
 namespace cv {
 	class Mat;
@@ -13,7 +12,7 @@ namespace Gdiplus {
 	class Bitmap;
 }
 
-class DebugImageCombineFrame : public wxFrame
+class DebugImageCombineFrame : public wxFrame, public wxThreadHelper
 {
 public:
 	DebugImageCombineFrame(wxWindow* parent);
@@ -24,14 +23,16 @@ private:
 	void OnClickStartCapture(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
 	void OnClose(wxCloseEvent& event);
+	void OnThreadUpdate(wxThreadEvent& event);
 
-	DECLARE_EVENT_TABLE()
+	// wxThreadHelper を介して継承されました
+	void* Entry() override;
 
 private:
 	wxTimer timer;
-	CombineImage combine;
 	wxStaticText* text;
-	std::thread thread;
 	bool bRunning;
+
+	DECLARE_EVENT_TABLE()
 };
 

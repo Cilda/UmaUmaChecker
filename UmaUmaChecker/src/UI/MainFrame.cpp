@@ -176,6 +176,10 @@ MainFrame::MainFrame(wxWindow* parent, const wxPoint& pos, const wxSize& size, l
 	m_comboBoxUma->Bind(wxEVT_KEY_DOWN, &MainFrame::OnComboKeyDown, this);
 	CombineTimer.Bind(wxEVT_TIMER, &MainFrame::OnCombineTimer, this);
 
+	Bind(wxEVT_COMMAND_COMBINETHREAD_COMPLETED, &MainFrame::OnCombineThreadCompleted, this);
+	Bind(wxEVT_COMMAND_COMBINETHREAD_COMBINE_STARTED, &MainFrame::OnCombineThreadStarted, this);
+	Bind(wxEVT_COMMAND_COMBINETHREAD_COMBINE_WAIT, &MainFrame::OnCombineThredWait, this);
+
 	if (config->WindowX != 0 || config->WindowY != 0) {
 		this->Move(config->WindowX, config->WindowY);
 	}
@@ -234,9 +238,14 @@ void MainFrame::AddToSystemMenu()
 
 void MainFrame::OnClose(wxCloseEvent& event)
 {
-	if (thread.joinable()) {
+	if (m_combineThread && m_combineThread->IsRunning()) {
 		wxMessageBox(_("Please stop merging image to exit."), _("Error"), wxICON_ERROR);
 		return;
+	}
+
+	if (m_combineThread) {
+		m_combineThread->Delete();
+		m_combineThread = nullptr;
 	}
 
 	Destroy();
@@ -305,43 +314,16 @@ void MainFrame::OnClickCombine(wxCommandEvent& event)
 		return;
 	}
 
-	if (combine.IsCapturing()) {
-		combine.EndCapture();
+	if (!m_combineThread) {
+		m_combineThread = new CombineThread(this);
+
+		if (m_combineThread->Run() != wxTHREAD_NO_ERROR) {
+			return;
+		}
 	}
 	else {
-		CombineTimer.Start(100);
-
-		bool bRunning = true;
-		thread = std::thread([&] {
-			combine.StartCapture();
-			bRunning = false;
-		});
-
-		CombineStatus PrevStatus = Stop;
-
-		while (bRunning) {
-			if (PrevStatus != WaitForMovingScrollbarOnTop && combine.GetStatus() == WaitForMovingScrollbarOnTop) {
-				m_buttonCombine->SetBitmap(wxIcon(wxT("WaitRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-				m_buttonCombine->SetToolTip(_("Stop merge."));
-			}
-			else if (PrevStatus != Scanning && combine.GetStatus() == Scanning) {
-				m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-				m_buttonCombine->SetToolTip(_("Stop merge."));
-			}
-
-			PrevStatus = combine.GetStatus();
-			wxYield();
-		}
-
-		if (thread.joinable()) thread.join();
-		m_buttonCombine->SetBitmap(wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
-		m_buttonCombine->SetToolTip(_("Merge umamusume skill tab as an image."));
-		CombineTimer.Stop();
-		this->SetTitle(app_title);
-		if (!combine.IsImageSaved()) {
-			std::wstring error = combine.GetError();
-			if (!error.empty()) wxMessageBox(error, app_title, wxICON_ERROR);
-			else wxMessageBox(_("Failed to capture."), app_title, wxICON_ERROR);
+		if (m_combineThread->IsRunning()) {
+			m_combineThread->Delete();
 		}
 	}
 }
@@ -545,7 +527,7 @@ void MainFrame::OnTimer(wxTimerEvent& event)
 
 void MainFrame::OnCombineTimer(wxTimerEvent& event)
 {
-	CombineStatus status = combine.GetStatus();
+	/*CombineStatus status = combine.GetStatus();
 	switch (status) {
 		case Stop:
 			break;
@@ -555,7 +537,36 @@ void MainFrame::OnCombineTimer(wxTimerEvent& event)
 			if (combine.GetProgressTime() > 0)
 				this->SetTitle(wxString::Format(wxT("%s [%d fps]"), app_title, 1000 / combine.GetProgressTime()));
 			break;
+	}*/
+}
+
+void MainFrame::OnCombineThreadCompleted(wxThreadEvent& event)
+{
+	if (m_combineThread) {
+		if (m_combineThread->IsRunning()) m_combineThread->Delete();
+
+		delete m_combineThread;
+		m_combineThread = nullptr;
 	}
+
+	m_buttonCombine->SetBitmap(wxIcon(wxT("StartRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+	m_buttonCombine->SetToolTip(_("Merge umamusume skill tab as an image."));
+
+	if (!event.GetString().empty()) {
+		wxMessageBox(event.GetString(), app_name, wxICON_ERROR);
+	}
+}
+
+void MainFrame::OnCombineThreadStarted(wxThreadEvent& event)
+{
+	m_buttonCombine->SetBitmap(wxIcon(wxT("StopRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+	m_buttonCombine->SetToolTip(_("Stop merge."));
+}
+
+void MainFrame::OnCombineThredWait(wxThreadEvent& event)
+{
+	m_buttonCombine->SetBitmap(wxIcon(wxT("WaitRecord"), wxBITMAP_TYPE_ICO_RESOURCE, 16, 16));
+	m_buttonCombine->SetToolTip(_("Stop merge."));
 }
 
 void MainFrame::OnComboTextUpdate(wxCommandEvent& event)

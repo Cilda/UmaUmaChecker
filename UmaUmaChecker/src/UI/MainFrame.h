@@ -27,12 +27,10 @@
 #include "wxUmaTextCtrl.h"
 #include "wxComboBoxPopup.h"
 #include "UI/Theme/ThemeWrapper.h"
-#include "Recognizer/CombineImage.h"
-
+//#include "Recognizer/CombineImage.h"
+#include "Threads/CombineThread.h"
 #include "PreviewFrame.h"
 #include "DebugFrame.h"
-
-
 #include "Recognizer/Uma.h"
 #include "version.h"
 
@@ -63,6 +61,11 @@ private:
 	void OnPreviewDragFile(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
 	void OnCombineTimer(wxTimerEvent& event);
+
+	void OnCombineThreadCompleted(wxThreadEvent& event);
+	void OnCombineThreadStarted(wxThreadEvent& event);
+	void OnCombineThredWait(wxThreadEvent& event);
+
 	// コンボボックスのオートコンプリート用
 	void OnComboTextUpdate(wxCommandEvent& event);
 	void OnSelectedListBoxItem(wxCommandEvent& event);
@@ -100,12 +103,13 @@ private:
 	PreviewFrame* m_PreviewWindow;
 	wxTimer timer;
 	wxStatusBar* m_statusBar;
-	DebugFrame* m_DebugFrame = NULL;
-	wxComboBoxPopup* m_comboPopup = NULL;
+	DebugFrame* m_DebugFrame = nullptr;
+	wxComboBoxPopup* m_comboPopup = nullptr;
 
 	Uma* umaMgr;
 
 	wxTimer CombineTimer;
-	CombineImage combine;
-	std::thread thread;
+	CombineThread* m_combineThread = nullptr;
+	//CombineImage combine;
+	//std::thread thread;
 };

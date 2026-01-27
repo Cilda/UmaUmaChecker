@@ -11,8 +11,11 @@
 #include"Utils/utility.h"
 #include "Log/Log.h"
 
-#include "ScrollbarDetector.h"
 #include "Capture/UmaWindowCapture.h"
+#include "Processor/ScrollPositionProcessor.h"
+#include "Images/ImageTemplateMatcher.h"
+
+#undef RGB
 
 
 cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image)
@@ -29,7 +32,8 @@ cv::Mat BitmapToCvMat(Gdiplus::Bitmap* image)
 }
 
 
-CombineImage::CombineImage() : IsCapture(false), BarLength(0), CurrentScrollPos(0), msec(0)
+CombineImage::CombineImage() : /*config(config),*/
+	IsCapture(false), BarLength(0), CurrentScrollPos(0), msec(0)
 {
 }
 
@@ -161,7 +165,7 @@ void CombineImage::Capture()
 
 void CombineImage::ProcessDetection(const cv::Mat& mat)
 {
-	ScrollbarDetector scroll(mat);
+	ScrollPositionProcessor scroll(mat);
 
 	if (BarLength == 0 && scroll.GetBarLength() > 0) BarLength = scroll.GetBarLength();
 

@@ -108,7 +108,7 @@
     <ClCompile Include="src\Capture\UmaWindowCapture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\Recognizer\ScrollbarDetector.cpp">
+    <ClCompile Include="src\Processor\ScrollPositionProcessor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\DebugImageCombineFrame.cpp">
@@ -121,6 +121,21 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="src\Data\RandomOptionEventData.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Config\SkillImageCombinerConfig.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Threads\CombineThread.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Images\ImageTemplateMatcher.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Images\Combine\SkillImageCombiner.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Images\ImageConverter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -230,7 +245,7 @@
     <ClInclude Include="src\Capture\CaptureMode.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="src\Recognizer\ScrollbarDetector.h">
+    <ClInclude Include="src\Processor\ScrollPositionProcessor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="src\UI\DebugImageCombineFrame.h">
@@ -270,6 +285,30 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="src\Data\RandomOptionEventData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Config\SkillImageCombinerConfig.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Config\IConfig.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Color.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Coord.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Threads\CombineThread.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Images\ImageTemplateMatcher.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Images\Combine\SkillImageCombiner.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Images\ImageConverter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -327,6 +366,6 @@
     <None Include="locale\en.po" />
     <None Include="locale\ko.po" />
     <None Include="Assets\Recognizer.json" />
-    <None Include="Assets\SkillMerge.json" />
+    <None Include="Assets\SkillCombiner.json" />
   </ItemGroup>
 </Project>

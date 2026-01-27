@@ -4,6 +4,8 @@
 #include <opencv2/opencv.hpp>
 #include <string>
 
+#include "Config/SkillImageCombinerConfig.h"
+
 struct CombineImageInfo {
 	int StartY;
 	int NextDetectedY;
@@ -48,6 +50,8 @@ private:
 	void CutScrollbar(const cv::Mat& src, cv::Mat& out);
 
 private:
+	//const SkillImageCombinerConfig& config;
+
 	bool IsCapture;
 	bool IsScanStarted;
 	bool IsFirstScan;

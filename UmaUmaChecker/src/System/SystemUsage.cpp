@@ -1,8 +1,11 @@
 #include "SystemUsage.h"
 
 #include <psapi.h>
+
 #include <exception>
 #include <thread>
+#include <chrono>
+
 
 SystemUsage::SystemUsage() : LastCpuTime(0), LastSystemTime(0)
 {

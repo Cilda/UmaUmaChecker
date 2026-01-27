@@ -9,11 +9,11 @@ namespace cv {
 	class Mat;
 }
 
-class ScrollbarDetector
+class ScrollPositionProcessor
 {
 public:
-	ScrollbarDetector(const cv::Mat& img);
-	~ScrollbarDetector();
+	ScrollPositionProcessor(const cv::Mat& img);
+	~ScrollPositionProcessor();
 
 	bool IsValid() const;
 	int GetPos() const;

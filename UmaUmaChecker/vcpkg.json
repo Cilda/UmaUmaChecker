@@ -1,16 +1,22 @@
 {
   "name": "umaumacheckerpackage",
-  "version-string": "1.0",
+  "version": "1.0",
   "dependencies": [
     {
       "name": "opencv4",
       "default-features": false,
-      "features": ["jpeg", "png", "world"]
+      "features": [ "jpeg", "png", "world" ]
     },
     "nlohmann-json",
     "tesseract",
     "wxwidgets",
     "boost-log",
     "boost-locale"
+  ],
+  "overrides": [
+    {
+      "name": "opencv4",
+      "version": "4.8.0#20"
+    }
   ]
 }

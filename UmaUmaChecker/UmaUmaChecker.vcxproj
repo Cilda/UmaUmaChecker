@@ -240,6 +240,11 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Images\ImageConverter.cpp" />
+    <ClCompile Include="src\Images\Combine\SkillImageCombiner.cpp" />
+    <ClCompile Include="src\Images\ImageTemplateMatcher.cpp" />
+    <ClCompile Include="src\Threads\CombineThread.cpp" />
+    <ClCompile Include="src\Config\SkillImageCombinerConfig.cpp" />
     <ClCompile Include="src\Data\RandomOptionEventData.cpp" />
     <ClCompile Include="src\Recognizer\EventDetector.cpp" />
     <ClCompile Include="src\Language\Languages.cpp" />
@@ -252,7 +257,7 @@
     <ClCompile Include="src\UI\GrandLiveMusicListFrame.cpp" />
     <ClCompile Include="src\Log\Log.cpp" />
     <ClCompile Include="src\Data\ScenarioData.cpp" />
-    <ClCompile Include="src\Recognizer\ScrollbarDetector.cpp" />
+    <ClCompile Include="src\Processor\ScrollPositionProcessor.cpp" />
     <ClCompile Include="src\Tesseract\Tesseract.cpp" />
     <ClCompile Include="src\UI\Theme\ThemeWrapper.cpp" />
     <ClCompile Include="src\UI\Theme\BaseRenderer.cpp" />
@@ -285,6 +290,12 @@
     <ClInclude Include="3rdparty\simstring\memory_mapped_file_win32.h" />
     <ClInclude Include="3rdparty\simstring\ngram.h" />
     <ClInclude Include="3rdparty\simstring\simstring.h" />
+    <ClInclude Include="src\Images\ImageConverter.h" />
+    <ClInclude Include="src\Images\Combine\SkillImageCombiner.h" />
+    <ClInclude Include="src\Images\ImageTemplateMatcher.h" />
+    <ClInclude Include="src\Threads\CombineThread.h" />
+    <ClInclude Include="src\Config\IConfig.h" />
+    <ClInclude Include="src\Config\SkillImageCombinerConfig.h" />
     <ClInclude Include="src\Data\RandomOptionEventData.h" />
     <ClInclude Include="src\Recognizer\EventDetector.h" />
     <ClInclude Include="src\Language\Languages.h" />
@@ -301,7 +312,7 @@
     <ClInclude Include="src\object_pool.hpp" />
     <ClInclude Include="src\Point.h" />
     <ClInclude Include="src\Data\ScenarioData.h" />
-    <ClInclude Include="src\Recognizer\ScrollbarDetector.h" />
+    <ClInclude Include="src\Processor\ScrollPositionProcessor.h" />
     <ClInclude Include="src\Tesseract\Tesseract.h" />
     <ClInclude Include="src\UI\Theme\ThemeWrapper.h" />
     <ClInclude Include="src\UI\Theme\BaseRenderer.h" />
@@ -323,6 +334,8 @@
     <ClInclude Include="src\Recognizer\Uma.h" />
     <ClInclude Include="src\Data\EventLibrary.h" />
     <ClInclude Include="src\UI\MainFrame.h" />
+    <ClInclude Include="src\Utils\Coord.h" />
+    <ClInclude Include="src\Utils\Color.h" />
     <ClInclude Include="src\Utils\utility.h" />
     <ClInclude Include="src\version.h" />
     <ClInclude Include="src\UI\wxTextPopupCtrl.h" />
@@ -434,7 +447,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Recognizer.json" />
-    <None Include="Assets\SkillMerge.json" />
+    <None Include="Assets\SkillCombiner.json" />
     <CopyFileToFolders Include="Library\RandomOptionEvents.json">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </ExcludedFromBuild>

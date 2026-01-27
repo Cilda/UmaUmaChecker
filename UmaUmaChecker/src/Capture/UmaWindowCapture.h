@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Windows.h>
+#include <gdiplus.h>
+
 #include "CaptureMode.h"
 #include <memory>
 
